@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>מדריך למבחן - אלגברה לינארית</title>
+<meta name="theme-color" content="#1F2A47">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%231F2A47%22/%3E%3Cpath d=%22M38 13.5C32 11 28 15 28 23v18c0 8-4 11-9 9.5%22 fill=%22none%22 stroke=%22%23E3B95C%22 stroke-width=%224%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%2242%22 cy=%2214.5%22 r=%224%22 fill=%22%23E3B95C%22/%3E%3Ccircle cx=%2216%22 cy=%2250%22 r=%224%22 fill=%22%23E3B95C%22/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAJlklEQVR4nOzdbXBUVx3H8XP37mM2G/IIpAESYqAFQ3mSMlBUamhTKAjFN6hoVexIO47xRUcZn2bqOFN1xtEKapWhdtTi2CpSHWxRy1gKsYRSpAmTkNgEzBMJSTbZ3ezz7vUwTFsm9H/Pvbvbm5u7v88wnU57djLhfjn3nHOXrL16aSMDeC92BkBAHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHEBCHO+XhXPkBbPl2cWyw86GJ9IDI6mO3mRaYTMI4ngPRQXSHQvs88rlylJ5bonN7ZQGR1MDY+m+kdTVsVT/aCoSI19b5rM9dJ9n00p3kdc25X9FY0pLZ/yZ45Od/Sk2E0j4EQzvWFVnX7/UtWqRY/E8h/rItwaTLR3x19rj57oS7/xHn0f6zCbPJzZ4XE6bymsVRfnXhdhTx8L9I2ZPBHFct6hK/urOwuW1TqZTJKac7Yyf6Yj/41z00x8reOg+r8YX/rs99vhvAqEoM7N8j6PYKz2yzfvAWg/LTjCS9nlsul7C+/jawYBi4lWIXFxRx/JVfY19/5dLln9A94RxK5dDYjrNr7A77dLrnQlmVvpit5JP3uN5qqmkrGg6fwe2r3PzlQozqzydOfbtKtzdoHV9IMDvC5leXz7fpNLKG10mnTzycebYucG9NetFxrukrFYNG+90MbPKuziWLLA3PVjIcimr+0L1HLtp7yz5FQc/ofrhw7NkW+4uBt9sZL3fmFtq0quQX3F8f4+vpDDX37KUbWpzS2RmSnl0fL5ro2dJtb5d67A/1dmfvDKUml1im18h8wP1wimHGZJ59xrZy6s4CjSOHJlIH/hLiJ97BsNTbxmLq+wbVzgbVriqyt/+reO3lewSueo36Tl6vsSxfb27fJamG8rhE5OHXgrHiN0ln0j4r18dC/MT9xW1Tp9X2rbWXVGc+X0hnuQPbNPMlPIljt0Nmvauj+73v9md1DKyqz/V1R/h/xJPKHu3Zr79Od+VmIyZ9Ag9LxakjatdlaXiPwY/PhLUWMbNXjwbjSUyv7pHm8378C0v4vhco3i18cqbsT+9msl1Gg0oz5+MsIxc6I6/2hZnZmX9OD66zMkfcamP6R9Jffd3AZapp49PdvbpPgIPRdJP/D7ITMz6cdy72i0cs/+FUCyL5xvxBNt3aMIf1LGuTKeVbz8T6DPrUvQG68exsk7wtq7xUPr0xWzn9uFx5Us/9XcPalqyBCPpxw5OnDXxw/obLB5HZYltllfwPR47E83JO274jvTRA+PPnwzz3anKsOaL8UeeHG/pMHsZzPJb2fqFDuGYI6czXE7eKhRWnvzz5OETkQ8vcy6vddbMsc0ulp12NjSe5sua1p7Ea+3xmfLuYmb5OJbVCL7B3mvJIX+Ob/zXJtJHTkX5LzbDWTyOD9YIHqZ0XNF9sJE/rBwHn8/5Ibf6mPbeGXDvny5WjqO+xm4TvXWjvRczB8nKcVSVC6YNfthwqQ9xkKwch9ct2MR2D6biuKvQrByH8L2ZA2MzZlc5LSw9c4jiiMRMfXo97awcR6HotjIZY6DC2msOwYBIdEb9uAzDWXrm8AhnDtxW1OT3mmPGH3C/vywdh0sQRxgzhyorx2ETvR8BKw51+JlgQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQEIcQLJyHLIk+BivBD6qXJWV4yhwC+IIRfAZb2ry+qNDg2F8ypsay8Yh/GhILoiZQ5V14/CIxwQjmDnUWHjmEH1wKGNjQcShxrpxiFaj0RjKELBsHJXlsvoALDiELBvH0gWCby2ABYeIZeNYMt+hPqBvOMVAlTXj4Eejd4hmjtbLCQaqrBnHottkuyxYkLb2IA4Ba8axYZlLfUAypXT04smKgAXj4PeUHesFR2AXryRS2KyITGcc/Cry+X9eub2i5PqB1TV/um8k2dnP/0CLT75VfKTeWeoTnIC19mDaEJueOKrK5S80ejbUu7zuqVeRHz80X4w9fTzSP5LhbmL73eKT8zasRjUwOo4yn+2Lm72b73JRC0afx9b4IU/DSvffWqKHXgyPBvXN/mtud9x1u1N9TCCcbrkUZyAifgCRQw4727vNu22dW7iV4AM+vs7z8AMFTplp5/NI39ldJBx2tDkSx8ShgaFxND3o3bzGrX381rWer+z0ah//rU/5SgoF3xHfpzz3SoSBBsbFsWOde8f6AqYTfwl/oZaRW9e67653CYe9fD46HsLBuSYGxeG0s8/fr7uMG3bdUyDb1C5nYYHE54x9u3xMg8MnMG1oZVAcW9a4y4r0LB9uMq9C/mwDeXO5d7XrD98ovV/b3eqNrsRbg3ikopVBu5WGVeIJX8WeLQV7tnjbr8SHxpWRQCqeUPhmuLJU5v+8dTOs4rmTYQaaGRRHXVUOvtCSaueSapaxU22xU23YwepgRBxlRZLPk+X9K6szU+5/w8nHfxtgoIcRa44FFTlJMPMtRiiSfuzgRASzhk5GzByh6HQ+40qnlW/+OjAwgudsuhkRx1gwJxcmwzvLz/46ea4LB6KZMCKO0UB62J+aXZLhVvY6fkuRFL19xJPK954NnvhPjEFGjDnnkJrbs7tC+svgOe79iR9lZMOgQ7Cjp6PMKLGE8uzL4d0/8Hf247wrKwadc/x3IPXP89FNK3U8dbuJjmnj+OuRXx6bHB7H05McMO79HD/6Y6iu0l4zV99X5A9R7TZxG0P+FL+DvHQ2itPxHJKqlzYyo5T5bL9oKr6tTOvK9PLVZNPPJ/iC485aR+0c+yyv5PVI/Lzc45QmY8pkVOEHGP6AcuZS7FIfmsg9Q+PgCt3siT2zVtY5hSMvdMe/fnAiZNxaBaaSiyvqmIHiSfb3c9GB0dSiKpk6Ux8cS+4/GjrwQiiWyPbUHLJh9Mzx7heW2OIqeXmtY9lCR33N9b+62HY50dqTuNCT7OxLKlhQmsC0xQHmhx81CSTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEASTEAaT/AwAA///2krm4AAAABklEQVQDAN3zv04n5xlDAAAAAElFTkSuQmCC">
+<meta name="apple-mobile-web-app-title" content="אלגברה לינארית">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF6EE;
+    --paper:#FFFFFF;
+    --ink:#23262B;
+    --ink-soft:#5B5F6B;
+    --line:#E4DECF;
+    --indigo:#2C3A5E;
+    --indigo-2:#1F2A47;
+    --indigo-soft:#EDF0F7;
+    --gold:#A8791E;
+    --gold-soft:#FBF3DF;
+    --rust:#A23F35;
+    --rust-soft:#FBEBE8;
+    --teal:#2A6F63;
+    --teal-soft:#E7F3EF;
+    --sidebar-w:305px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Assistant', sans-serif;
+    font-size:17px;
+    line-height:1.75;
+  }
+  ::selection{ background: var(--gold-soft); color:var(--ink); }
+
+  math{
+    font-size:1.06em;
+    vertical-align:middle;
+    direction:ltr;
+    unicode-bidi:isolate;
+  }
+  math[display="block"]{
+    display:block;
+    margin:0 auto;
+    text-align:center;
+  }
+  menclose[notation="box"]{ padding:0 .15em; }
+  mtable{ vertical-align:middle; }
+  mtd{ padding:.15em .35em; }
+
+  h1,h2,h3,h4{
+    font-family:'Frank Ruhl Libre', serif;
+    color:var(--indigo-2);
+    line-height:1.3;
+    margin:0 0 .5em 0;
+  }
+
+  a{ color:inherit; }
+
+  /* ---------- layout ---------- */
+  .layout{
+    display:flex;
+    align-items:flex-start;
+    min-height:100vh;
+  }
+  .sidebar{
+    position:sticky;
+    top:0;
+    height:100vh;
+    width:var(--sidebar-w);
+    flex:0 0 var(--sidebar-w);
+    background:linear-gradient(180deg, var(--indigo-2), var(--indigo));
+    color:#FAF6EE;
+    padding:28px 20px;
+    overflow-y:auto;
+    z-index:10;
+  }
+  .sidebar-title{
+    font-family:'Frank Ruhl Libre', serif;
+    font-size:1.45rem;
+    color:#fff;
+    margin-bottom:3px;
+  }
+  .sidebar-sub{
+    font-size:.86rem;
+    color:#E4DBBE;
+    margin-bottom:16px;
+  }
+
+  .search-box{
+    position:sticky;
+    top:0;
+    background:var(--indigo-2);
+    padding-bottom:10px;
+    margin-bottom:6px;
+    z-index:2;
+  }
+  .search-box input[type="search"]{
+    width:100%;
+    box-sizing:border-box;
+    padding:11px 14px;
+    border-radius:9px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    font-family:'Assistant', sans-serif;
+    font-size:.92rem;
+    outline:none;
+  }
+  .search-box input[type="search"]::placeholder{ color:#CFC5A6; }
+  .search-box input[type="search"]:focus{ border-color:var(--gold); background:rgba(255,255,255,.14); }
+  .search-box input[type="search"]::-webkit-search-cancel-button{ filter:invert(1); opacity:.6; }
+
+  .search-status{
+    color:#D8CEAE;
+    font-size:.82rem;
+    font-weight:600;
+    padding:2px 4px 4px;
+    min-height:1.2em;
+  }
+  .search-empty{ color:#D8CEAE; font-size:.85rem; padding:10px 4px; }
+
+  .collapse-all-btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.18);
+    color:#E7DFC8;
+    font-family:'Assistant', sans-serif;
+    font-size:.8rem;
+    font-weight:600;
+    padding:8px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-bottom:8px;
+  }
+  .collapse-all-btn:hover{ background:rgba(255,255,255,.14); color:#fff; }
+  .toc{
+    list-style:none;
+    margin:0;
+    padding:0;
+    border-top:1px solid rgba(255,255,255,.14);
+  }
+  .toc > li{ border-bottom:1px solid rgba(255,255,255,.14); }
+  .toc a{
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    text-decoration:none;
+    color:#F5F0E1;
+    padding:12px 4px;
+    font-size:1.02rem;
+    font-weight:500;
+    transition:color .15s ease;
+  }
+  .toc a .num{
+    font-family:'Frank Ruhl Libre', serif;
+    font-weight:700;
+    color:#E3B95C;
+    min-width:20px;
+    flex:0 0 auto;
+  }
+  .toc a:hover, .toc a.active{
+    color:#fff;
+  }
+  .toc a.active .num{ color:var(--gold); }
+  .toc-details{ margin-top:-4px; }
+  .toc-details summary{
+    display:flex;
+    align-items:center;
+    list-style:none;
+    cursor:pointer;
+    user-select:none;
+  }
+  .toc-details summary::-webkit-details-marker{ display:none; }
+  .toc-details summary::before{
+    content:"▸";
+    color:#E3B95C;
+    font-weight:700;
+    font-size:.8rem;
+    flex:0 0 auto;
+    margin-inline-start:6px;
+  }
+  .toc-details[open] summary::before{ content:"▾"; }
+  .toc-details summary .top-link{ flex:1 1 auto; }
+  .sub-toc{
+    list-style:none;
+    margin:0;
+    padding:0 0 6px 8px;
+  }
+  .sub-toc li{ border-bottom:none; }
+  .sub-toc a{
+    padding:9px 4px 9px 0;
+    font-size:.87rem;
+    font-weight:400;
+    line-height:1.5;
+    color:#E7DFC8;
+    border-right:2px solid rgba(255,255,255,.22);
+    padding-right:12px;
+    margin-right:9px;
+  }
+  .sub-toc a:hover{ color:#fff; border-color:rgba(255,255,255,.55); }
+  .sub-toc a.active{ color:var(--gold); border-color:var(--gold); font-weight:600; }
+  .toc-part-li{ margin-top:10px; }
+  .toc-part-li:first-child{ margin-top:0; }
+  .toc-part-link{
+    font-weight:700;
+    font-size:.8rem;
+    color:#B9E0D4;
+    border-right:2px solid rgba(150,220,195,.4);
+    letter-spacing:.2px;
+  }
+  .toc-part-link:hover{ color:#fff; border-color:#B9E0D4; }
+  .toc-part-link.active{ color:var(--gold); border-color:var(--gold); }
+  .toc-note{
+    margin-top:20px;
+    font-size:.78rem;
+    color:#C2B896;
+    line-height:1.6;
+  }
+
+  .content{
+    flex:1 1 auto;
+    min-width:0;
+    padding:52px 6vw 120px;
+    max-width:900px;
+    margin:0 auto;
+  }
+
+  .hero{
+    margin-bottom:56px;
+    padding-bottom:32px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero h1{
+    font-size:2.4rem;
+    font-weight:700;
+    margin-bottom:.25em;
+  }
+  .hero p{
+    color:var(--ink-soft);
+    max-width:62ch;
+    font-size:1.05rem;
+  }
+  .hero .tags{
+    margin-top:18px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .hero .tags span{
+    font-size:.82rem;
+    padding:5px 12px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    color:var(--ink-soft);
+    background:var(--paper);
+  }
+
+  /* ---------- exercise sections ---------- */
+  .exercise{
+    padding-top:70px;
+    margin-top:-70px;
+    scroll-margin-top:80px;
+  }
+  .ex-header{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:6px;
+  }
+  .ex-badge{
+    font-family:'Frank Ruhl Libre', serif;
+    font-weight:900;
+    font-size:1.9rem;
+    color:var(--gold);
+    background:var(--gold-soft);
+    border:1px solid #EAD9AD;
+    width:56px;
+    height:56px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+  }
+  .ex-header h2.ex-title{
+    font-size:1.85rem;
+    margin:0;
+  }
+  .ex-intro{
+    color:var(--ink-soft);
+    max-width:70ch;
+    margin:14px 0 40px;
+    font-size:1.02rem;
+  }
+
+  h3.q{
+    font-size:1.28rem;
+    margin-top:44px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+    scroll-margin-top:80px;
+  }
+  h4.sub{
+    font-family:'Assistant', sans-serif;
+    font-weight:700;
+    font-size:1.02rem;
+    color:var(--indigo);
+    margin-top:22px;
+    margin-bottom:6px;
+  }
+  p{ margin:0 0 14px 0; }
+  .content > .exercise > p, .exercise p{ max-width:72ch; }
+
+  .formula{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 20px;
+    margin:12px 0 18px;
+    overflow-x:auto;
+    text-align:center;
+  }
+  .formula.tight{ padding:8px 16px; display:inline-block; margin-inline-end:10px;}
+
+  .diagram{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 16px 14px;
+    margin:20px auto;
+    max-width:460px;
+    text-align:center;
+  }
+  .diagram svg{ max-width:100%; height:auto; display:block; margin:0 auto; }
+  .diagram-caption{
+    margin-top:10px;
+    font-size:.88rem;
+    color:var(--ink-soft);
+    line-height:1.6;
+    text-align:right;
+  }
+  .diagram-key{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 18px;
+    justify-content:center;
+    margin-top:2px;
+    padding-top:12px;
+    border-top:1px dashed var(--line);
+    font-size:.85rem;
+    color:var(--ink);
+  }
+  .diagram-key .dk-item{ display:flex; align-items:center; gap:6px; }
+  .diagram-key .dk-swatch{
+    display:inline-block;
+    width:16px; height:16px;
+    border-radius:4px;
+    flex:0 0 auto;
+  }
+
+
+  .callout{
+    border-radius:10px;
+    padding:16px 20px;
+    margin:18px 0 22px;
+    border-inline-start:4px solid;
+    max-width:76ch;
+  }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout-title{
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+    font-size:.98rem;
+  }
+  .callout-star{ background:var(--gold-soft); border-color:var(--gold); }
+  .callout-star .callout-title{ color:#7A5A0F; }
+  .callout-warn{ background:var(--rust-soft); border-color:var(--rust); }
+  .callout-warn .callout-title{ color:var(--rust); }
+  .callout-target{ background:var(--teal-soft); border-color:var(--teal); }
+  .callout-target .callout-title{ color:var(--teal); }
+  .callout-info{ background:var(--indigo-soft); border-color:var(--indigo); }
+  .callout-info .callout-title{ color:var(--indigo); }
+
+  .steps{
+    margin:14px 0 20px;
+    padding-inline-start:0;
+    list-style:none;
+    counter-reset:step;
+    max-width:76ch;
+  }
+  .steps > li{
+    counter-increment:step;
+    position:relative;
+    padding-inline-start:38px;
+    margin-bottom:14px;
+  }
+  .steps > li::before{
+    content: counter(step);
+    position:absolute;
+    inline-size: 26px;
+    block-size: 26px;
+    inset-inline-start:0;
+    top:-1px;
+    background:var(--indigo);
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:.82rem;
+    font-weight:700;
+    font-family:'Frank Ruhl Libre',serif;
+  }
+
+  table{
+    border-collapse:collapse;
+    margin:14px 0 22px;
+    width:auto;
+    background:var(--paper);
+  }
+  table caption{ text-align:right; color:var(--ink-soft); margin-bottom:6px; font-size:.9rem;}
+  th,td{
+    border:1px solid var(--line);
+    padding:8px 16px;
+    text-align:center;
+    font-size:.96rem;
+  }
+  th{ background:var(--indigo-soft); color:var(--indigo-2); }
+
+  .divider{
+    border:none;
+    border-top:1px dashed var(--line);
+    margin:34px 0;
+  }
+
+  .summary-sheet{
+    margin-top:60px;
+    background:linear-gradient(180deg, var(--indigo-soft), var(--paper));
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:28px 30px 8px;
+  }
+  .summary-sheet h3.q{ border-top:none; margin-top:0; }
+  .summary-sheet-title{
+    font-family:'Frank Ruhl Libre', serif;
+    font-size:1.4rem;
+    color:var(--indigo-2);
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .key-idea{
+    margin-top:40px;
+    padding:22px 26px;
+    background:var(--indigo-2);
+    color:#F3EFE3;
+    border-radius:14px;
+  }
+  .key-idea h4{
+    color:#fff;
+    font-family:'Frank Ruhl Libre', serif;
+    font-size:1.15rem;
+    margin-bottom:8px;
+  }
+  .key-idea p{ color:#D8D2BE; margin-bottom:0; }
+
+  .end-of-exercise{
+    height:1px;
+    margin-bottom:0;
+  }
+
+  footer.site-footer{
+    max-width:900px;
+    margin:0 auto;
+    padding:0 6vw 60px;
+    color:var(--ink-soft);
+    font-size:.85rem;
+  }
+
+  .top-btn{
+    position:fixed;
+    bottom:26px;
+    left:26px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:var(--indigo);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+    text-decoration:none;
+    font-size:1.2rem;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+    z-index:20;
+  }
+  .top-btn.show{ opacity:1; pointer-events:auto; }
+
+  .mobile-toggle{ display:none; }
+  .menu-toggle-input{ display:none; }
+
+  .drawer-backdrop{
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(20,22,28,.55);
+    z-index:40;
+    opacity:0;
+    pointer-events:none;
+    cursor:pointer;
+    transition:opacity .25s ease;
+  }
+
+  .menu-fab{
+    display:none;
+    position:fixed;
+    bottom:24px;
+    right:22px;
+    z-index:45;
+    align-items:center;
+    gap:8px;
+    background:var(--indigo-2);
+    color:#fff;
+    border:none;
+    border-radius:100px;
+    padding:13px 20px 13px 18px;
+    font-family:'Assistant', sans-serif;
+    font-size:1rem;
+    font-weight:600;
+    box-shadow:0 6px 18px rgba(0,0,0,.3);
+    cursor:pointer;
+  }
+  .menu-fab svg{ width:20px; height:20px; flex:0 0 auto; }
+
+  .sidebar-close{
+    display:none;
+    width:40px; height:40px;
+    align-items:center; justify-content:center;
+    background:rgba(255,255,255,.08);
+    border:none;
+    border-radius:50%;
+    color:#fff;
+    font-size:1.3rem;
+    position:absolute;
+    top:16px; left:16px;
+    cursor:pointer;
+  }
+
+  @media (max-width: 880px){
+    .layout{ display:block; }
+    .sidebar{
+      position:fixed;
+      top:0; right:0;
+      height:100vh;
+      width:86vw;
+      max-width:400px;
+      flex:none;
+      padding:26px 22px;
+      transform:translateX(100%);
+      transition:transform .28s ease;
+      box-shadow:-10px 0 30px rgba(0,0,0,.35);
+      z-index:50;
+    }
+    #menuToggle:checked ~ .layout .sidebar{ transform:translateX(0); }
+    #menuToggle:checked ~ .layout .drawer-backdrop{ opacity:1; pointer-events:auto; }
+    .sidebar-close{ display:flex; }
+    .drawer-backdrop{ display:block; }
+    .menu-fab{ display:flex; }
+    .sidebar-title, .sidebar-sub{ margin-top:26px; }
+    .toc{ max-height:none; overflow:visible; }
+    .toc a{ padding:13px 4px; font-size:1.02rem; min-height:44px; }
+    .toc-details summary::before{ font-size:1rem; }
+    .sub-toc a{ padding:11px 4px 11px 0; font-size:.9rem; min-height:40px; display:flex; align-items:center; }
+    .content{ padding:34px 6vw 110px; }
+    table{ display:block; overflow-x:auto; max-width:100%; -webkit-overflow-scrolling:touch; }
+    .formula{ font-size:.95rem; }
+  }
+
+  @media print{
+    .sidebar, .top-btn, .menu-fab, .drawer-backdrop{ display:none; }
+    .layout{ display:block; }
+    .content{ max-width:100%; padding:0; }
+    .exercise{ padding-top:0; margin-top:0; }
+    html, body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .callout, .formula, table, .summary-sheet, .key-idea, .ex-header{ break-inside:avoid; page-break-inside:avoid; }
+    h2, h3.q, h4.sub{ break-after:avoid; page-break-after:avoid; }
+    .exercise{ break-before:page; page-break-before:always; }
+    .hero{ break-before:auto; page-break-before:auto; }
+  }
+  .hebrew-box{
+    font-weight:700;
+    background:rgba(168,121,30,.12);
+    padding:1px 6px;
+    border-radius:4px;
+  }
+  .src-tag{
+    display:block;
+    width:fit-content;
+    font-size:.74rem;
+    color:var(--ink-soft);
+    background:rgba(44,58,94,.06);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:3px 10px;
+    margin:-8px 0 16px;
+    font-weight:600;
+  }
+  .src-tag.missing{
+    background:rgba(162,63,53,.08);
+    border-color:rgba(162,63,53,.3);
+    color:var(--rust);
+  }
+  .src-tag.base{
+    background:rgba(0,0,0,.03);
+    color:var(--ink-soft);
+    font-weight:500;
+  }
+  mark.search-hit{
+    background:var(--gold);
+    color:#1F2A47;
+    padding:0 3px;
+    border-radius:3px;
+    box-shadow:0 0 0 4px rgba(168,121,30,.35);
+    animation:hitFade 2.5s ease-out 1;
+  }
+  @keyframes hitFade{
+    0%{ box-shadow:0 0 0 6px rgba(168,121,30,.5); }
+    100%{ box-shadow:0 0 0 0 rgba(168,121,30,0); }
+  }
+  .search-context-highlight{
+    background:rgba(168,121,30,.14);
+    border-radius:8px;
+    transition:background 2.5s ease;
+  }
+
+/* ===== נספח ד׳: נגישות ומובייל ===== */
+:root{ --gold-text:#7A5610; }                       /* זהב כהה לטקסט קטן על רקע בהיר (ניגודיות 6.0) */
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body{ font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; overflow-wrap:break-word; }
+h1,h2,h3,h4{ font-family:'Frank Ruhl Libre', 'David', 'Times New Roman', serif; }
+svg{ max-width:100%; height:auto; }
+
+/* מסגרת פוקוס גלויה */
+:where(a,button,summary,input,label,[tabindex]):focus-visible{ outline:3px solid var(--gold); outline-offset:2px; border-radius:4px; }
+.sidebar :where(a,button,summary,input,label,[tabindex]):focus-visible{ outline-color:#E3B95C; }
+
+/* ניגודיות בסרגל הכהה: פריט פעיל בזהב בהיר */
+.sub-toc a.active, .toc-part-link.active{ color:#E3B95C; border-color:#E3B95C; }
+.toc a.active .num{ color:#E3B95C; }
+
+/* גדלי טקסט מינימליים */
+.src-tag{ font-size:.8rem; }
+.toc-note, .search-status{ font-size:.85rem; }
+.diagram-caption{ font-size:.92rem; }
+
+/* תנועה מופחתת */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *, *::before, *::after{ animation:none !important; transition:none !important; }
+}
+
+/* נייד */
+@media (max-width:880px){
+  .sidebar{ height:100dvh; overscroll-behavior:contain; }
+  .menu-fab{ bottom:calc(24px + env(safe-area-inset-bottom)); right:calc(22px + env(safe-area-inset-right)); min-height:44px; }
+  .top-btn{ bottom:calc(26px + env(safe-area-inset-bottom)); left:calc(20px + env(safe-area-inset-left)); width:44px; height:44px; }
+  .toc-details summary, .collapse-all-btn, .sidebar-close{ min-height:44px; }
+  .sub-toc a{ display:flex; align-items:center; min-height:44px; padding-block:6px; }
+  /* נוסחה ארוכה בתוך פסקה גוללת אופקית בתוך הפסקה ולא מרחיבה את העמוד (נבדק ב-320px) */
+  .content math{ max-width:100%; }
+  .content p:has(math), .content li:has(math), .content h3:has(math), .content h4:has(math){ overflow-x:auto; overflow-y:hidden; }
+  .content{ padding-inline:max(16px, 5vw); }
+}
+.toc-group{ margin:0; }
+/* smart search: long part names wrap instead of squeezing the section title */
+.ai-results .ai-result .t .part{ white-space:normal; flex:0 1 40%; text-align:left; }
+.ai-results .ai-result .t > span:first-child{ flex:1 1 60%; }
+
+
+/* ====== נוסף: עיצוב תיבות, מקרא צבעים, חיפוש חכם ====== */
+
+/* ===== תיבות חומר: הגדרה / משפט / דוגמה / הוכחה ===== */
+.box{ border:1px solid var(--line); border-radius:12px; padding:14px 20px 8px; margin:16px 0 22px; background:var(--paper); max-width:80ch; }
+.box-title{ font-weight:700; font-size:.95rem; margin-bottom:6px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.box-def{ border-inline-start:5px solid var(--indigo); }
+.box-def .box-title{ color:var(--indigo); }
+.box-def .box-title::before{ content:"הגדרה"; font-size:.72rem; letter-spacing:.3px; background:var(--indigo); color:#fff; padding:2px 8px; border-radius:100px; }
+.box-thm{ border-inline-start:5px solid var(--gold); background:linear-gradient(180deg,var(--gold-soft),var(--paper)); }
+.box-thm .box-title{ color:var(--gold-text); }
+.box-thm .box-title::before{ content:"נוסחה / משפט"; font-size:.72rem; background:var(--gold); color:#fff; padding:2px 8px; border-radius:100px; }
+.box-ex{ border-inline-start:5px solid var(--teal); background:var(--teal-soft); border-color:#CFE5DD; }
+.box-ex .box-title{ color:var(--teal); }
+.box-ex .box-title::before{ content:"דוגמה"; font-size:.72rem; background:var(--teal); color:#fff; padding:2px 8px; border-radius:100px; }
+.box .formula{ border:none; background:transparent; padding:6px 4px; margin:6px 0 10px; }
+.box-ex .formula{ background:rgba(255,255,255,.55); border-radius:8px; }
+.box ul, .box ol{ margin-top:4px; }
+details.proof{ border:1px dashed #C9C0A8; border-radius:10px; padding:4px 18px; margin:10px 0 18px; background:#FFFDF8; max-width:80ch; }
+details.proof > summary{ cursor:pointer; font-weight:700; color:var(--indigo); padding:8px 0; list-style:none; }
+details.proof > summary::-webkit-details-marker{ display:none; }
+details.proof > summary::before{ content:"▸ "; color:var(--gold); }
+details.proof[open] > summary::before{ content:"▾ "; }
+details.proof[open]{ padding-bottom:10px; }
+.qed{ text-align:left; color:var(--rust); font-weight:700; margin:0; }
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:80ch; }
+.two-col .box{ margin:8px 0; }
+.matrix-types{ display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width:80ch; }
+.matrix-types .box{ margin:0; }
+table.props td:first-child{ direction:ltr; white-space:nowrap; }
+table.props td:last-child{ text-align:right; color:var(--ink-soft); }
+table.props tr.hl td{ background:var(--gold-soft); }
+table.wide td:last-child{ direction:ltr; }
+.size-rule{ max-width:520px; }
+.size-line{ display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; font-size:1.25rem; font-family:'Frank Ruhl Libre',serif; }
+.size-line .dim{ font-size:1rem; background:var(--indigo-soft); border-radius:6px; padding:2px 8px; }
+.size-line .in{ color:var(--rust); font-weight:700; }
+.size-line .out{ color:var(--teal); font-weight:700; }
+.size-line .arrow, .size-line .times{ color:var(--ink-soft); }
+.rowcol p{ margin:4px 0; }
+.hl-row{ background:#FBE3C9; padding:1px 6px; border-radius:4px; }
+.hl-col{ background:#D5ECDF; padding:1px 6px; border-radius:4px; }
+.part-nav{ display:flex; flex-wrap:wrap; gap:12px; margin-top:22px; }
+.part-nav a{ display:block; flex:1 1 220px; text-decoration:none; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:14px 18px; }
+.part-nav a b{ display:block; font-family:'Frank Ruhl Libre',serif; font-size:1.2rem; color:var(--indigo-2); }
+.part-nav a span{ color:var(--ink-soft); font-size:.92rem; }
+.part-nav a:hover{ border-color:var(--gold); }
+.box-q{ border-inline-start:5px solid #6B4FA0; background:#F3EFFA; border-color:#E0D7F0; }
+.box-q .box-title{ color:#5A3F8C; }
+.box-q .box-title::before{ content:"❓"; }
+.box-q .formula{ background:rgba(255,255,255,.6); border-radius:8px; }
+details.solution{ margin:4px 0 8px; border-top:1px dashed #CFC3E6; padding-top:6px; }
+details.solution > summary{ cursor:pointer; font-weight:700; color:#5A3F8C; list-style:none; padding:4px 0; width:fit-content; }
+details.solution > summary::-webkit-details-marker{ display:none; }
+details.solution > summary::before{ content:"▸ הצג "; color:#6B4FA0; }
+details.solution[open] > summary::before{ content:"▾ הסתר "; }
+@media (max-width:880px){
+  .two-col, .matrix-types{ grid-template-columns:1fr; }
+  .box{ padding:12px 14px 6px; }
+  .box .formula, .formula{ overflow-x:auto; }
+  table.props td:first-child{ white-space:normal; }
+}
+.formula{ text-align:center; }
+math .ovl{ border-top:1.3px solid currentColor; padding-top:2px; }
+.diagram svg{ direction:ltr; }
+.formula > math[display="block"]{ display:inline-block; margin:0 auto; max-width:100%; }
+@media print{ details.proof{ break-inside:avoid; } .box{ break-inside:avoid; } }
+
+/* ===== חיפוש חכם (AI) ===== */
+[hidden]{ display:none !important; }
+.ai-open-btn{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin:0 0 10px; padding:11px 12px; border-radius:9px; border:1px solid #E3B95C; background:linear-gradient(180deg,#E3B95C,#C99A3A); color:#1F2A47; font-family:'Assistant',sans-serif; font-weight:700; font-size:.95rem; cursor:pointer; }
+.ai-open-btn:hover{ filter:brightness(1.05); }
+.ai-hero-btn{ display:inline-flex; align-items:center; gap:10px; margin-top:18px; padding:13px 20px; border-radius:12px; border:none; background:var(--indigo-2); color:#fff; font-family:'Assistant',sans-serif; font-weight:700; font-size:1.02rem; cursor:pointer; box-shadow:0 4px 14px rgba(31,42,71,.25); }
+.ai-hero-btn small{ font-weight:400; color:#D8CEAE; font-size:.85rem; }
+.ai-hero-btn:hover{ background:var(--indigo); }
+.ai-overlay{ position:fixed; inset:0; z-index:100; background:rgba(20,22,28,.55); display:flex; align-items:flex-start; justify-content:center; overflow-y:auto; padding:max(24px, env(safe-area-inset-top,0px)) max(12px, env(safe-area-inset-right,0px)) max(24px, env(safe-area-inset-bottom,0px)) max(12px, env(safe-area-inset-left,0px)); }
+.ai-panel{ background:var(--bg); color:var(--ink); width:100%; max-width:640px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,.35); padding:22px 24px 20px; margin:auto 0; }
+.ai-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px; }
+.ai-head h2{ font-size:1.35rem; margin:0; }
+.ai-close{ width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:var(--paper); font-size:1.1rem; cursor:pointer; color:var(--ink); flex:0 0 auto; }
+.ai-sub{ color:var(--ink-soft); font-size:.95rem; margin:0 0 14px; }
+.ai-panel textarea{ width:100%; min-height:110px; resize:vertical; box-sizing:border-box; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:'Assistant',sans-serif; font-size:1rem; background:var(--paper); color:var(--ink); }
+.ai-panel textarea:focus{ outline:3px solid var(--gold-soft); border-color:var(--gold); }
+.ai-drop{ margin-top:10px; border:2px dashed #CFC3A6; border-radius:12px; padding:14px; text-align:center; background:var(--paper); cursor:pointer; color:var(--ink-soft); font-size:.95rem; }
+.ai-drop.drag{ border-color:var(--gold); background:var(--gold-soft); }
+.ai-drop b{ color:var(--indigo); }
+.ai-thumbs{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+.ai-thumb{ position:relative; width:96px; height:96px; border-radius:10px; overflow:hidden; border:1px solid var(--line); background:var(--paper); }
+.ai-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.ai-thumb button{ position:absolute; top:4px; left:4px; width:26px; height:26px; border-radius:50%; border:none; background:rgba(20,22,28,.7); color:#fff; cursor:pointer; font-size:.8rem; }
+.ai-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center; }
+.ai-go{ padding:11px 22px; border-radius:10px; border:none; background:var(--indigo-2); color:#fff; font-family:'Assistant',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; }
+.ai-go:disabled{ opacity:.55; cursor:default; }
+.ai-stop{ padding:10px 16px; border-radius:10px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:'Assistant',sans-serif; cursor:pointer; }
+.ai-status{ color:var(--ink-soft); font-size:.92rem; }
+.ai-status.err{ color:var(--rust); font-weight:600; }
+.ai-understood{ margin-top:16px; padding:12px 16px; border-radius:10px; background:var(--indigo-soft); border-inline-start:4px solid var(--indigo); }
+.ai-understood .lbl{ font-weight:700; color:var(--indigo); font-size:.9rem; margin-bottom:4px; }
+.ai-results{ display:grid; gap:10px; margin-top:12px; }
+.ai-result{ display:block; width:100%; text-align:right; border:1px solid var(--line); border-radius:12px; background:var(--paper); padding:12px 16px; cursor:pointer; font-family:'Assistant',sans-serif; color:var(--ink); }
+.ai-result:hover{ border-color:var(--gold); background:var(--gold-soft); }
+.ai-result .t{ font-family:'Frank Ruhl Libre',serif; font-weight:700; color:var(--indigo-2); font-size:1.05rem; display:flex; justify-content:space-between; gap:10px; }
+.ai-result .t .part{ font-family:'Assistant',sans-serif; font-weight:600; font-size:.78rem; color:var(--ink-soft); white-space:nowrap; }
+.ai-result .w{ color:var(--ink-soft); font-size:.93rem; margin-top:4px; line-height:1.6; }
+.ai-result .go{ color:var(--teal); font-weight:700; font-size:.88rem; margin-top:6px; }
+.ai-setup{ margin:4px 0 16px; padding:14px 18px; border-radius:12px; background:#FFF6D6; border:2px solid #E3B95C; color:#3A2E10; font-size:.95rem; }
+.ai-setup-title{ font-weight:800; font-size:1.05rem; margin-bottom:6px; color:#6B4A00; }
+.ai-setup ol{ margin:6px 0 10px; padding-inline-start:22px; }
+.ai-setup li{ margin-bottom:4px; }
+.ai-setup a{ color:#1F2A47; font-weight:700; }
+.ai-setup-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.ai-setup-row input{ flex:1 1 220px; min-width:0; padding:10px 12px; border-radius:8px; border:1px solid #CFAE5C; font-family:monospace; direction:ltr; background:#fff; color:#23262B; font-size:1rem; }
+.ai-setup-row button{ padding:10px 20px; border-radius:8px; border:none; background:#1F2A47; color:#fff; font-weight:700; cursor:pointer; font-family:'Assistant',sans-serif; }
+.ai-setup-note{ font-size:.85rem; color:#6B5A2E; margin:8px 0 0; }
+.ai-keyok{ margin:0 0 12px; font-size:.88rem; color:var(--teal); display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.ai-keyok button{ padding:4px 12px; border-radius:7px; border:1px solid var(--line); background:var(--paper); cursor:pointer; font-family:'Assistant',sans-serif; color:var(--ink); }
+.ai-saved{ margin-top:14px; font-size:.88rem; color:var(--ink-soft); background:var(--paper); border:1px dashed var(--line); border-radius:8px; padding:6px 12px; }
+.ai-flash{ animation:aiFlash 2.6s ease-out 1; border-radius:8px; }
+@keyframes aiFlash{ 0%{ background:rgba(227,185,92,.55); box-shadow:0 0 0 8px rgba(227,185,92,.35);} 100%{ background:transparent; box-shadow:0 0 0 0 rgba(227,185,92,0);} }
+@media (max-width:880px){ .ai-panel{ padding:18px 16px 16px; } }
+
+/* ===== סוגי תיבות: לכל סוג צבע, צורה ותווית משלו ===== */
+.box, .callout, details.proof{
+  --c:#5B5F6B; --tint:#FFFFFF;
+  border:1.5px solid var(--c); border-inline-start-width:1.5px; border-radius:12px; overflow:hidden;
+  background:var(--tint); padding:0 18px 10px; margin:18px 0 22px; max-width:80ch;
+}
+.box-title, .callout-title, details.proof > summary{
+  display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px;
+  margin:0 -18px 12px; padding:9px 18px; background:var(--c); color:#fff !important;
+  font-weight:700; font-size:.97rem; line-height:1.5;
+}
+.box > .box-title::before, .callout > .callout-title::before, details.proof > summary::before{
+  content:var(--lbl); font-weight:800; letter-spacing:.2px; white-space:nowrap;
+  padding:0 10px 0 0; padding-inline:0 10px; border-inline-end:1px solid rgba(255,255,255,.5);
+  background:none; color:#fff; border-radius:0; font-size:.97rem;
+}
+.box > .box-title:empty::before, .callout > .callout-title:empty::before{ border:none; padding:0; }
+.box-title math, .callout-title math, details.proof > summary math{ color:#fff; }
+
+.box-def{ --c:#2C4A8C; --tint:#F3F6FC; --lbl:"📘 הגדרה"; }
+.box-thm{ --c:#9A6B12; --tint:#FFF9EA; --lbl:"📐 נוסחה / משפט"; border:3px double var(--c); }
+.box-thm .box-title{ margin-top:0; }
+.box-ex{ --c:#2A6F63; --tint:#EEF7F3; --lbl:"✏️ דוגמה פתורה"; }
+.box-q{ --c:#6B3FA0; --tint:#FFFFFF; --lbl:"🎯 שאלה לדוגמה"; border:2.5px dashed var(--c); box-shadow:0 3px 0 rgba(107,63,160,.18); }
+.box-q > .box-title::after{ content:"נסי לפתור לבד לפני שפותחים את הפתרון"; font-weight:400; font-size:.85rem; opacity:.9; }
+.box-q > p:first-of-type{ font-size:1.05rem; font-weight:600; }
+.callout-star{ --c:#B7790A; --tint:#FFF7E3; --lbl:"💡 טיפ"; }
+.callout-warn{ --c:#A23F35; --tint:#FDF0EE; --lbl:"⚠️ שימי לב"; border-width:2px; }
+.callout-info{ --c:#4A5578; --tint:#F1F3F8; --lbl:"📌 הערה"; }
+.callout-target{ --c:#2A6F63; --tint:#EEF7F3; --lbl:"🎯"; }
+details.proof{ --c:#6A6E78; --tint:#FAFAF7; --lbl:"🔍 הוכחה"; border-style:dashed; padding-bottom:0; }
+details.proof[open]{ padding-bottom:10px; }
+details.proof > summary{ cursor:pointer; list-style:none; margin-bottom:0; }
+details.proof[open] > summary{ margin-bottom:12px; }
+details.proof > summary::after{ content:"▸ לחצי לפתיחה"; margin-inline-start:auto; font-weight:400; font-size:.82rem; opacity:.85; }
+details.proof[open] > summary::after{ content:"▾ סגירה"; }
+details.proof > summary .proof-name{ font-weight:600; }
+
+/* פתרון של שאלה לדוגמה */
+details.solution{ border-top:none; margin:10px 0 6px; padding:0; }
+details.solution > summary{ display:inline-flex; align-items:center; gap:6px; padding:7px 16px; border-radius:100px; background:#6B3FA0; color:#fff; font-weight:700; cursor:pointer; list-style:none; }
+details.solution > summary::before{ content:"👁 הצגת הפתרון"; color:#fff; }
+details.solution[open] > summary::before{ content:"🙈 הסתרת הפתרון"; }
+details.solution[open]{ background:#F6F1FC; border:1px solid #DCCDF0; border-radius:10px; padding:0 14px 8px; }
+details.solution[open] > summary{ margin:10px 0 10px; }
+
+/* מקרא */
+.legend{ margin-top:22px; }
+details.legend{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:0 16px; }
+details.legend[open]{ padding-bottom:14px; }
+details.legend > summary{ cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px; padding:12px 0; margin:0 !important; }
+details.legend > summary::-webkit-details-marker{ display:none; }
+details.legend > summary::before{ content:"◀"; font-size:.8rem; color:var(--gold); transition:transform .2s ease; display:inline-block; }
+details.legend[open] > summary::before{ transform:rotate(-90deg); }
+details.legend > summary::after{ content:"לחצי לפתיחה"; font-family:'Assistant',sans-serif; font-weight:400; font-size:.85rem; color:var(--ink-soft); margin-inline-start:auto; }
+details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
+.legend-title{ font-family:'Frank Ruhl Libre',serif; font-weight:700; font-size:1.15rem; color:var(--indigo-2); margin-bottom:10px; }
+.legend-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:10px; }
+.legend-grid > *{ margin:0 !important; max-width:none; }
+.legend-grid p{ margin:0 0 4px; font-size:.92rem; color:var(--ink-soft); }
+@media (max-width:880px){ .box, .callout, details.proof{ padding:0 14px 8px; } .box-title, .callout-title, details.proof > summary{ margin-inline:-14px; padding-inline:14px; } }
+
+/* ===== סוגי תיבות נוספים ===== */
+.callout-id{ --c:#2C4A8C; --tint:#F3F6FC; --lbl:"🔎 איך מזהים את סוג השאלה"; }
+.callout-steps{ --c:#2A6F63; --tint:#EEF7F3; --lbl:"🪜 שלבי הפתרון"; }
+.callout-star{ --lbl:"⭐ כלל חשוב"; }
+.callout-sym{ --c:#4A5578; --tint:#F1F3F8; --lbl:"🔤 מקרא סימנים"; }
+.callout-check{ --c:#1B7A99; --tint:#EAF6FA; --lbl:"✅ בדיקה"; }
+.callout-info{ --c:#6A6E78; --tint:#F6F6F4; --lbl:"📌 הערה"; }
+.callout-steps ol.steps{ margin:4px 0 6px; }
+.ai-topbar{ max-width:900px; margin:16px auto 0; padding:0 16px; }
+
+/* ----- חיפוש חכם: כמה תרגילים ובחירת תרגיל ----- */
+.ai-focus{ width:100%; box-sizing:border-box; border:1px solid var(--line); border-radius:10px; padding:10px 14px; margin:2px 0 12px; font-family:'Assistant',sans-serif; font-size:1rem; background:var(--paper); color:var(--ink); }
+.ai-focus:focus{ outline:3px solid var(--gold-soft); border-color:var(--gold); }
+.ai-ex{ margin-top:14px; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--paper); }
+.ai-ex-label{ font-family:'Frank Ruhl Libre',serif; font-weight:700; color:var(--indigo-2); font-size:1.08rem; margin-bottom:2px; }
+.ai-ex-und{ color:var(--ink-soft); font-size:.94rem; margin-bottom:8px; }
+.ai-ex .ai-results{ margin-top:6px; }
+
+/* ----- כפתור רענון: פינה שמאלית תחתונה (בעברית הצד השמאלי של השורות הכי פנוי) ----- */
+.refresh-btn{
+  position:fixed; z-index:21;
+  left:calc(20px + env(safe-area-inset-left, 0px)); bottom:calc(22px + env(safe-area-inset-bottom, 0px));
+  width:44px; height:44px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.92); color:#2C3A5E; border:1.5px solid #C9C0A8;
+  box-shadow:0 3px 10px rgba(0,0,0,.14); text-decoration:none; cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.refresh-btn svg{ width:20px; height:20px; }
+.refresh-btn:hover{ border-color:#A8791E; background:#fff; }
+.refresh-btn.spin svg{ animation:refreshSpin .8s linear infinite; }
+@keyframes refreshSpin{ to{ transform:rotate(360deg); } }
+/* כפתור "למעלה" עולה מעל כפתור הרענון כדי שלא יסתירו זה את זה */
+.top-btn{ bottom:calc(76px + env(safe-area-inset-bottom, 0px)) !important; left:calc(20px + env(safe-area-inset-left, 0px)) !important; }
+@media (prefers-reduced-motion: reduce){ .refresh-btn.spin svg{ animation:none; } }
+@media print{ .refresh-btn{ display:none !important; } }
+</style>
+</head>
+<body>
+<div class="hub-back-bar" style="background:#1F2A47;padding:0 16px;font-family:'Assistant',system-ui,sans-serif;"><a href="../" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#F5F0E1;text-decoration:none;font-size:.95rem;font-weight:600;"><span aria-hidden="true" style="color:#E3B95C;">⌂</span> כל אתרי המתמטיקה</a></div>
+
+<input type="checkbox" id="menuToggle" class="menu-toggle-input">
+<div class="layout">
+
+  <nav class="sidebar" id="sidebar" aria-label="תוכן עניינים">
+    <label for="menuToggle" class="sidebar-close" aria-label="סגור תפריט">✕</label>
+    <div class="sidebar-title">מדריך למבחן - אלגברה לינארית</div>
+    <div class="sidebar-sub">שיטות פתרון כלליות - כל תרגיל</div>
+
+    <div class="search-box">
+      <input type="search" id="siteSearch" placeholder="🔍 חיפוש בכל המסמך…" autocomplete="off" aria-label="חיפוש בכל המסמך">
+      <div class="search-status" id="searchStatus" aria-live="polite"></div>
+    </div>
+
+    <button type="button" class="ai-open-btn" data-ai-open>✨ חיפוש חכם - העלאת תרגיל</button>
+    <button type="button" class="collapse-all-btn" id="collapseAllBtn">▴ כווץ הכול</button>
+
+    <ul class="toc" id="tocList">
+      <li><a href="#intro"><span class="num">·</span><span>פתיחה</span></a></li>
+      <li class="toc-group">
+        <details class="toc-details" id="details-1">
+          <summary><a href="#ex1" class="top-link" data-ex="1"><span class="num">1</span><span>מספרים מרוכבים</span></a></summary>
+          <ul class="sub-toc">
+            <li><a href="#ex1-s1" data-ex="1">1. מושגי יסוד: חלק ממשי, חלק מדומה, צמוד וערך מוחלט</a></li>
+            <li><a href="#ex1-s2" data-ex="1">2. פתיחת סוגריים: כפל וריבוע בהצגה קרטזית</a></li>
+            <li><a href="#ex1-s3" data-ex="1">3. חילוק: כפל בצמוד של המכנה</a></li>
+            <li><a href="#ex1-s4" data-ex="1">4. חזקות של i</a></li>
+            <li><a href="#ex1-s5" data-ex="1">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a></li>
+            <li><a href="#ex1-s6" data-ex="1">6. משוואה שבה מופיעים z והצמוד שלו יחד</a></li>
+            <li><a href="#ex1-s7" data-ex="1">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></li>
+            <li><a href="#ex1-s8" data-ex="1">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></li>
+            <li><a href="#ex1-s9" data-ex="1">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a></li>
+            <li><a href="#ex1-s10" data-ex="1">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</a></li>
+            <li><a href="#ex1-s11" data-ex="1">11. תנאי שקובע צורה ל-z: למשל Re(z)=Im(z)</a></li>
+            <li><a href="#ex1-s12" data-ex="1">12. מעבר להצגה קוטבית</a></li>
+            <li><a href="#ex1-s13" data-ex="1">13. חזקה גבוהה: נוסחת דה-מואבר</a></li>
+            <li><a href="#ex1-s14" data-ex="1">14. הוכחת זהויות טריגונומטריות בעזרת הצגה קוטבית</a></li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+    <div class="toc-note">טיפ: אפשר לחפש בעמוד עם Ctrl+F - כל התוכן נמצא באותו דף אחד.</div>
+  </nav>
+
+  <label for="menuToggle" class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></label>
+  <label for="menuToggle" class="menu-fab" id="menuFab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+    <span>תוכן עניינים</span>
+  </label>
+
+  <main class="content">
+
+    <section class="hero" id="intro">
+      <h1>מדריך פתרון כללי לכל שאלה במבחן באלגברה לינארית</h1>
+      <p>כל תרגיל מסוכם כאן לפי סוגי השאלות שבו: איך מזהים את סוג השאלה, אילו כללים להשתמש בהם, מהם שלבי הפתרון הקבועים, ומהן הטעויות הנפוצות. הכול בצורה כללית (עם a,b,x,y ופונקציות כלליות) כדי שאפשר יהיה להשתמש באותה שיטה על כל שאלה דומה, לא משנה אילו נתונים ספציפיים יופיעו במבחן.</p>
+      <div class="tags"><span>מספרים מרוכבים</span><span>הצגה קרטזית</span><span>צמוד וערך מוחלט</span><span>הצגה קוטבית</span><span>נוסחת דה-מואבר</span></div>
+      <button type="button" class="ai-hero-btn" data-ai-open>✨ יש לך תרגיל? <small>העלי תמונה או הדביקי טקסט - ואעביר אותך לחומר המתאים</small></button>
+      <details class="legend">
+        <summary class="legend-title">מקרא צבעים: מה כל סוג תיבה מראה</summary>
+        <div class="legend-grid">
+          <div class="callout callout-id"><div class="callout-title"></div><p>איך יודעים שזה סוג השאלה הזה</p></div>
+          <div class="callout callout-steps"><div class="callout-title"></div><p>מה עושים, שלב אחרי שלב</p></div>
+          <div class="callout callout-star"><div class="callout-title"></div><p>כלל או טיפ שכדאי לזכור</p></div>
+          <div class="callout callout-sym"><div class="callout-title"></div><p>מה כל סימן ואות אומרים</p></div>
+          <div class="callout callout-warn"><div class="callout-title"></div><p>טעות נפוצה שכדאי להיזהר ממנה</p></div>
+          <div class="callout callout-check"><div class="callout-title"></div><p>איך מוודאים שהתשובה נכונה</p></div>
+          <div class="callout callout-info"><div class="callout-title"></div><p>הבהרה או הרחבה קטנה</p></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="exercise" id="ex1" data-toc="מספרים מרוכבים">
+      <div class="ex-header">
+        <div class="ex-badge">1</div>
+        <h2 class="ex-title">מספרים מרוכבים: הצגה קרטזית, צמוד, ערך מוחלט, הצגה קוטבית ונוסחת דה-מואבר</h2>
+      </div>
+      <p class="ex-intro">סוגי השאלות בתרגיל 1 (כיתה ובית): חישוב בהצגה קרטזית, חזקות של <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>, מציאת פרמטרים בהשוואת חלקים, משוואות עם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math>, ערך מוחלט בלי לחשב את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math>, הוכחות שביטוי ממשי או מדומה טהור, מעבר להצגה קוטבית וחזקות גבוהות בדה-מואבר.</p>
+
+      <h3 class="q" id="ex1-s1">1. מושגי יסוד: חלק ממשי, חלק מדומה, צמוד וערך מוחלט</h3>
+      <div class="src-tag base">🔧 כלי יסוד - נדרש בכל השאלות של תרגיל כיתה 1 ותרגיל בית 1</div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>z</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mspace width="2em" /><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn><mspace width="2em" /><mo>Re</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>a</mi><mspace width="2em" /><mo>Im</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>b</mi></mrow></math></div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mi>a</mi><mo>&#x02212;</mo><mi>b</mi><mi>i</mi><mspace width="2em" /><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msqrt><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>2</mn></msup></mrow></msqrt></mrow></math></div>
+      <div class="callout callout-sym">
+        <div class="callout-title"></div>
+        <p><b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math></b> - החלק הממשי &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math></b> - החלק המדומה (מספר ממשי, בלי ה-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>) &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math></b> - הצמוד &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math></b> - הערך המוחלט (המרחק מהראשית)</p>
+      </div>
+      <div class="diagram">
+        <svg viewBox="0 0 420 300" role="img" aria-label="המישור המרוכב: הנקודה z שווה a ועוד bi נמצאת ברביע הראשון, הצמוד שלה נמצא בשיקוף מתחת לציר הממשי, הקו מהראשית אל z הוא הערך המוחלט r, והזווית תטא נמדדת מהציר הממשי" xmlns="http://www.w3.org/2000/svg" font-family="Assistant, sans-serif"><defs><marker id="arrAx420x300" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#23262B"/></marker></defs><line x1="20" y1="150" x2="405" y2="150" stroke="#23262B" stroke-width="1.5" marker-end="url(#arrAx420x300)"/><line x1="120" y1="285" x2="120" y2="15" stroke="#23262B" stroke-width="1.5" marker-end="url(#arrAx420x300)"/><text x="402.0" y="140.0" font-size="14" font-weight="700" fill="#23262B" text-anchor="end" direction="ltr">Re</text><text x="128.0" y="26.0" font-size="14" font-weight="700" fill="#23262B" text-anchor="start" direction="ltr">Im</text><line x1="285" y1="40" x2="285" y2="260" stroke="#B9B2A0" stroke-width="1.2" stroke-dasharray="3 4"/><line x1="120" y1="40" x2="285" y2="40" stroke="#B9B2A0" stroke-width="1.2" stroke-dasharray="3 4"/><line x1="120" y1="260" x2="285" y2="260" stroke="#B9B2A0" stroke-width="1.2" stroke-dasharray="3 4"/><line x1="120" y1="150" x2="285" y2="40" stroke="#2C3A5E" stroke-width="3"/><line x1="120" y1="150" x2="285" y2="260" stroke="#A8791E" stroke-width="2.5" stroke-dasharray="7 5"/><path d="M160,150 A40,40 0 0 0 153.3,127.8" fill="none" stroke="#2A6F63" stroke-width="2.5"/><text x="174.0" y="142.0" font-size="16" font-weight="700" fill="#2A6F63" text-anchor="middle" direction="ltr" font-style="italic">θ</text><text x="182.0" y="88.0" font-size="15" font-weight="700" fill="#2C3A5E" text-anchor="end" direction="ltr" font-style="italic">r = |z|</text><circle cx="285" cy="40" r="5" fill="#2C3A5E"/><circle cx="285" cy="260" r="5" fill="#A8791E"/><text x="295.0" y="32.0" font-size="15" font-weight="700" fill="#2C3A5E" text-anchor="start" direction="ltr" font-style="italic">z = a + bi</text><text x="295" y="280" font-size="15" font-weight="700" fill="#A8791E" direction="ltr" font-style="italic"><tspan text-decoration="overline">z</tspan> = a − bi</text><text x="295.0" y="168.0" font-size="15" font-weight="700" fill="#23262B" text-anchor="start" direction="ltr" font-style="italic">a</text><text x="108.0" y="45.0" font-size="15" font-weight="700" fill="#23262B" text-anchor="middle" direction="ltr" font-style="italic">b</text><text x="106.0" y="265.0" font-size="15" font-weight="700" fill="#23262B" text-anchor="middle" direction="ltr" font-style="italic">−b</text></svg>
+        <div class="diagram-key"><span class="dk-item"><span class="dk-swatch" style="background:#2C3A5E"></span>כחול = z והקטע r=|z|</span><span class="dk-item"><span class="dk-swatch" style="background:#A8791E"></span>זהב מקווקו = הצמוד</span><span class="dk-item"><span class="dk-swatch" style="background:#2A6F63"></span>ירקרק = הזווית θ</span></div>
+        <div class="diagram-caption">הנקודה <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow></math> נמצאת במרחק <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> מהראשית, בזווית <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi></mrow></math> מהציר הממשי. הצמוד <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math> הוא השיקוף שלה ביחס לציר הממשי: אותו <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math>, סימן הפוך ל-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math>, ואותו ערך מוחלט.</div>
+      </div>
+      <div class="callout callout-star">
+        <div class="callout-title">תכונות שחייבים לזכור</div>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0002B;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>2</mn><mo>Re</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x02212;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>2</mn><mi>i</mi><mo>Im</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo></mrow></math></p>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mfrac><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></mfrac></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msup><mi>z</mi><mi>n</mi></msup><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mi>n</mi></msup></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math></p>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><msub><mi>z</mi><mn>1</mn></msub><mo>&#x000B1;</mo><msub><mi>z</mi><mn>2</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mover><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x000B1;</mo><mover><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><msub><mi>z</mi><mn>1</mn></msub><msub><mi>z</mi><mn>2</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mover><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover><mspace width="0.167em" /><mover><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mfrac><mrow><mover><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover></mrow><mrow><mover><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow><mo accent="true">&#x02015;</mo></mover></mrow></mfrac></mrow></math> &nbsp;&nbsp; <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mi>z</mi></mrow></math></p>
+      </div>
+      <p><b>שוויון מספרים מרוכבים:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo>&#x0003D;</mo><mi>c</mi><mo>&#x0002B;</mo><mi>d</mi><mi>i</mi></mrow></math> <span class="hebrew-box">אם ורק אם</span> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mi>c</mi></mrow></math> וגם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x0003D;</mo><mi>d</mi></mrow></math>. על זה מבוססות כל שאלות "מצאו את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002C;</mo><mi>b</mi></mrow></math>".</p>
+
+      <h3 class="q" id="ex1-s2">2. פתיחת סוגריים: כפל וריבוע בהצגה קרטזית</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 1 (ב,ה,ו)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>"רשמו בהצגה קרטזית" כשיש רק כפל, חיבור או חזקה קטנה (2-3), בלי שבר.</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>פתחי סוגריים</b> כמו בביטוי אלגברי רגיל (כולל נוסחאות כפל מקוצר).</li>
+        <li><b>החליפי כל <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mn>2</mn></msup></mrow></math> ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></math>.</b></li>
+        <li><b>אספי</b> את האיברים בלי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math> ואת האיברים עם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>, וכתבי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow></math>.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s2-t1">דוגמה מהתרגיל</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x02212;</mo><mn>2</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mn>9</mn><mo>&#x02212;</mo><mn>12</mn><mi>i</mi><mo>&#x0002B;</mo><mn>4</mn><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mn>9</mn><mo>&#x02212;</mo><mn>12</mn><mi>i</mi><mo>&#x02212;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>5</mn><mo>&#x02212;</mo><mn>12</mn><mi>i</mi></mrow></math>.</p>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>2</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>4</mn><mo>&#x02212;</mo><mn>6</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>2</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>16</mn><mo>&#x02212;</mo><mn>48</mn><mi>i</mi><mo>&#x02212;</mo><mn>36</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>2</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>20</mn><mo>&#x02212;</mo><mn>48</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>20</mn><mo>&#x02212;</mo><mn>48</mn><mi>i</mi><mo>&#x02212;</mo><mn>40</mn><mi>i</mi><mo>&#x0002B;</mo><mn>96</mn><mo>&#x0003D;</mo><mn>76</mn><mo>&#x02212;</mo><mn>88</mn><mi>i</mi></mrow></math>. שימי לב: <span class="hebrew-box">קודם חזקה, אחר כך כפל</span>.</p>
+      <div class="callout callout-warn">
+        <div class="callout-title">טעויות נפוצות</div>
+        <p>שכחת להחליף <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>, בעיקר בתוך ריבוע: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x02212;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mn>4</mn><mo>&#x02212;</mo><mn>4</mn><mi>i</mi><mo>&#x0002B;</mo><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mn>3</mn><mo>&#x02212;</mo><mn>4</mn><mi>i</mi></mrow></math>, ולא <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x02212;</mo><mn>4</mn><mi>i</mi></mrow></math>.</p>
+      </div>
+
+      <h3 class="q" id="ex1-s3">3. חילוק: כפל בצמוד של המכנה</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 1 (א,ב,ג,ד) ושאלה 3 (א,ב,ג); תרגיל בית 1, שאלה 1 (א,ב) ושאלה 3</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>שבר שבמכנה שלו יש <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>, ומבקשים הצגה קרטזית.</p></div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mfrac><mrow><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow><mrow><mi>c</mi><mo>&#x0002B;</mo><mi>d</mi><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mi>c</mi><mo>&#x02212;</mo><mi>d</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>c</mi><mo>&#x0002B;</mo><mi>d</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mi>c</mi><mo>&#x02212;</mo><mi>d</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mi>c</mi><mo>&#x02212;</mo><mi>d</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><msup><mi>c</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>d</mi><mn>2</mn></msup></mrow></mfrac></mrow></math></div>
+      <div class="callout callout-sym">
+        <div class="callout-title"></div>
+        <p><b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow></math></b> - המונה &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x0002B;</mo><mi>d</mi><mi>i</mi></mrow></math></b> - המכנה &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>c</mi><mo>&#x02212;</mo><mi>d</mi><mi>i</mi></mrow></math></b> - הצמוד של המכנה</p>
+      </div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>אם המכנה הוא חזקה</b> - קודם פתחי אותו (למשל <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>3</mn><mo>&#x02212;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mn>8</mn><mo>&#x02212;</mo><mn>6</mn><mi>i</mi></mrow></math>).</li>
+        <li><b>הכפילי מונה ומכנה בצמוד של המכנה.</b> המכנה הופך למספר ממשי: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>c</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>d</mi><mn>2</mn></msup></mrow></math>.</li>
+        <li><b>פתחי את המונה</b> והחליפי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>.</li>
+        <li><b>פצלי</b> לחלק ממשי ולחלק מדומה: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>x</mi></mrow><mrow><mi>N</mi></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mi>y</mi></mrow><mrow><mi>N</mi></mrow></mfrac><mi>i</mi></mrow></math>.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s3-t1">דוגמה מהתרגיל</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>2</mn><mo>&#x0002B;</mo><mn>3</mn><mi>i</mi></mrow><mrow><mn>7</mn><mo>&#x02212;</mo><mn>3</mn><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mo>&#x0002B;</mo><mn>3</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mn>7</mn><mo>&#x0002B;</mo><mn>3</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><msup><mn>7</mn><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mn>3</mn><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>14</mn><mo>&#x0002B;</mo><mn>27</mn><mi>i</mi><mo>&#x02212;</mo><mn>9</mn></mrow><mrow><mn>58</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>5</mn></mrow><mrow><mn>58</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>27</mn></mrow><mrow><mn>58</mn></mrow></mfrac><mi>i</mi></mrow></math>.</p>
+      <div class="callout callout-star">
+        <div class="callout-title">קיצור דרך: מכנה מדומה טהור</div>
+        <p>כשהמכנה הוא רק <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mi>i</mi></mrow></math> - מספיק להכפיל ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mi>i</mi></mrow></math> (או ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>): <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mo>&#x02212;</mo><mi>i</mi></mrow><mrow><mn>2</mn><mi>i</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mfrac><mrow><mi>i</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></math>. וגם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>i</mi></mrow></math>.</p>
+      </div>
+      <div class="callout callout-star">
+        <div class="callout-title">צמוד של שבר</div>
+        <p>לחישוב <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math> (שאלה 3ג): חשבי קודם את השבר בהצגה קרטזית, ואז רק הפכי את הסימן של החלק המדומה.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-title">טעויות נפוצות</div>
+        <p>להכפיל רק את המכנה בצמוד ולא את המונה. לכתוב במכנה <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>c</mi><mn>2</mn></msup><mo>&#x02212;</mo><msup><mi>d</mi><mn>2</mn></msup></mrow></math> במקום <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>c</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>d</mi><mn>2</mn></msup></mrow></math>. לשכוח לפצל לחלק ממשי ומדומה בסוף. (בפתרון הרשמי של שאלה 1ד בכיתה יש טעות הקלדה בשורה האחרונה: התשובה הנכונה היא <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>8</mn></mrow><mrow><mn>100</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mn>6</mn></mrow><mrow><mn>100</mn></mrow></mfrac><mi>i</mi></mrow></math>.)</p>
+      </div>
+      <div class="callout callout-check"><div class="callout-title"></div><p>הכפילי את התשובה במכנה המקורי - צריך לצאת המונה.</p></div>
+
+      <h3 class="q" id="ex1-s4">4. חזקות של i</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 2 (א,ב,ג)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mi>n</mi></msup></mrow></math> עם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math> גדול, או סכום של הרבה חזקות של <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>.</p></div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><msup><mi>i</mi><mi>n</mi></msup><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007B;</mo><mtable><mtr><mtd columnalign="left"><mn>1</mn></mtd><mtd columnalign="left"><mi>n</mi><mo>&#x0003D;</mo><mn>4</mn><mi>k</mi></mtd></mtr><mtr><mtd columnalign="left"><mi>i</mi></mtd><mtd columnalign="left"><mi>n</mi><mo>&#x0003D;</mo><mn>4</mn><mi>k</mi><mo>&#x0002B;</mo><mn>1</mn></mtd></mtr><mtr><mtd columnalign="left"><mo>&#x02212;</mo><mn>1</mn></mtd><mtd columnalign="left"><mi>n</mi><mo>&#x0003D;</mo><mn>4</mn><mi>k</mi><mo>&#x0002B;</mo><mn>2</mn></mtd></mtr><mtr><mtd columnalign="left"><mo>&#x02212;</mo><mi>i</mi></mtd><mtd columnalign="left"><mi>n</mi><mo>&#x0003D;</mo><mn>4</mn><mi>k</mi><mo>&#x0002B;</mo><mn>3</mn></mtd></mtr></mtable><mo stretchy="true" fence="true" form="postfix" /></mrow></mrow></math></div>
+      <div class="callout callout-sym">
+        <div class="callout-title"></div>
+        <p><b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math></b> - המעריך &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>k</mi></mrow></math></b> - מספר שלם &nbsp;|&nbsp; השארית בחלוקה של <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math> ב-4 קובעת את התוצאה</p>
+      </div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>חלקי את המעריך ב-4</b> ומצאי את השארית: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2005</mn><mo>&#x0003D;</mo><mn>4</mn><mo>&#x000B7;</mo><mn>501</mn><mo>&#x0002B;</mo><mn>1</mn></mrow></math>.</li>
+        <li><b>השתמשי ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mn>4</mn></msup><mo>&#x0003D;</mo><mn>1</mn></mrow></math>:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mrow><mn>2005</mn></mrow></msup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><msup><mi>i</mi><mn>4</mn></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>501</mn></mrow></msup><mo>&#x000B7;</mo><mi>i</mi><mo>&#x0003D;</mo><mi>i</mi></mrow></math>.</li>
+        <li><b>חזקה שלילית:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mi>i</mi></mrow><mrow><msup><mi>i</mi><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>i</mi></mrow></math>.</li>
+      </ol></div>
+      <div class="callout callout-star">
+        <div class="callout-title">סכום של ארבע חזקות רצופות הוא 0</div>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mrow><mn>4</mn><mi>k</mi></mrow></msup><mo>&#x0002B;</mo><msup><mi>i</mi><mrow><mn>4</mn><mi>k</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msup><mo>&#x0002B;</mo><msup><mi>i</mi><mrow><mn>4</mn><mi>k</mi><mo>&#x0002B;</mo><mn>2</mn></mrow></msup><mo>&#x0002B;</mo><msup><mi>i</mi><mrow><mn>4</mn><mi>k</mi><mo>&#x0002B;</mo><mn>3</mn></mrow></msup><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo>&#x02212;</mo><mn>1</mn><mo>&#x02212;</mo><mi>i</mi><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. לכן בסכום ארוך מוחקים רביעיות שלמות ומשאירים רק את מה שנשאר בסוף.</p>
+      </div>
+      <h4 class="sub" id="ex1-s4-t1">דוגמה מהתרגיל</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo>&#x0002B;</mo><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>i</mi><mn>3</mn></msup><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>100</mn></mrow></msup><mo>&#x0003D;</mo><msup><mn>0</mn><mrow><mn>100</mn></mrow></msup><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. וגם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo>&#x0002B;</mo><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0002B;</mo><mo>&#x02026;</mo><mo>&#x0002B;</mo><msup><mi>i</mi><mrow><mn>102</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><msup><mi>i</mi><mrow><mn>101</mn></mrow></msup><mo>&#x0002B;</mo><msup><mi>i</mi><mrow><mn>102</mn></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><mi>i</mi><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>2</mn><mi>i</mi></mrow></math> (100 האיברים הראשונים הם 25 רביעיות).</p>
+
+      <h3 class="q" id="ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 4 ושאלה 8 (שלב 1); תרגיל בית 1, שאלה 2 ושאלה 5</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>"יהיו <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002C;</mo><mi>b</mi></mrow></math> ממשיים כך ש..." ויש שוויון בין ביטויים מרוכבים.</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>היפטרי מהשבר:</b> הכפילי את שני הצדדים במכנה (לא צריך צמוד כאן).</li>
+        <li><b>פתחי סוגריים</b> וסדרי כל צד בצורה <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mo>&#x02026;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02026;</mo><mo stretchy="false">&#x00029;</mo><mi>i</mi></mrow></math>.</li>
+        <li><b>השווי חלקים:</b> ממשי = ממשי, מדומה = מדומה. מתקבלת מערכת של שתי משוואות.</li>
+        <li><b>פתרי את המערכת</b> וחשבי את מה שמבקשים.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s5-t1">דוגמה מהתרגיל (בית 2)</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>5</mn><mo>&#x02212;</mo><mi>i</mi></mrow><mrow><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mn>1</mn><mo>&#x02212;</mo><mi>i</mi></mrow></math> אז <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x02212;</mo><mi>i</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mi>b</mi><mo>&#x02212;</mo><mi>a</mi><mo stretchy="false">&#x00029;</mo><mi>i</mi></mrow></math>. משווים: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mo>&#x0003D;</mo><mn>5</mn></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi><mo>&#x02212;</mo><mi>a</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>, ולכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mi>b</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>a</mi><mn>3</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>3</mn></msup><mo>&#x0003D;</mo><mn>35</mn></mrow></math>.</p>
+      <div class="callout callout-warn">
+        <div class="callout-title">טעויות נפוצות</div>
+        <p>להשוות את החלק המדומה <b>עם</b> ה-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>. החלק המדומה הוא המקדם בלבד. וכשמשוואה נותנת ריבוע (בית 5: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mn>4</mn></mrow></math>) - יש <b>שני</b> פתרונות, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mo>&#x000B1;</mo><mn>2</mn></mrow></math>.</p>
+      </div>
+
+      <h3 class="q" id="ex1-s6">6. משוואה שבה מופיעים z והצמוד שלו יחד</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 5 ושאלה 7 (שלב 1)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>משוואה עם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> וגם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math>, ולכן אי אפשר "לבודד את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math>".</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>הציבי</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mi>a</mi><mo>&#x02212;</mo><mi>b</mi><mi>i</mi></mrow></math>.</li>
+        <li><b>פתחי</b> וסדרי כל צד ל-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mo>&#x02026;</mo><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02026;</mo><mo stretchy="false">&#x00029;</mo><mi>i</mi></mrow></math>.</li>
+        <li><b>השווי חלקים</b> ופתרי את המערכת ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002C;</mo><mi>b</mi></mrow></math>.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s6-t1">דוגמה מהתרגיל</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>z</mi><mo>&#x0002B;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>2</mn><mi>i</mi></mrow></math>: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x02212;</mo><mi>b</mi><mi>i</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>3</mn><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo>&#x0003D;</mo><mn>3</mn><mo>&#x0002B;</mo><mn>2</mn><mi>i</mi></mrow></math>, ולכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mi>b</mi><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, כלומר <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002B;</mo><mn>2</mn><mi>i</mi></mrow></math>.</p>
+      <div class="callout callout-info">
+        <div class="callout-title">כשהמערכת תלויה</div>
+        <p>אם שתי המשוואות זהות (כיתה 5: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003D;</mo><mi>b</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></math> פעמיים), יש <b>אינסוף פתרונות</b>: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>b</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow></math> לכל <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math> ממשי. במישור זה ישר.</p>
+      </div>
+
+      <h3 class="q" id="ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 6, שאלה 7 (שלב 2) ושאלה 8 (שלב 2); תרגיל בית 1, שאלה 4 ושאלה 5</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>"מצאו את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math>" או "מצאו את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mo>&#x02026;</mo><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math>" כשהביטוי הוא מכפלות, מנות וחזקות.</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>שימי ערך מוחלט על שני הצדדים</b> (או על הביטוי).</li>
+        <li><b>פרקי</b> בעזרת <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mfrac><mrow><msub><mi>z</mi><mn>1</mn></msub></mrow><mrow><msub><mi>z</mi><mn>2</mn></msub></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mfrac><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></mfrac></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msup><mi>z</mi><mi>n</mi></msup><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mi>n</mi></msup></mrow></math>.</li>
+        <li><b>חשבי כל גורם</b> בנפרד: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msqrt><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>2</mn></msup></mrow></msqrt></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>i</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math>.</li>
+        <li><b>פתרי</b> את המשוואה ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> (אם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> לא ידוע).</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s7-t1">דוגמה מהתרגיל (בית 4)</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><msup><mi>z</mi><mn>2</mn></msup><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mi>i</mi><mo>&#x0002B;</mo><mn>11</mn><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi></mrow></math> אז <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mn>2</mn><mi>i</mi><mo>&#x0002B;</mo><mn>11</mn><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>3</mn></msup></mrow><mrow><mn>125</mn></mrow></mfrac><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msqrt><mn>2</mn></msqrt></mrow></math>, ולכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>3</mn></msup><mo>&#x0003D;</mo><mn>125</mn><msqrt><mn>2</mn></msqrt></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>5</mn><mroot><mrow><mn>2</mn></mrow><mn>6</mn></mroot></mrow></math>.</p>
+      <div class="callout callout-star">
+        <div class="callout-title">טיפ חשוב</div>
+        <p>אם צריך למצוא קודם את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> (כיתה 7, 8), עושים את זה בשלב 1 (סעיפים 5-6), ורק אחר כך מחשבים ערך מוחלט לפי התכונות - <span class="hebrew-box">בלי לפתוח את הביטוי</span>.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-title">טעויות נפוצות</div>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><mo>&#x0002B;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x02260;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0002B;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math>. התכונות עובדות רק לכפל, חילוק וחזקה, לא לחיבור.</p>
+      </div>
+
+      <h3 class="q" id="ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 10, שאלה 11, שאלה 12 ושאלה 13(ב); תרגיל בית 1, שאלה 7(ב) ושאלה 8</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>"הוכיחו ש-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi></mrow></math> הוא מספר ממשי" או "מדומה טהור", כשנתון תנאי על <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math>.</p></div>
+      <div class="callout callout-target">
+        <div class="callout-title">התבנית</div>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi></mrow></math> <b>ממשי</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x027FA;</mo><mi>&#x003C9;</mi><mo>&#x0003D;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x027FA;</mo><mi>&#x003C9;</mi><mo>&#x02212;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>0</mn></mrow></math></p>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi></mrow></math> <b>מדומה טהור</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x027FA;</mo><mi>&#x003C9;</mi><mo>&#x0003D;</mo><mo>&#x02212;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x027FA;</mo><mi>&#x003C9;</mi><mo>&#x0002B;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>0</mn></mrow></math></p>
+      </div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>כתבי</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi><mo>&#x02212;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math> (לממשי) או <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi><mo>&#x0002B;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math> (למדומה טהור).</li>
+        <li><b>חשבי את הצמוד</b> לפי התכונות: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mfrac><mrow><mi>z</mi><mo>&#x0002B;</mo><mn>2</mn></mrow><mrow><mi>z</mi></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mfrac><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0002B;</mo><mn>2</mn></mrow><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></mfrac></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>i</mi><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>i</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math>.</li>
+        <li><b>מכנה משותף</b> ופתיחת סוגריים במונה.</li>
+        <li><b>הציבי את הנתון</b> במונה (למשל <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>2</mn></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>1</mn></mrow></math>) - המונה מתאפס.</li>
+        <li><b>סכמי:</b> קיבלנו 0, ולכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi></mrow></math> ממשי / מדומה טהור. מ.ש.ל.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s8-t1">דוגמה מהתרגיל (כיתה 10)</h4>
+      <p>נתון <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0002B;</mo><mi>z</mi><mo>&#x0002B;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>0</mn></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>z</mi></mrow><mrow><mi>z</mi><mo>&#x0002B;</mo><mn>2</mn></mrow></mfrac></mrow></math>:</p>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>&#x003C9;</mi><mo>&#x0002B;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mfrac><mrow><mi>z</mi></mrow><mrow><mi>z</mi><mo>&#x0002B;</mo><mn>2</mn></mrow></mfrac><mo>&#x0002B;</mo><mfrac><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0002B;</mo><mn>2</mn></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mi>z</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0002B;</mo><mi>z</mi><mo>&#x0002B;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo stretchy="false">&#x00029;</mo></mrow><mrow><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0002B;</mo><mn>2</mn><mo stretchy="false">&#x00029;</mo></mrow></mfrac><mo>&#x0003D;</mo><mn>0</mn></mrow></math></div>
+      <div class="callout callout-info">
+        <div class="callout-title">דרך קלה לזכור</div>
+        <p>ממשי = <span class="hebrew-box">לא משתנה בצמוד</span>. מדומה טהור = <span class="hebrew-box">רק מחליף סימן בצמוד</span>.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-title">טעויות נפוצות</div>
+        <p>לבלבל בין מינוס לפלוס (ממשי: מינוס; מדומה טהור: פלוס). לשכוח לצמד את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>i</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>i</mi></mrow></math>. לפתוח את המונה בלי לנסות לזהות בו את ביטוי הנתון.</p>
+      </div>
+
+      <h3 class="q" id="ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 9 ושאלה 13(א); תרגיל בית 1, שאלה 6(ב) ושאלה 7(א)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>נתון (או צריך להוכיח) <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>A</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>B</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> או <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>A</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mi>c</mi></mrow></math>.</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>העלי בריבוע:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>A</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>B</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup></mrow></math>.</li>
+        <li><b>השתמשי ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>w</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mi>w</mi><mover><mrow><mi>w</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math>:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>A</mi><mover><mrow><mi>A</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mi>B</mi><mover><mrow><mi>B</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math>.</li>
+        <li><b>פתחי</b> ובטלי איברים זהים בשני הצדדים.</li>
+        <li><b>זהי</b> ביטוי כמו <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0002B;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>2</mn><mo>Re</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo></mrow></math> או <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x02212;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>2</mn><mi>i</mi><mo>Im</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo></mrow></math> והסיקי.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s9-t1">דוגמה מהתרגיל (בית 6ב)</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo>&#x02212;</mo><mn>1</mn><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> אז <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo><mo stretchy="false">&#x00028;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x02212;</mo><mn>1</mn><mo stretchy="false">&#x00029;</mo></mrow></math>, ואחרי ביטול <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo>&#x0002B;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>. לכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> מדומה טהור, ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi><mi>z</mi></mrow></math> ממשי.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 420 260" role="img" aria-label="הנקודות מינוס 1 ו-1 על הציר הממשי. כל נקודה z על הציר המדומה נמצאת באותו מרחק משתיהן, ולכן הציר המדומה הוא קבוצת הפתרונות של השוויון בין הערכים המוחלטים" xmlns="http://www.w3.org/2000/svg" font-family="Assistant, sans-serif"><defs><marker id="arrAx420x260" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#23262B"/></marker></defs><line x1="20" y1="150" x2="405" y2="150" stroke="#23262B" stroke-width="1.5" marker-end="url(#arrAx420x260)"/><line x1="210" y1="250" x2="210" y2="12" stroke="#2A6F63" stroke-width="4"/><text x="402.0" y="140.0" font-size="14" font-weight="700" fill="#23262B" text-anchor="end" direction="ltr">Re</text><text x="220.0" y="26.0" font-size="14" font-weight="700" fill="#2A6F63" text-anchor="start" direction="ltr">Im</text><line x1="130" y1="150" x2="210" y2="54.0" stroke="#2C3A5E" stroke-width="2.5" stroke-dasharray="7 5"/><line x1="290" y1="150" x2="210" y2="54.0" stroke="#2C3A5E" stroke-width="2.5" stroke-dasharray="7 5"/><circle cx="130" cy="150" r="5.5" fill="#A8791E"/><circle cx="290" cy="150" r="5.5" fill="#A8791E"/><text x="130.0" y="174.0" font-size="15" font-weight="700" fill="#A8791E" text-anchor="middle" direction="ltr">−1</text><text x="290.0" y="174.0" font-size="15" font-weight="700" fill="#A8791E" text-anchor="middle" direction="ltr">1</text><circle cx="210" cy="54.0" r="5.5" fill="#2C3A5E"/><text x="222.0" y="48.0" font-size="16" font-weight="700" fill="#2C3A5E" text-anchor="start" direction="ltr" font-style="italic">z</text><text x="156.0" y="102.0" font-size="14" font-weight="700" fill="#2C3A5E" text-anchor="end" direction="ltr" font-style="italic">|z+1|</text><text x="264.0" y="102.0" font-size="14" font-weight="700" fill="#2C3A5E" text-anchor="start" direction="ltr" font-style="italic">|z−1|</text></svg>
+        <div class="diagram-key"><span class="dk-item"><span class="dk-swatch" style="background:#A8791E"></span>זהב = הנקודות 1 ו-1-</span><span class="dk-item"><span class="dk-swatch" style="background:#2C3A5E"></span>כחול מקווקו = המרחקים מ-z</span><span class="dk-item"><span class="dk-swatch" style="background:#2A6F63"></span>ירקרק = כל הפתרונות</span></div>
+        <div class="diagram-caption"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo>&#x02212;</mo><mn>1</mn><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> הוא המרחק של <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> מהנקודה <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>1</mn></mrow></math>, ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo>&#x0002B;</mo><mn>1</mn><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math> הוא המרחק מ-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>1</mn></mrow></math>. הם שווים בדיוק כש-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> על האנך האמצעי, כלומר על הציר המדומה - וזה מה שהחישוב האלגברי נותן.</div>
+      </div>
+      <div class="callout callout-star">
+        <div class="callout-title">כלל זהב</div>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x027FA;</mo><mi>z</mi><mo>&#x02208;</mo><mi>&#x0211D;</mi></mrow></math> (כיתה 9). <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0002B;</mo><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>0</mn><mo>&#x027FA;</mo><mi>z</mi></mrow></math> מדומה טהור (בית 6ב).</p>
+      </div>
+
+      <h3 class="q" id="ex1-s10">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 11 ושאלה 12; תרגיל בית 1, שאלה 6(א)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>נתון <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, או <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>z</mi><mi>n</mi></msup><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, או <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>z</mi><mi>n</mi></msup><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003C6;</mi></mrow></msup></mrow></math>.</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>הסיקי ש-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>1</mn></mrow></math>:</b> מ-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>z</mi><mi>n</mi></msup><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003C6;</mi></mrow></msup></mrow></math> מקבלים <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mi>n</mi></msup><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, ולכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>1</mn></mrow></math>.</li>
+        <li><b>תרגמי לכלי עבודה:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>1</mn></mrow></math>, כלומר <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>z</mi></mrow></mfrac></mrow></math>. או: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B1;</mi></mrow></msup></mrow></math>.</li>
+        <li><b>המשיכי</b> לפי סעיף 8 (המונה מתאפס כי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x02212;</mo><mn>1</mn><mo>&#x0003D;</mo><mn>0</mn></mrow></math>).</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s10-t1">דוגמה מהתרגיל (בית 6א)</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>z</mi><mrow><mn>11</mn></mrow></msup><mo>&#x0003D;</mo><mn>1</mn></mrow></math> אז <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>1</mn></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B1;</mi></mrow></msup></mrow></math>. לכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0002B;</mo><mfrac><mn>1</mn><mi>z</mi></mfrac><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B1;</mi></mrow></msup><mo>&#x0002B;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>i</mi><mi>&#x003B1;</mi></mrow></msup><mo>&#x0003D;</mo><mn>2</mn><mi>cos</mi><mi>&#x003B1;</mi><mo>&#x02208;</mo><mi>&#x0211D;</mi></mrow></math>.</p>
+
+      <h3 class="q" id="ex1-s11">11. תנאי שקובע צורה ל-z: למשל Re(z)=Im(z)</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 13 (א,ב,ג)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>נתון קשר בין החלק הממשי למדומה, ומבקשים להוכיח כמה טענות.</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>כתבי את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> עם פרמטר אחד:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>Re</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>Im</mo><mo stretchy="false">&#x00028;</mo><mi>z</mi><mo stretchy="false">&#x00029;</mo></mrow></math> נותן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>a</mi><mi>i</mi><mo>&#x0003D;</mo><mi>a</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x02208;</mo><mi>&#x0211D;</mi></mrow></math>.</li>
+        <li><b>הציבי</b> בכל טענה וחשבי ישירות.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s11-t1">דוגמה מהתרגיל</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>i</mi><mi>z</mi></mrow><mrow><mn>1</mn><mo>&#x02212;</mo><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mi>i</mi><mi>a</mi><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>1</mn><mo>&#x02212;</mo><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mfrac><mrow><mi>a</mi><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>1</mn><mo>&#x02212;</mo><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>a</mi><mo>&#x02208;</mo><mi>&#x0211D;</mi></mrow></math>. וגם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>4</mn></msup><mo>&#x0003D;</mo><mo stretchy="false">&#x00028;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><msup><mo stretchy="false">&#x00029;</mo><mn>2</mn></msup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>2</mn><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>4</mn></mrow></math>, ולכן <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>z</mi><mn>4</mn></msup><mo>&#x0002B;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msup><mi>z</mi><mn>4</mn></msup><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msup><mi>a</mi><mn>4</mn></msup><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>4</mn><mo>&#x0002B;</mo><mn>4</mn><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mn>0</mn></mrow></math>.</p>
+
+      <h3 class="q" id="ex1-s12">12. מעבר להצגה קוטבית</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 14 (א-ו); תרגיל בית 1, שאלה 9 (א,ב)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>"רשמו הצגה קוטבית" או "הצגה <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B8;</mi></mrow></msup></mrow></math>".</p></div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>z</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi><mo>&#x0003D;</mo><mi>r</mi><mo stretchy="false">&#x00028;</mo><mi>cos</mi><mi>&#x003B8;</mi><mo>&#x0002B;</mo><mi>i</mi><mi>sin</mi><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>r</mi><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B8;</mi></mrow></msup><mspace width="2em" /><mi>r</mi><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msqrt><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>2</mn></msup></mrow></msqrt><mspace width="2em" /><mi>tan</mi><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>b</mi></mrow><mrow><mi>a</mi></mrow></mfrac></mrow></math></div>
+      <div class="callout callout-sym">
+        <div class="callout-title"></div>
+        <p><b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi></mrow></math></b> - המרחק מהראשית &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi></mrow></math></b> - הזווית מהכיוון החיובי של הציר הממשי (ארגומנט) &nbsp;|&nbsp; <b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002C;</mo><mi>b</mi></mrow></math></b> - החלק הממשי והמדומה</p>
+      </div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>קבעי את הרביע</b> לפי הסימנים של <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math>.</li>
+        <li><b>חשבי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x0003D;</mo><msqrt><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>2</mn></msup></mrow></msqrt></mrow></math>.</b></li>
+        <li><b>חשבי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>tan</mi><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>b</mi></mrow><mrow><mi>a</mi></mrow></mfrac></mrow></math></b> ומצאי זווית בסיס.</li>
+        <li><b>תקני לפי הרביע</b> (טבלה למטה).</li>
+        <li><b>כתבי</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mi>r</mi><mo stretchy="false">&#x00028;</mo><mi>cos</mi><mi>&#x003B8;</mi><mo>&#x0002B;</mo><mi>i</mi><mi>sin</mi><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mi>r</mi><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B8;</mi></mrow></msup></mrow></math>.</li>
+      </ol></div>
+      <table>
+        <thead><tr><th scope="col">רביע</th><th scope="col">סימנים</th><th scope="col">הזווית</th><th scope="col">דוגמה מהתרגיל</th></tr></thead>
+        <tbody>
+          <tr><td>ראשון</td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003E;</mo><mn>0</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mi>b</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math></td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mi>arctan</mi><mfrac><mrow><mi>b</mi></mrow><mrow><mi>a</mi></mrow></mfrac></mrow></math></td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>5</mn><mo>&#x0002B;</mo><mn>5</mn><mi>i</mi><mo>&#x0003D;</mo><mn>5</mn><msqrt><mn>2</mn></msqrt><msup><mi>e</mi><mrow><mi>i</mi><mfrac><mrow><mi>&#x003C0;</mi></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></msup></mrow></math></td></tr>
+          <tr><td>שני</td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003C;</mo><mn>0</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mi>b</mi><mo>&#x0003E;</mo><mn>0</mn></mrow></math></td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mi>arctan</mi><mfrac><mrow><mi>b</mi></mrow><mrow><mi>a</mi></mrow></mfrac><mo>&#x0002B;</mo><mi>&#x003C0;</mi></mrow></math></td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>6</mn><mo>&#x0002B;</mo><mn>6</mn><msqrt><mn>3</mn></msqrt><mi>i</mi><mo>&#x0003D;</mo><mn>12</mn><msup><mi>e</mi><mrow><mi>i</mi><mfrac><mrow><mn>2</mn><mi>&#x003C0;</mi></mrow><mrow><mn>3</mn></mrow></mfrac></mrow></msup></mrow></math></td></tr>
+          <tr><td>שלישי</td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003C;</mo><mn>0</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mi>b</mi><mo>&#x0003C;</mo><mn>0</mn></mrow></math></td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mi>arctan</mi><mfrac><mrow><mi>b</mi></mrow><mrow><mi>a</mi></mrow></mfrac><mo>&#x02212;</mo><mi>&#x003C0;</mi></mrow></math></td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>3</mn><mo>&#x02212;</mo><mn>3</mn><mi>i</mi><mo>&#x0003D;</mo><mn>3</mn><msqrt><mn>2</mn></msqrt><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>i</mi><mfrac><mrow><mn>3</mn><mi>&#x003C0;</mi></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></msup></mrow></math></td></tr>
+          <tr><td>רביעי</td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0003E;</mo><mn>0</mn><mo>&#x0002C;</mo><mtext>&#x000A0;</mtext><mi>b</mi><mo>&#x0003C;</mo><mn>0</mn></mrow></math></td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mi>arctan</mi><mfrac><mrow><mi>b</mi></mrow><mrow><mi>a</mi></mrow></mfrac></mrow></math> (שלילית)</td><td><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><msqrt><mn>3</mn></msqrt><mo>&#x02212;</mo><mn>2</mn><mi>i</mi><mo>&#x0003D;</mo><mn>4</mn><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>i</mi><mfrac><mrow><mi>&#x003C0;</mi></mrow><mrow><mn>6</mn></mrow></mfrac></mrow></msup></mrow></math></td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-star">
+        <div class="callout-title">על הצירים (<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>tan</mi><mi>&#x003B8;</mi></mrow></math> לא מוגדר או 0)</div>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>i</mi><mo>&#x0003D;</mo><mn>2</mn><msup><mi>e</mi><mrow><mi>i</mi><mfrac><mrow><mi>&#x003C0;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></msup></mrow></math> (ציר מדומה חיובי), <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>4</mn><mo>&#x0003D;</mo><mn>4</mn><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003C0;</mi></mrow></msup></mrow></math> (ציר ממשי שלילי). כשהזווית לא "יפה" - מחשבון: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>4</mn><mo>&#x0002B;</mo><mn>3</mn><mi>i</mi><mo>&#x0003D;</mo><mn>5</mn><msup><mi>e</mi><mrow><mn>0.64</mn><mi>i</mi></mrow></msup></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mo>&#x02212;</mo><mn>4</mn><mi>i</mi><mo>&#x0003D;</mo><mn>2</mn><msqrt><mn>5</mn></msqrt><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mn>1.107</mn><mi>i</mi></mrow></msup></mrow></math>.</p>
+      </div>
+      <div class="callout callout-warn">
+        <div class="callout-title">שימי לב לרביע!</div>
+        <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>tan</mi><mi>&#x003B8;</mi></mrow></math> זהה לנקודות נגדיות: ל-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mn>3</mn><mo>&#x02212;</mo><mn>3</mn><mi>i</mi></mrow></math> ול-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mo>&#x0002B;</mo><mn>3</mn><mi>i</mi></mrow></math> יש <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>tan</mi><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math>. בלי תיקון לפי הרביע מקבלים <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mi>&#x003C0;</mi></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math> במקום <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mo>&#x02212;</mo><mfrac><mrow><mn>3</mn><mi>&#x003C0;</mi></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></math>.</p>
+      </div>
+      <div class="callout callout-check"><div class="callout-title"></div><p>חשבי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mi>cos</mi><mi>&#x003B8;</mi></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mi>sin</mi><mi>&#x003B8;</mi></mrow></math> - צריך לחזור ל-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi></mrow></math> ול-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>b</mi></mrow></math>.</p></div>
+
+      <h3 class="q" id="ex1-s13">13. חזקה גבוהה: נוסחת דה-מואבר</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 15 (א,ב); תרגיל בית 1, שאלה 10 (א,ב)</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>"רשמו בהצגה קרטזית" עם חזקה גבוהה (6, 7, 8, 12) או חזקה שלילית.</p></div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">{</mo><mo stretchy="false">&#x00028;</mo><mi>r</mi><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B8;</mi></mrow></msup><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><msup><mi>}</mi><mi>n</mi></msup><mo>&#x0003D;</mo><msup><mi>r</mi><mi>n</mi></msup><msup><mi>e</mi><mrow><mi>i</mi><mi>n</mi><mi>&#x003B8;</mi></mrow></msup><mo>&#x0003D;</mo><msup><mi>r</mi><mi>n</mi></msup><mo stretchy="false">&#x00028;</mo><mi>cos</mi><mi>n</mi><mi>&#x003B8;</mi><mo>&#x0002B;</mo><mi>i</mi><mi>sin</mi><mi>n</mi><mi>&#x003B8;</mi><mo stretchy="false">&#x00029;</mo></mrow></math></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>שלב 1:</b> העבירי את הבסיס להצגה קוטבית (סעיף 12). אם הבסיס הוא שבר - קודם צמצמי אותו לקרטזי: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>1</mn><mo>&#x02212;</mo><mi>i</mi></mrow><mrow><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi></mrow></mfrac><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>i</mi><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>i</mi><mfrac><mrow><mi>&#x003C0;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></msup></mrow></math>.</li>
+        <li><b>שלב 2:</b> הפעילי דה-מואבר: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi></mrow></math> בחזקת <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math>, הזווית כפול <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>n</mi></mrow></math>.</li>
+        <li><b>הורידי סיבובים שלמים:</b> הוסיפי או הפחיתי <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>2</mn><mi>&#x003C0;</mi></mrow></math> עד שהזווית נוחה (<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mfrac><mrow><mn>7</mn><mi>&#x003C0;</mi></mrow><mrow><mn>6</mn></mrow></mfrac><mo>&#x02192;</mo><mo>&#x02212;</mo><mfrac><mrow><mn>5</mn><mi>&#x003C0;</mi></mrow><mrow><mn>6</mn></mrow></mfrac></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mn>3</mn><mi>&#x003C0;</mi><mo>&#x02192;</mo><mi>&#x003C0;</mi></mrow></math>).</li>
+        <li><b>חזרי לקרטזי</b> בעזרת <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>cos</mi></mrow></math> ו-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>sin</mi></mrow></math> של הזווית.</li>
+      </ol></div>
+      <h4 class="sub" id="ex1-s13-t1">דוגמה מהתרגיל</h4>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mn>1</mn><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>12</mn></mrow></msup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><msqrt><mn>2</mn></msqrt><mo stretchy="false">&#x00029;</mo></mrow><mrow><mn>12</mn></mrow></msup><msup><mi>e</mi><mrow><mi>i</mi><mfrac><mrow><mn>12</mn><mi>&#x003C0;</mi></mrow><mrow><mn>4</mn></mrow></mfrac></mrow></msup><mo>&#x0003D;</mo><mn>64</mn><msup><mi>e</mi><mrow><mn>3</mn><mi>&#x003C0;</mi><mi>i</mi></mrow></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>64</mn></mrow></math>.</p>
+      <p><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><msqrt><mn>3</mn></msqrt><mo>&#x0002B;</mo><mi>i</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>7</mn></msup><mo>&#x0003D;</mo><msup><mn>2</mn><mn>7</mn></msup><msup><mi>e</mi><mrow><mi>i</mi><mfrac><mrow><mn>7</mn><mi>&#x003C0;</mi></mrow><mrow><mn>6</mn></mrow></mfrac></mrow></msup><mo>&#x0003D;</mo><mn>128</mn><mrow><mo stretchy="true" fence="true" form="prefix">&#x00028;</mo><mo>&#x02212;</mo><mfrac><mrow><msqrt><mn>3</mn></msqrt></mrow><mrow><mn>2</mn></mrow></mfrac><mo>&#x02212;</mo><mfrac><mrow><mi>i</mi></mrow><mrow><mn>2</mn></mrow></mfrac><mo stretchy="true" fence="true" form="postfix">&#x00029;</mo></mrow><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>64</mn><msqrt><mn>3</mn></msqrt><mo>&#x02212;</mo><mn>64</mn><mi>i</mi></mrow></math>.</p>
+      <div class="callout callout-warn">
+        <div class="callout-title">טעויות נפוצות</div>
+        <p>להעלות בחזקה רק את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi></mrow></math> ולשכוח להכפיל את הזווית (או ההפך). בחזקה שלילית: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>e</mi><mrow><mi>i</mi><mfrac><mrow><mi>&#x003C0;</mi></mrow><mrow><mn>4</mn></mrow></mfrac><mo>&#x000B7;</mo><mo stretchy="false">&#x00028;</mo><mo>&#x02212;</mo><mn>6</mn><mo stretchy="false">&#x00029;</mo></mrow></msup><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mo>&#x02212;</mo><mi>i</mi><mfrac><mrow><mn>3</mn><mi>&#x003C0;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></msup><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mi>i</mi><mfrac><mrow><mi>&#x003C0;</mi></mrow><mrow><mn>2</mn></mrow></mfrac></mrow></msup><mo>&#x0003D;</mo><mi>i</mi></mrow></math>.</p>
+      </div>
+
+      <h3 class="q" id="ex1-s14">14. הוכחת זהויות טריגונומטריות בעזרת הצגה קוטבית</h3>
+      <div class="src-tag">📍 תרגיל כיתה 1, שאלה 16</div>
+      <div class="callout callout-id"><div class="callout-title"></div><p>"בעזרת הצגה קוטבית הוכיחו ש-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>cos</mi><mo stretchy="false">&#x00028;</mo><mi>n</mi><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo><mo>&#x0003D;</mo><mo>&#x02026;</mo></mrow></math>".</p></div>
+      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">
+        <li><b>כתבי</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>e</mi><mrow><mi>i</mi><mi>n</mi><mi>&#x003B1;</mi></mrow></msup><mo>&#x0003D;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B1;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mi>n</mi></msup></mrow></math>, כלומר <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>cos</mi><mi>n</mi><mi>&#x003B1;</mi><mo>&#x0002B;</mo><mi>i</mi><mi>sin</mi><mi>n</mi><mi>&#x003B1;</mi><mo>&#x0003D;</mo><msup><mrow><mo stretchy="false">&#x00028;</mo><mi>cos</mi><mi>&#x003B1;</mi><mo>&#x0002B;</mo><mi>i</mi><mi>sin</mi><mi>&#x003B1;</mi><mo stretchy="false">&#x00029;</mo></mrow><mi>n</mi></msup></mrow></math>.</li>
+        <li><b>פתחי את צד ימין</b> בבינום: <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mo stretchy="false">&#x00029;</mo></mrow><mn>3</mn></msup><mo>&#x0003D;</mo><msup><mi>a</mi><mn>3</mn></msup><mo>&#x0002B;</mo><mn>3</mn><msup><mi>a</mi><mn>2</mn></msup><mi>b</mi><mo>&#x0002B;</mo><mn>3</mn><mi>a</mi><msup><mi>b</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>3</mn></msup></mrow></math>, עם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mn>3</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mi>i</mi></mrow></math>.</li>
+        <li><b>השווי חלקים:</b> החלק הממשי הוא <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>cos</mi><mi>n</mi><mi>&#x003B1;</mi></mrow></math>, המדומה הוא <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>sin</mi><mi>n</mi><mi>&#x003B1;</mi></mrow></math>.</li>
+        <li><b>השתמשי ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>sin</mi><mn>2</mn></msup><mi>&#x003B1;</mi><mo>&#x0002B;</mo><msup><mi>cos</mi><mn>2</mn></msup><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>1</mn></mrow></math></b> כדי להגיע לצורה המבוקשת.</li>
+      </ol></div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>cos</mi><mn>3</mn><mi>&#x003B1;</mi><mo>&#x0003D;</mo><msup><mi>cos</mi><mn>3</mn></msup><mi>&#x003B1;</mi><mo>&#x02212;</mo><mn>3</mn><mi>cos</mi><mi>&#x003B1;</mi><msup><mi>sin</mi><mn>2</mn></msup><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>4</mn><msup><mi>cos</mi><mn>3</mn></msup><mi>&#x003B1;</mi><mo>&#x02212;</mo><mn>3</mn><mi>cos</mi><mi>&#x003B1;</mi></mrow></math></div>
+      <div class="formula"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>sin</mi><mn>3</mn><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>3</mn><msup><mi>cos</mi><mn>2</mn></msup><mi>&#x003B1;</mi><mi>sin</mi><mi>&#x003B1;</mi><mo>&#x02212;</mo><msup><mi>sin</mi><mn>3</mn></msup><mi>&#x003B1;</mi><mo>&#x0003D;</mo><mn>3</mn><mi>sin</mi><mi>&#x003B1;</mi><mo>&#x02212;</mo><mn>4</mn><msup><mi>sin</mi><mn>3</mn></msup><mi>&#x003B1;</mi></mrow></math></div>
+
+      <div class="summary-sheet">
+        <div class="summary-sheet-title">✅ סיכום תרגיל 1 - דף נוסחאות מחשבתי</div>
+        <p><b>יסודות:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>i</mi><mn>2</mn></msup><mo>&#x0003D;</mo><mo>&#x02212;</mo><mn>1</mn></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mi>a</mi><mo>&#x02212;</mo><mi>b</mi><mi>i</mi></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msqrt><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>2</mn></msup></mrow></msqrt></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup></mrow></math>.</p>
+        <p><b>חילוק:</b> כופלים מונה ומכנה <span class="hebrew-box">בצמוד של המכנה</span>; המכנה הופך ל-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mi>c</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>d</mi><mn>2</mn></msup></mrow></math>.</p>
+        <p><b>חזקות של <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math>:</b> לפי השארית בחלוקה ב-4; ארבע חזקות רצופות מסתכמות ל-0.</p>
+        <p><b>מציאת <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>a</mi><mo>&#x0002C;</mo><mi>b</mi></mrow></math>:</b> מכפילים במכנה, משווים ממשי לממשי ומדומה למדומה.</p>
+        <p><b>משוואה עם <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math>:</b> מציבים <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><mi>a</mi><mo>&#x0002B;</mo><mi>b</mi><mi>i</mi></mrow></math>.</p>
+        <p><b>ערך מוחלט:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>1</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msub><mi>z</mi><mn>2</mn></msub><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><msup><mi>z</mi><mi>n</mi></msup><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mi>n</mi></msup></mrow></math> - בלי לפתוח את הביטוי.</p>
+        <p><b>ממשי / מדומה טהור:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi><mo>&#x02212;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>0</mn></mrow></math> / <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>&#x003C9;</mi><mo>&#x0002B;</mo><mover><mrow><mi>&#x003C9;</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mn>0</mn></mrow></math>.</p>
+        <p><b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>A</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>B</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow></mrow></math>:</b> מעלים בריבוע ומשתמשים ב-<math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>w</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mn>2</mn></msup><mo>&#x0003D;</mo><mi>w</mi><mover><mrow><mi>w</mi></mrow><mo accent="true">&#x02015;</mo></mover></mrow></math>.</p>
+        <p><b><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mrow><mo stretchy="true" fence="true" form="prefix">&#x0007C;</mo><mi>z</mi><mo stretchy="true" fence="true" form="postfix">&#x0007C;</mo></mrow><mo>&#x0003D;</mo><mn>1</mn></mrow></math>:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mover><mrow><mi>z</mi></mrow><mo accent="true">&#x02015;</mo></mover><mo>&#x0003D;</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>z</mi></mrow></mfrac></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi><mo>&#x0003D;</mo><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B1;</mi></mrow></msup></mrow></math>.</p>
+        <p><b>קוטבית:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>r</mi><mo>&#x0003D;</mo><msqrt><mrow><msup><mi>a</mi><mn>2</mn></msup><mo>&#x0002B;</mo><msup><mi>b</mi><mn>2</mn></msup></mrow></msqrt></mrow></math>, <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>tan</mi><mi>&#x003B8;</mi><mo>&#x0003D;</mo><mfrac><mrow><mi>b</mi></mrow><mrow><mi>a</mi></mrow></mfrac></mrow></math> <span class="hebrew-box">ותיקון לפי הרביע</span>.</p>
+        <p><b>דה-מואבר:</b> <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><msup><mrow><mo stretchy="false">&#x00028;</mo><mi>r</mi><msup><mi>e</mi><mrow><mi>i</mi><mi>&#x003B8;</mi></mrow></msup><mo stretchy="false">&#x00029;</mo></mrow><mi>n</mi></msup><mo>&#x0003D;</mo><msup><mi>r</mi><mi>n</mi></msup><msup><mi>e</mi><mrow><mi>i</mi><mi>n</mi><mi>&#x003B8;</mi></mrow></msup></mrow></math>.</p>
+      </div>
+      <div class="key-idea">
+        <h4>💡 הדבר שהכי חשוב להבין מכל תרגיל 1</h4>
+        <p>כמעט כל שאלה נפתרת עם הצמוד: הוא מעלים את <math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>i</mi></mrow></math> מהמכנה, הופך ערך מוחלט לכפל, ובודק אם מספר ממשי או מדומה. המשפט שצריך לזכור: <span class="hebrew-box"><math dir="ltr" xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow><mi>z</mi></mrow></math> כפול הצמוד שלו = ריבוע הערך המוחלט</span>.</p>
+      </div>
+    </section>
+
+
+    <footer class="site-footer">נבנה עבורך לצורך חזרה למבחן - כל השיטות מנוסחות באופן כללי כדי שיתאימו לכל שאלה מאותו סוג.</footer>
+  </main>
+</div>
+
+<a href="#intro" class="top-btn" id="topBtn" aria-label="חזרה למעלה">↑</a>
+<script>
+try {
+  const menuToggle = document.getElementById('menuToggle');
+  const allLinks = Array.from(document.querySelectorAll('.toc a'));
+
+  const tracked = allLinks
+    .map(a => ({ a, el: document.querySelector(a.getAttribute('href')) }))
+    .filter(x => x.el);
+
+  function currentExOf(a){
+    return a.dataset.ex || null;
+  }
+
+  function setOpen(exNum){
+    document.querySelectorAll('.toc-details').forEach(d => {
+      d.open = (d.id === 'details-' + exNum);
+    });
+  }
+
+  const collapseAllBtn = document.getElementById('collapseAllBtn');
+  if(collapseAllBtn){
+    collapseAllBtn.addEventListener('click', () => {
+      document.querySelectorAll('.toc-details').forEach(d => { d.open = false; });
+    });
+  }
+
+  function clearSearchHighlights(){
+    document.querySelectorAll('mark.search-hit').forEach(m => {
+      const parent = m.parentNode;
+      if(!parent) return;
+      parent.replaceChild(document.createTextNode(m.textContent), m);
+      parent.normalize();
+    });
+    document.querySelectorAll('.search-context-highlight').forEach(el => {
+      el.classList.remove('search-context-highlight');
+    });
+  }
+
+  function highlightTextInElement(el, query){
+    const qLow = query.toLowerCase();
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){
+        let p = node.parentElement;
+        while(p && p !== el){
+          if(p.tagName === 'MATH') return NodeFilter.FILTER_REJECT;
+          p = p.parentElement;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    let node;
+    while(node = walker.nextNode()){
+      const text = node.textContent;
+      const idx = text.toLowerCase().indexOf(qLow);
+      if(idx === -1) continue;
+      const before = text.slice(0, idx);
+      const matchText = text.slice(idx, idx + query.length);
+      const after = text.slice(idx + query.length);
+      const mark = document.createElement('mark');
+      mark.className = 'search-hit';
+      mark.textContent = matchText;
+      const parent = node.parentNode;
+      parent.insertBefore(document.createTextNode(before), node);
+      parent.insertBefore(mark, node);
+      parent.insertBefore(document.createTextNode(after), node);
+      parent.removeChild(node);
+      return mark;
+    }
+    return null;
+  }
+
+  function goTo(id){
+    try { clearSearchHighlights(); } catch(e){}
+    let scrollTarget = document.getElementById(id);
+    try {
+      const state = window.__searchState;
+      if(state && state.query && state.matches && state.matches.has(id)){
+        const container = state.matches.get(id);
+        const mark = highlightTextInElement(container, state.query);
+        if(mark){ scrollTarget = mark; }
+        else { container.classList.add('search-context-highlight'); scrollTarget = container; }
+      }
+    } catch(e){}
+    if(!scrollTarget) return;
+    const rect = scrollTarget.getBoundingClientRect();
+    const elTop = rect.top + window.scrollY;
+    const OFFSET = 45; // small gap below the top of the viewport
+    const target = Math.max(0, elTop - OFFSET);
+    window.scrollTo({ top: target, behavior: (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' });
+    try {
+      if(history && history.replaceState){ history.replaceState(null, '', '#' + id); }
+    } catch(e){}
+  }
+
+  function linkClickHandler(e){
+    const a = e.currentTarget;
+    const href = a.getAttribute('href') || '';
+    if(href.charAt(0) !== '#') return;
+    e.preventDefault();
+    goTo(href.slice(1));
+    if(menuToggle) menuToggle.checked = false;
+  }
+
+  // event delegation on the sidebar covers all TOC links in one place
+  const sidebarEl = document.getElementById('sidebar');
+  if(sidebarEl){
+    sidebarEl.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if(!a || !sidebarEl.contains(a)) return;
+      linkClickHandler({ currentTarget: a, preventDefault: () => e.preventDefault() });
+    });
+  }
+
+  function onScroll(){
+    if(!tracked.length) return;
+    let current = tracked[0];
+    const y = window.scrollY + 130;
+    for(const t of tracked){
+      if(t.el.offsetTop <= y) current = t;
+    }
+    allLinks.forEach(a => a.classList.toggle('active', a === current.a));
+    const ex = currentExOf(current.a);
+    if(ex) setOpen(ex);
+    const topBtn = document.getElementById('topBtn');
+    if(topBtn) topBtn.classList.toggle('show', window.scrollY > 500);
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+
+} catch(err){}
+</script>
+<script>
+  // ---- full-document search: filters the TOC down to headings that contain a match, no extra detail shown ----
+  try {
+    const input = document.getElementById('siteSearch');
+    const statusBox = document.getElementById('searchStatus');
+    if(input && statusBox){
+      const nodes = document.querySelectorAll(
+        '.exercise h2[id], .exercise h3, .exercise p, .exercise li, .exercise h4, .exercise td, .exercise summary'
+      );
+      let currentSubId = null;
+      const index = [];
+      nodes.forEach(el => {
+        // h3.q headings and h2 "part" headings both start a new grouping context
+        if(el.tagName === 'H2' || el.classList.contains('q')){ currentSubId = el.id; }
+        const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+        if(!text || !currentSubId) return;
+        index.push({ el, text, subId: currentSubId });
+      });
+
+      window.__searchState = { query: '', matches: new Map() };
+
+      function clearResults(){
+        document.querySelectorAll('.toc-group').forEach(el => { el.style.display = ''; });
+        document.querySelectorAll('.sub-toc li').forEach(el => { el.style.display = ''; });
+      }
+
+      function runSearch(){
+        try {
+          const q = input.value.trim();
+          clearResults();
+          if(q.length < 2){
+            statusBox.textContent = '';
+            window.__searchState = { query: '', matches: new Map() };
+            try { if(typeof clearSearchHighlights === 'function') clearSearchHighlights(); } catch(e){}
+            return;
+          }
+          const qLow = q.toLowerCase();
+          const matchedSubIds = new Set();
+          const matchEls = new Map(); // subId -> first matching element
+          for(const item of index){
+            if(item.text.toLowerCase().indexOf(qLow) !== -1){
+              matchedSubIds.add(item.subId);
+              if(!matchEls.has(item.subId)) matchEls.set(item.subId, item.el);
+            }
+          }
+          window.__searchState = { query: q, matches: matchEls };
+
+          if(matchedSubIds.size === 0){
+            statusBox.textContent = 'אין תוצאות עבור "' + q + '"';
+            document.querySelectorAll('.toc-group').forEach(g => { g.style.display = 'none'; });
+            return;
+          }
+          statusBox.textContent = matchedSubIds.size + ' כותרות תואמות';
+
+          document.querySelectorAll('.toc-group').forEach(group => {
+            const details = group.querySelector('.toc-details');
+            let groupHasMatch = false;
+            group.querySelectorAll('.sub-toc li').forEach(li => {
+              const a = li.querySelector('a');
+              const subId = (a.getAttribute('href') || '').slice(1);
+              if(matchedSubIds.has(subId)){
+                groupHasMatch = true;
+                li.style.display = '';
+              } else {
+                li.style.display = 'none';
+              }
+            });
+            if(groupHasMatch){
+              group.style.display = '';
+              if(details) details.open = true;
+            } else {
+              group.style.display = 'none';
+            }
+          });
+        } catch(err){
+          statusBox.textContent = 'שגיאה בחיפוש: ' + String(err && err.message || err);
+        }
+      }
+
+      ['input', 'keyup', 'search', 'change'].forEach(evt => input.addEventListener(evt, runSearch));
+    }
+  } catch(err){
+    const statusBox = document.getElementById('searchStatus');
+    if(statusBox) statusBox.textContent = 'שגיאת אתחול חיפוש: ' + String(err && err.message || err);
+  }
+
+</script>
+<script>
+  // ---- remember scroll position across app switches ----
+  try {
+    const SCROLL_KEY = 'examGuideScrollY_v1_algebra-solutions';
+    function restoreScroll(){
+      try {
+        const saved = localStorage.getItem(SCROLL_KEY);
+        if(saved === null) return;
+        const y = parseFloat(saved);
+        if(!isNaN(y) && y > 0){ window.scrollTo(0, y); }
+      } catch(e){}
+    }
+    let saveTimer = null;
+    function saveScroll(){
+      try { localStorage.setItem(SCROLL_KEY, String(window.scrollY)); } catch(e){}
+    }
+    requestAnimationFrame(() => requestAnimationFrame(restoreScroll));
+    window.addEventListener('load', () => setTimeout(restoreScroll, 60));
+    window.addEventListener('scroll', () => {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveScroll, 200);
+    });
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'hidden') saveScroll();
+    });
+    window.addEventListener('pagehide', saveScroll);
+  } catch(err){}
+
+</script>
+<script>
+try {
+  const t = document.getElementById('menuToggle');
+  document.querySelectorAll('label.menu-fab, label.sidebar-close').forEach(l => {
+    l.setAttribute('tabindex', '0');
+    l.setAttribute('role', 'button');
+    l.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t.checked = !t.checked; }
+    });
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && t.checked) t.checked = false; });
+} catch (err) {}
+
+</script>
+
+<div class="ai-overlay" id="aiOverlay" hidden>
+  <div class="ai-panel" role="dialog" aria-modal="true" aria-labelledby="aiTitle">
+    <div class="ai-head">
+      <h2 id="aiTitle">✨ חיפוש חכם</h2>
+      <button type="button" class="ai-close" id="aiClose" aria-label="סגירה">✕</button>
+    </div>
+    <p class="ai-sub">העלי תמונה של תרגיל, או כתבי אותו במילים. ה-AI יבין מה התרגיל שואל ויפנה אותך לסעיפים באתר שצריך בשבילו.</p>
+    <div class="ai-setup" id="aiSetup" hidden>
+      <div class="ai-setup-title">🔑 הגדרה חד-פעמית (חינם): מפתח של Google</div>
+      <p>באתר הזה החיפוש החכם עובד דרך Gemini של Google, שיש לו שימוש חינמי. צריך רק "מפתח" - מעין סיסמה שמחברת את האתר לחשבון Google שלך. בלי כרטיס אשראי ובלי תשלום. עושים את זה פעם אחת בכל מחשב או טלפון:</p>
+      <ol>
+        <li>נכנסים ל-<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> עם חשבון Google (Gmail) ומאשרים את התנאים.</li>
+        <li>לוחצים <b dir="ltr">Create API key</b> ומעתיקים את המפתח (רצף ארוך של אותיות ומספרים).</li>
+        <li>מדביקים אותו בתיבה כאן ולוחצים "שמירה".</li>
+      </ol>
+      <div class="ai-setup-row">
+        <input type="password" id="aiKey" placeholder="הדביקי כאן את המפתח" autocomplete="off" aria-label="מפתח של Google">
+        <button type="button" id="aiKeySave">שמירה</button>
+      </div>
+      <p class="ai-setup-note">המפתח נשמר רק בדפדפן הזה ונשלח רק ל-Google. אל תשלחי אותו לאף אחד. בשימוש החינמי יש מגבלה של כמה בקשות בדקה, ו-Google עשויה להשתמש בתרגילים ששולחים כדי לשפר את המוצרים שלה.</p>
+    </div>
+    <div class="ai-keyok" id="aiKeyOk" hidden>🔑 מפתח Google שמור בדפדפן הזה <button type="button" id="aiKeyClear">החלפת מפתח</button></div>
+    <label for="aiFocus" class="ai-status">איזה תרגיל מהתמונה? (לא חובה)</label>
+    <input type="text" id="aiFocus" class="ai-focus" placeholder="למשל: שאלה 3 סעיף ב. להשאיר ריק = כל התרגילים" autocomplete="off">
+    <label for="aiText" class="ai-status">התרגיל במילים (לא חובה אם יש תמונה)</label>
+    <textarea id="aiText" placeholder="הדביקי או כתבי כאן את נוסח התרגיל"></textarea>
+    <div class="ai-drop" id="aiDrop" tabindex="0" role="button" aria-label="העלאת תמונה">
+      📷 <b>העלאת תמונה של התרגיל</b> - לחיצה, גרירה לכאן, או הדבקה (Ctrl+V)
+      <input type="file" id="aiFile" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+    </div>
+    <div class="ai-thumbs" id="aiThumbs"></div>
+    <div class="ai-actions">
+      <button type="button" class="ai-go" id="aiGo">חיפוש</button>
+      <button type="button" class="ai-stop" id="aiStop" hidden>עצירה</button>
+      <button type="button" class="ai-stop" id="aiClear" hidden>ניקוי וחיפוש חדש</button>
+      <span class="ai-status" id="aiStatus" aria-live="polite"></span>
+    </div>
+    <div class="ai-understood" id="aiUnderstood" hidden><div class="lbl">הערה</div><div id="aiUnderstoodText"></div></div>
+    <div class="ai-results" id="aiResults"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  try {
+  const $ = id => document.getElementById(id);
+  const overlay=$('aiOverlay'), textEl=$('aiText'), fileEl=$('aiFile'), drop=$('aiDrop'), thumbs=$('aiThumbs'),
+        goBtn=$('aiGo'), stopBtn=$('aiStop'), statusEl=$('aiStatus'), undBox=$('aiUnderstood'), undText=$('aiUnderstoodText'),
+        results=$('aiResults'), setupBox=$('aiSetup'), keyOk=$('aiKeyOk'), keyIn=$('aiKey');
+  const LAST_STORE='studyAiLast_v1';
+  const KEY_STORE='studyGeminiKey_v1';
+  let images=[];            // File/Blob list
+  let mode=null;            // 'claude' | 'api' | 'none'
+  let sample=null, imgLimits=null, ctl=null;
+
+  // ---------- section catalog from the page itself ----------
+  const catalog=[]; const byId={};
+  document.querySelectorAll('section.exercise').forEach(sec=>{
+    const part=(sec.querySelector('.ex-title')||{}).textContent||'';
+    sec.querySelectorAll('h3.q').forEach(h3=>{
+      const subs=[]; let el=h3.nextElementSibling; let snippet='';
+      while(el && !(el.matches && el.matches('h3.q, .summary-sheet'))){
+        if(el.matches('h4.sub') && el.id) subs.push({id:el.id, title:el.textContent.trim()});
+        if(!el.classList.contains('box-q') && snippet.length<260) snippet+=' '+el.textContent.replace(/\s+/g,' ').trim();
+        el=el.nextElementSibling;
+      }
+      const item={id:h3.id, title:(h3.dataset.plain||h3.textContent).trim(), part:part.trim(), subs, snippet:snippet.trim().slice(0,260)};
+      catalog.push(item); byId[item.id]={title:item.title, part:item.part};
+      subs.forEach(s=>{ byId[s.id]={title:s.title, part:item.part, parent:item.title}; });
+    });
+    const sum=sec.querySelector('.summary-sheet[id]');
+    if(sum){ const t=sum.querySelector('.summary-sheet-title').textContent.trim(); catalog.push({id:sum.id,title:t,part:part.trim(),subs:[],snippet:''}); byId[sum.id]={title:t,part:part.trim()}; }
+  });
+  function catalogText(){
+    return catalog.map(c=>{
+      let s='['+c.id+'] '+c.part+' > '+c.title;
+      if(c.snippet) s+='\n   תקציר: '+c.snippet;
+      c.subs.forEach(x=>{ s+='\n   ['+x.id+'] תת-נושא: '+x.title; });
+      return s;
+    }).join('\n');
+  }
+  function buildPrompt(userText, nImages, focus){
+    return 'את/ה עוזר/ת לימוד באתר הלימוד "'+(document.title||'')+'". סטודנטית שלחה חומר'
+      +(nImages? ' ב-'+nImages+' תמונה/ות מצורפות':'')+(userText? ' ובטקסט':'')+'.\n'
+      +'המשימה: להבין מה כל תרגיל שואל, ולהפנות אותה לסעיפים באתר הלימוד שמכילים את החומר הדרוש כדי לפתור אותו. אל תפתור/י את התרגילים.\n\n'
+      +(focus
+        ? 'הסטודנטית ביקשה להתייחס רק לתרגיל הזה: "'+focus+'". מצא/י אותו לפי המספור שבתמונה או בטקסט (מספר שאלה ואולי אות או מספר סעיף), והתעלם/י מכל שאר התרגילים. '
+          +'אם יש לו כמה סעיפים ולא צוין סעיף - התייחס/י לכל הסעיפים שלו. אם התרגיל הזה לא נמצא, החזר/י exercises ריק והסבר/י ב-note מה כן רואים.\n\n'
+        : 'ייתכן שיש תרגיל אחד וייתכן שיש כמה. זהה/י כל תרגיל (או כל סעיף, אם הסעיפים בנושאים שונים) בנפרד, לפי המספור שמופיע בחומר.\n\n')
+      +'רשימת הסעיפים באתר (המזהה בסוגריים מרובעים):\n'+catalogText()+'\n\n'
+      +(userText? 'הטקסט שהסטודנטית כתבה:\n"""\n'+userText+'\n"""\n\n':'')
+      +'החזר/י JSON בלבד בצורה הזאת:\n'
+      +'{"exercises":[{"label":"המספור כפי שמופיע, למשל שאלה 3ב (או \\"התרגיל\\" אם אין מספור)","understood":"משפט אחד בעברית: מה התרגיל שואל","matches":[{"id":"מזהה מהרשימה","why":"משפט אחד בעברית: מה בסעיף הזה עוזר לתרגיל"}]}],"note":"הערה קצרה אם צריך, אחרת מחרוזת ריקה"}\n'
+      +'כללים: עד 8 תרגילים לפי הסדר שבו הם מופיעים. לכל תרגיל 1-4 התאמות (אם יש רק תרגיל אחד, או שהסטודנטית בחרה תרגיל - עד 5). הכלל/י רק סעיפים שבאמת נדרשים לפתרון, החשובה ביותר ראשונה. השתמש/י רק במזהים מהרשימה. העדף/י תת-נושא מדויק כשהוא מתאים. '
+      +'כתוב/י ביטויים מתמטיים בטקסט פשוט (למשל x^2 + 1). תרגיל שלא קשור לחומר באתר - matches ריק. אם התמונה לא קריאה - exercises ריק והסבר/י ב-note.';
+  }
+
+  // ---------- mode detection ----------
+  function setStatus(t, err){ statusEl.textContent=t||''; statusEl.classList.toggle('err', !!err); }
+  async function detect(){
+    if(window.claude && typeof window.claude.use==='function'){
+      mode='pending';
+      try { sample = await window.claude.use('sample'); } catch(e){ sample=null; }
+      if(sample){
+        mode='claude';
+        try { const l=await sample.limits(); imgLimits=l && l.images ? l.images : null; } catch(e){ imgLimits=null; }
+        drop.hidden=!imgLimits;
+      } else { mode='none'; }
+    } else {
+      mode='api';
+    }
+    refreshKeyBox();
+  }
+  function getKey(){ try { return localStorage.getItem(KEY_STORE)||''; } catch(e){ return ''; } }
+  function refreshKeyBox(){
+    const has=!!getKey();
+    setupBox.hidden = !(mode==='api' && !has);
+    keyOk.hidden = !(mode==='api' && has);
+    if(mode==='none') setStatus('החיפוש החכם לא זמין בתצוגה הזאת.', true);
+  }
+  $('aiKeySave').onclick=()=>{ const v=keyIn.value.trim(); if(!v) return; try{ localStorage.setItem(KEY_STORE,v); setStatus('המפתח נשמר. אפשר לחפש!'); keyIn.value=''; refreshKeyBox(); }catch(e){ setStatus('לא ניתן לשמור בדפדפן הזה (חלון פרטי?).', true); } };
+  $('aiKeyClear').onclick=()=>{ try{ localStorage.removeItem(KEY_STORE); }catch(e){} setStatus('המפתח נמחק. הדביקי מפתח חדש.'); refreshKeyBox(); keyIn.focus(); };
+
+  // ---------- open / close ----------
+  let lastFocus=null;
+  function open(){
+    lastFocus=document.activeElement; overlay.hidden=false; document.body.style.overflow='hidden';
+    const mt=document.getElementById('menuToggle'); if(mt) mt.checked=false;
+    setTimeout(()=>textEl.focus(),30);
+  }
+  function close(){ overlay.hidden=true; document.body.style.overflow=''; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+  document.querySelectorAll('[data-ai-open]').forEach(b=>b.addEventListener('click',open));
+  $('aiClose').onclick=close;
+  overlay.addEventListener('click',e=>{ if(e.target===overlay) close(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !overlay.hidden) close(); });
+
+  // ---------- images ----------
+  const OK_TYPES=['image/jpeg','image/png','image/webp','image/gif'];
+  function maxCount(){ return mode==='claude' ? (imgLimits? imgLimits.maxCount:0) : 3; }
+  function addFiles(list){
+    const arr=Array.from(list||[]).filter(f=>f && OK_TYPES.includes(f.type));
+    if(!arr.length){ if(list && list.length) setStatus('אפשר להעלות רק תמונות (JPG, PNG, WebP, GIF).', true); return; }
+    for(const f of arr){ if(images.length>=maxCount()){ setStatus('אפשר עד '+maxCount()+' תמונות.', true); break; } images.push(f); }
+    renderThumbs();
+  }
+  function renderThumbs(){
+    thumbs.textContent='';
+    images.forEach((f,i)=>{
+      const d=document.createElement('div'); d.className='ai-thumb';
+      const img=document.createElement('img'); img.alt='תמונת תרגיל '+(i+1); img.src=URL.createObjectURL(f);
+      const x=document.createElement('button'); x.type='button'; x.textContent='✕'; x.setAttribute('aria-label','הסרת תמונה');
+      x.onclick=()=>{ images.splice(i,1); renderThumbs(); };
+      d.append(img,x); thumbs.append(d);
+    });
+  }
+  drop.addEventListener('click',()=>fileEl.click());
+  drop.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); fileEl.click(); } });
+  fileEl.addEventListener('change',()=>{ addFiles(fileEl.files); fileEl.value=''; });
+  ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove('drag'); }));
+  drop.addEventListener('drop',e=>addFiles(e.dataTransfer && e.dataTransfer.files));
+  overlay.addEventListener('paste',e=>{
+    const items=Array.from((e.clipboardData&&e.clipboardData.items)||[]).filter(it=>it.kind==='file');
+    if(items.length){ e.preventDefault(); addFiles(items.map(it=>it.getAsFile())); }
+  });
+
+  // downscale for direct API calls
+  function toJpegBase64(file){
+    return new Promise((res,rej)=>{
+      const img=new Image(); const url=URL.createObjectURL(file);
+      img.onload=()=>{ const M=1568; let w=img.naturalWidth,h=img.naturalHeight; const s=Math.min(1,M/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s);
+        const c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,w,h); g.drawImage(img,0,0,w,h);
+        URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.88).split(',')[1]); };
+      img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('image')); };
+      img.src=url;
+    });
+  }
+  function parseJsonLoose(t){
+    try { return JSON.parse(t); } catch(e){}
+    const m=t.match(/```(?:json)?\s*([\s\S]*?)```/); if(m){ try{ return JSON.parse(m[1]); }catch(e){} }
+    const a=t.indexOf('{'), b=t.lastIndexOf('}'); if(a>=0&&b>a){ return JSON.parse(t.slice(a,b+1)); }
+    throw new Error('json');
+  }
+  async function askApi(prompt, signal){
+    const key=getKey();
+    if(!key){ refreshKeyBox(); throw {code:'no_key'}; }
+    const parts=[];
+    for(const f of images){ parts.push({inline_data:{mime_type:'image/jpeg', data: await toJpegBase64(f)}}); }
+    parts.push({text:prompt});
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',{method:'POST',signal,
+      headers:{'content-type':'application/json','x-goog-api-key':key},
+      body:JSON.stringify({contents:[{role:'user',parts}], generationConfig:{responseMimeType:'application/json', temperature:0.2}})});
+    if(!r.ok){
+      let msg=''; try{ msg=JSON.stringify(await r.json()); }catch(e){}
+      if(r.status===429) throw {code:'rate_limited'};
+      if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
+      if(r.status===401 || r.status===403) throw {code:'bad_key'};
+      throw {code:'upstream_error'};
+    }
+    const data=await r.json();
+    const cand=(data.candidates||[])[0];
+    if(!cand){ throw {code:'refused'}; }
+    const text=((cand.content&&cand.content.parts)||[]).map(p=>p.text||'').join('');
+    return parseJsonLoose(text);
+  }
+  const MSG={not_granted:'לא אושר שימוש ב-Claude בדף הזה.', sampling_disabled:'Claude לא זמין בחשבון הזה.', rate_limited:'הגעת למגבלת השימוש החינמי לרגע זה. חכי דקה ונסי שוב.',
+    session_expired:'צריך להתחבר מחדש ל-Claude.', image_rejected:'התמונה לא התקבלה. נסי תמונה אחרת (JPG או PNG).', images_unavailable:'אי אפשר לשלוח תמונות בתצוגה הזאת - כתבי את התרגיל במילים.',
+    refused:'הבקשה לא עובדה. נסי לנסח את התרגיל אחרת.', invalid_json:'התשובה לא הגיעה בפורמט הנכון. נסי שוב.', no_key:'קודם צריך לשמור מפתח בתיבה הצהובה למעלה.',
+    bad_key:'המפתח לא תקין. לחצי על "החלפת מפתח" והדביקי אותו שוב.', prompt_too_large:'הטקסט ארוך מדי. קצרי אותו.'};
+
+  // ---------- run ----------
+  goBtn.onclick=async ()=>{
+    const userText=textEl.value.trim();
+    const focus=($('aiFocus').value||'').trim();
+    if(!userText && !images.length){ setStatus('כתבי את התרגיל או העלי תמונה.', true); return; }
+    if(mode==='pending'){ setStatus('מתחבר, נסי שוב בעוד רגע.'); return; }
+    if(mode==='none'){ setStatus('החיפוש החכם לא זמין בתצוגה הזאת.', true); return; }
+    results.textContent=''; undBox.hidden=true; savedNote(false);
+    goBtn.disabled=true; stopBtn.hidden=false; setStatus(focus? 'מחפש את '+focus+'…' : 'קורא את התרגילים…');
+    ctl=new AbortController();
+    try {
+      const prompt=buildPrompt(userText, images.length, focus);
+      let ans;
+      if(mode==='claude'){
+        const opts={signal:ctl.signal};
+        if(images.length) opts.images=images.slice();
+        ans=await sample.json(prompt, opts);
+      } else {
+        ans=await askApi(prompt, ctl.signal);
+      }
+      show(ans); setStatus(''); await saveLast(userText, ans, focus);
+    } catch(e){
+      if(e && (e.code==='cancelled' || e.name==='AbortError')) setStatus('נעצר.');
+      else setStatus((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.', true);
+    } finally { goBtn.disabled=false; stopBtn.hidden=true; }
+  };
+  stopBtn.onclick=()=>{ if(ctl) ctl.abort(); };
+
+  function show(ans){
+    // תומך גם בפורמט הישן (תרגיל אחד) וגם בחדש (כמה תרגילים)
+    let exs = (ans && Array.isArray(ans.exercises)) ? ans.exercises
+            : (ans && (ans.matches || ans.understood)) ? [{label:'', understood:ans.understood, matches:ans.matches}] : [];
+    exs = exs.filter(e=>e && typeof e==='object').slice(0,8);
+    const note=(ans && typeof ans.note==='string')? ans.note.trim() : '';
+    if(note){ undText.textContent=note; undBox.hidden=false; }
+    if(!exs.length){ const p=document.createElement('p'); p.className='ai-status'; p.textContent= note? '' : 'לא זוהה תרגיל. נסי צילום ברור יותר או כתבי את התרגיל.'; if(p.textContent) results.append(p); return; }
+    const many = exs.length>1;
+    exs.forEach((ex)=>{
+      const box=document.createElement('div'); box.className='ai-ex';
+      const label=String(ex.label||'').trim();
+      if(many || label){ const h=document.createElement('div'); h.className='ai-ex-label'; h.textContent=label||'התרגיל'; box.append(h); }
+      const u=String(ex.understood||'').trim();
+      if(u){ const d=document.createElement('div'); d.className='ai-ex-und'; d.textContent=u; box.append(d); }
+      const list=document.createElement('div'); list.className='ai-results';
+      const ms=(Array.isArray(ex.matches)? ex.matches:[]).filter(m=>m && byId[String(m.id)] && document.getElementById(String(m.id))).slice(0, many?4:5);
+      if(!ms.length){ const p=document.createElement('p'); p.className='ai-status'; p.textContent='לא נמצא סעיף מתאים באתר לתרגיל הזה.'; list.append(p); }
+      ms.forEach((m,i)=>{
+        const info=byId[String(m.id)];
+        const b=document.createElement('button'); b.type='button'; b.className='ai-result';
+        const t=document.createElement('div'); t.className='t';
+        const tt=document.createElement('span'); tt.textContent=(i===0?'⭐ ':'')+(info.parent? info.parent+' ← '+info.title : info.title);
+        const pp=document.createElement('span'); pp.className='part'; pp.textContent=info.part;
+        t.append(tt,pp);
+        const w=document.createElement('div'); w.className='w'; w.textContent=String(m.why||'');
+        const g=document.createElement('div'); g.className='go'; g.textContent='מעבר לסעיף ←';
+        b.append(t,w,g);
+        b.onclick=()=>jump(String(m.id));
+        list.append(b);
+      });
+      box.append(list);
+      results.append(box);
+    });
+  }
+  function jump(id){
+    const el=document.getElementById(id); if(!el) return;
+    close();
+    const y=el.getBoundingClientRect().top+window.scrollY-45;
+    const reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:Math.max(0,y), behavior: reduce?'auto':'smooth'});
+    el.classList.remove('ai-flash'); void el.offsetWidth; el.classList.add('ai-flash');
+  }
+
+  // ---------- remember the last search until a new one ----------
+  function savedNote(on){ let n=$('aiSavedNote'); if(!n){ n=document.createElement('div'); n.id='aiSavedNote'; n.className='ai-saved'; n.textContent='🕘 זה החיפוש האחרון שלך - הוא נשמר עד שתחפשי משהו אחר או תלחצי "ניקוי".'; undBox.parentNode.insertBefore(n, undBox); } n.hidden=!on; $('aiClear').hidden=!on && !results.childElementCount; }
+  function smallDataUrl(file){
+    return new Promise((res)=>{ const img=new Image(); const url=URL.createObjectURL(file);
+      img.onload=()=>{ const M=1200; let w=img.naturalWidth,h=img.naturalHeight; const s=Math.min(1,M/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s);
+        const c=document.createElement('canvas'); c.width=w; c.height=h; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,w,h); g.drawImage(img,0,0,w,h); URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.8)); };
+      img.onerror=()=>{ URL.revokeObjectURL(url); res(null); }; img.src=url; });
+  }
+  async function saveLast(text, ans, focus){
+    let imgs=[]; try { for(const f of images){ const d=await smallDataUrl(f); if(d) imgs.push(d); } } catch(e){}
+    const rec={text, focus:focus||'', ans, imgs, t:Date.now()};
+    try { localStorage.setItem(LAST_STORE, JSON.stringify(rec)); }
+    catch(e){ try { rec.imgs=[]; localStorage.setItem(LAST_STORE, JSON.stringify(rec)); } catch(e2){} }
+    $('aiClear').hidden=false;
+  }
+  function dataUrlToBlob(d){ const [h,b]=d.split(','); const mime=(h.match(/data:([^;]+)/)||[])[1]||'image/jpeg'; const bin=atob(b); const u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return new Blob([u],{type:mime}); }
+  function loadLast(){
+    let rec=null; try { rec=JSON.parse(localStorage.getItem(LAST_STORE)||'null'); } catch(e){ rec=null; }
+    if(!rec || !rec.ans) return;
+    textEl.value=rec.text||'';
+    $('aiFocus').value=rec.focus||'';
+    images=(rec.imgs||[]).map(d=>{ try{ return dataUrlToBlob(d); }catch(e){ return null; } }).filter(Boolean);
+    renderThumbs(); show(rec.ans); savedNote(true);
+  }
+  $('aiClear').onclick=()=>{ try{ localStorage.removeItem(LAST_STORE); }catch(e){} textEl.value=''; $('aiFocus').value=''; images=[]; renderThumbs(); results.textContent=''; undBox.hidden=true; savedNote(false); $('aiClear').hidden=true; setStatus(''); textEl.focus(); };
+  loadLast();
+  detect();
+  } catch(err){ console.error(err); }
+})();
+</script>
+
+<a href="./" class="refresh-btn" id="refreshBtn" aria-label="רענון: טעינת הגרסה העדכנית של האתר" title="רענון - טעינת הגרסה העדכנית">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><polyline points="20 4 20 9 15 9"/></svg>
+</a>
+
+<script>
+// ---- כפתור רענון: טוען את הגרסה העדכנית מהשרת (בלי עותק שמור) וחוזר לאותו מקום בעמוד ----
+(function(){
+  try {
+    var btn = document.getElementById('refreshBtn');
+    if(!btn) return;
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      btn.classList.add('spin');
+      try { localStorage.setItem('examGuideScrollY_v1_algebra-solutions', String(window.scrollY)); } catch(err){}
+      try { sessionStorage.setItem('refreshScrollY', String(window.scrollY)); } catch(err){}
+      var url = location.pathname + '?r=' + Date.now();
+      location.replace(url);
+    });
+    // אחרי רענון: חזרה לאותו מקום, ומחיקת הפרמטר מהכתובת
+    var y = null;
+    try { y = sessionStorage.getItem('refreshScrollY'); sessionStorage.removeItem('refreshScrollY'); } catch(err){}
+    if(/[?&]r=\d+/.test(location.search)){
+      try { history.replaceState(null, '', location.pathname + location.hash); } catch(err){}
+    }
+    if(y !== null){
+      var go = function(){ window.scrollTo({top: parseFloat(y) || 0, behavior: 'instant'}); };
+      requestAnimationFrame(function(){ requestAnimationFrame(go); });
+      window.addEventListener('load', function(){ setTimeout(go, 80); });
+    }
+  } catch(err){}
+})();
+</script>
+</body>
+</html>
