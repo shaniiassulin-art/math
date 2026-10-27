@@ -190,7 +190,8 @@
         "split_cut": [
           3,
           46
-        ]
+        ],
+        "boxes_checked": true
       }
     },
     {
@@ -382,7 +383,8 @@
           7,
           40
         ],
-        "extra_by_bands": true
+        "extra_by_bands": true,
+        "boxes_checked": true
       }
     },
     {
@@ -621,7 +623,8 @@
         "split_cut": [
           3,
           37
-        ]
+        ],
+        "boxes_checked": true
       }
     },
     {
@@ -860,7 +863,8 @@
         "split_cut": [
           11,
           95
-        ]
+        ],
+        "boxes_checked": true
       }
     },
     {
@@ -1020,7 +1024,8 @@
         "split_cut": [
           3,
           37
-        ]
+        ],
+        "boxes_checked": true
       }
     },
     {
@@ -1188,7 +1193,8 @@
         "split_cut": [
           8,
           537
-        ]
+        ],
+        "boxes_checked": true
       }
     },
     {
@@ -1372,7 +1378,8 @@
         "split_cut": [
           3,
           37
-        ]
+        ],
+        "boxes_checked": true
       }
     },
     {
@@ -1556,7 +1563,8 @@
         "split_cut": [
           12,
           606
-        ]
+        ],
+        "boxes_checked": true
       }
     }
   ],

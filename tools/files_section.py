@@ -53,7 +53,7 @@ def locate(pdf, expected=None):
                     cands.append((pi, y0, int(digits)))
             else:
                 rw = max(words, key=lambda q: q[2])
-                m = re.match(r'^\.?(\d{1,2})\.?(?!\d)', rw[4])
+                m = re.match(r'^\.?(\d{1,2})\.?(?![\d,])', rw[4])
                 if m and rw[2] >= right - 30:
                     cands.append((pi, y0, int(m.group(1))))
     parts = {}
@@ -97,7 +97,7 @@ def cut_points(site_dir, f):
 
     def img(p):
         if p not in imgs:
-            imgs[p] = Image.open(os.path.join(site_dir, 'files', f'{f["id"]}-p{p}.webp')).convert('L')
+            imgs[p] = Image.open(os.path.join(site_dir, 'files', f'{f["id"]}-p{p}.webp')).convert('RGB')
         return imgs[p]
 
     others = [(p, y) for st in parts_of(lay).values() for p, y in st]
@@ -116,9 +116,11 @@ def cut_points(site_dir, f):
             if any(z0 <= ypt <= z1 for z0, z1 in zones):
                 break                                  # never cross into the previous question
             row = im.crop((xa, r, xb, r + 1)).tobytes()
-            n = len(row)
-            grey = sum(1 for v in row if 200 <= v <= 248) / n
-            dark = sum(1 for v in row if v < 140) / n
+            trip = [row[i:i + 3] for i in range(0, len(row), 3)]
+            n = len(trip)
+            # neutral grey only (a heading band or question box) - coloured highlights (yellow, cyan) are not bands
+            grey = sum(1 for R, G, B in trip if 175 <= R <= 248 and abs(R - G) < 8 and abs(G - B) < 8) / n
+            dark = sum(1 for R, G, B in trip if R + G + B < 420) / n
             if grey > 0.45:
                 band_top = r                           # grey heading band (topic title)
             elif dark > 0.002 and band_top is not None:
@@ -184,6 +186,56 @@ def extra_by_bands(site_dir, f, cfg):
     return True
 
 
+def grey_boxes(site_dir, f, min_h=14):
+    """Tops of the grey question boxes (neutral grey fill, not coloured highlights) over the whole file: [(page, top_pt)]."""
+    from PIL import Image
+    lay = f['layout']
+    W = lay['w']
+    cx0, cx1 = lay.get('crop', [0, W])
+    out = []
+    for p in range(1, lay['pages'] + 1):
+        im = Image.open(os.path.join(site_dir, 'files', f'{f["id"]}-p{p}.webp')).convert('RGB')
+        k = im.width / W
+        xa, xb = int(cx0 * k), int(cx1 * k)
+        run = None
+        for r in range(im.height + 1):
+            frac = 0.0
+            if r < im.height:
+                px = im.crop((xa, r, xb, r + 1)).tobytes()
+                trip = [px[i:i + 3] for i in range(0, len(px), 3)]
+                frac = sum(1 for R, G, B in trip if 175 <= R <= 248 and abs(R - G) < 8 and abs(G - B) < 8) / len(trip)
+            if frac > 0.6:
+                run = r if run is None else run
+            else:
+                if run is not None and (r - run) / k >= min_h:
+                    top, bottom = round(run / k, 1), round(r / k, 1)
+                    if out and out[-1][0] == p and top - out[-1][2] < 22:
+                        out[-1][2] = bottom          # same box, interrupted by a dark line of content
+                    else:
+                        out.append([p, top, bottom])
+                run = None
+    return [[p, t] for p, t, _ in out]
+
+
+def check_with_boxes(site_dir, f):
+    """Solution files put every question inside a grey box. If there is exactly one box per question and the
+    numbers found in the text disagree with the boxes, trust the boxes."""
+    lay = f['layout']
+    main = parts_of(lay).get('main', [])
+    if lay.get('split') or not f['id'].endswith('-solution') or not main:
+        return False
+    boxes = grey_boxes(site_dir, f)
+    if len(boxes) != len(main):
+        return False
+    off = [b for b, q in zip(boxes, main) if b[0] != q[0] or abs(b[1] + 12 - q[1]) > 25]
+    if not off:
+        return False
+    lay['parts'] = {'main': [[p, round(y + 12)] for p, y in boxes]}
+    lay['cuts'] = {'main': [[p, max(0.0, round(y - 3, 1))] for p, y in boxes]}
+    lay['by_boxes'] = True
+    return True
+
+
 def parts_of(lay):
     """{'main': [[p,y],...], 'extra': [...]} - also reads the older one-part layout ('starts')."""
     return lay.get('parts') or {'main': lay.get('starts', [])}
@@ -237,13 +289,48 @@ def linked_parts(f, cfg):
     return out
 
 
+def build_slides(f, titles, label):
+    """A presentation: every slide whole, and a bar with links at the first slide of each topic."""
+    e = html.escape
+    starts = {t['from']: (k, t) for k, t in enumerate(f['topics'], 1)}
+    jump = ' '.join(f'<a href="#file-{f["id"]}-t{k}">{e(t["title"])}</a>' for k, t in enumerate(f['topics'], 1))
+    body = ''
+    for p in range(1, f['pages'] + 1):
+        if p in starts:
+            k, t = starts[p]
+            links = ''.join(f'<a href="#{s}">{e(titles[s])}</a>' for s in t.get('links', []) if s in titles)
+            body += (f'\n        <div class="q-bar" id="file-{f["id"]}-t{k}"><span class="q-num">{e(t["title"])}</span>'
+                     + (f'<span class="q-lbl">{e(label)}</span>{links}' if links else '') + '</div>')
+        body += (f'\n        <div class="slide"><img src="files/{f["id"]}-p{p}.webp" alt="{e(f["title"])} - שקף {p}" '
+                 f'loading="lazy" decoding="async" width="1000" height="750"></div>')
+    return f'''
+      <div class="file-doc">
+        <h3 class="file-title" id="file-{f["id"]}">{e(f["title"])}</h3>
+        <div class="file-actions">
+          <a class="file-open" href="files/{e(f["pdf"])}" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
+          <span class="file-jump topics"><span>קפיצה לנושא:</span> {jump}</span>
+        </div>
+        <div class="file-pages slides">{body}
+        </div>
+      </div>'''
+
+
 def build(site, cfg, guide):
     e = html.escape
     titles = {}
-    for hid, txt in re.findall(r'<h3 class="q" id="([^"]+)"[^>]*>(.*?)</h3>', guide, re.S):
-        titles[hid] = re.sub(r'<[^>]+>', '', txt).strip()
+    for hid, attrs, txt in re.findall(r'<h3 class="q" id="([^"]+)"([^>]*)>(.*?)</h3>', guide, re.S):
+        plain = re.search(r'data-plain="([^"]*)"', attrs)
+        if plain:
+            titles[hid] = html.unescape(plain.group(1)).strip()
+        else:
+            txt = re.sub(r'<annotation[^>]*>.*?</annotation>', '', txt, flags=re.S)
+            titles[hid] = re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', txt))).strip()
     docs, toc = '', ''
     for f in cfg['files']:
+        if f.get('kind') == 'slides':
+            docs += build_slides(f, titles, cfg.get('link_label', 'במדריך:'))
+            toc += f'\n            <li><a href="#file-{f["id"]}" data-ex="files">{html.escape(f["title"])}</a></li>'
+            continue
         lay = f['layout']
         qmap = cfg['maps'].get(f.get('map') or '', {})
         linked = linked_parts(f, cfg)
@@ -264,7 +351,7 @@ def build(site, cfg, guide):
                 tag = 'q' if part == 'main' else 'x'
                 links = ''.join(f'<a href="#{s}">{e(titles[s])}</a>' for s in qmap[part].get(str(q), []) if s in titles)
                 body += (f'\n        <div class="q-bar" id="file-{f["id"]}-{tag}{q}"><span class="q-num">{PART_NAMES[part]} {q}</span>'
-                         + (f'<span class="q-lbl">במדריך:</span>{links}' if links else '<span class="q-lbl">אין לשאלה הזו סעיף במדריך</span>')
+                         + (f'<span class="q-lbl">{e(cfg.get("link_label", "במדריך:"))}</span>{links}' if links else '<span class="q-lbl">אין לשאלה הזו סעיף במדריך</span>')
                          + '</div>')
             for p, y0, y1 in segs:
                 first = p not in seen_pages
@@ -337,6 +424,12 @@ CSS = '''<!-- files-css:start -->
   .q-bar a{ display:inline-flex; align-items:center; min-height:40px; padding:4px 12px; border-radius:100px;
     background:#fff; border:1px solid #C9D1E6; color:var(--indigo-2); text-decoration:none; font-weight:600; }
   .q-bar a:hover{ border-color:var(--gold); }
+  .file-pages.slides{ background:var(--bg); border:none; }
+  .slide{ margin:0 0 10px; border:1px solid var(--line); border-radius:8px; overflow:hidden; background:#fff; line-height:0; }
+  .slide img{ display:block; width:100%; height:auto; }
+  .file-pages.slides .q-bar{ border:1px solid #D5DBEA; border-radius:10px; margin:22px 0 10px; }
+  .file-jump.topics a{ min-width:0; padding:4px 10px; }
+  @media (max-width:700px){ .file-pages.slides{ width:auto; } }
   @media print{ .file-actions, .q-bar{ display:none; } }
 </style>
 <!-- files-css:end -->
@@ -358,6 +451,8 @@ def main(site):
     cfg_path = os.path.join(d, 'files', 'files.json')
     cfg = json.load(open(cfg_path, encoding='utf-8'))
     for f in cfg['files']:
+        if f.get('kind') == 'slides':
+            continue
         if 'layout' not in f or '--relocate' in sys.argv:
             f['layout'] = locate(os.path.join(d, 'files', f['pdf']), f.get('questions'))
         if 'crop' not in f['layout'] or '--relocate' in sys.argv:
@@ -365,8 +460,14 @@ def main(site):
         if 'cuts' not in f['layout'] or '--relocate' in sys.argv:
             f['layout']['cuts'], f['layout']['split_cut'] = cut_points(d, f)
     for f in cfg['files']:
+        if f.get('kind') == 'slides':
+            continue
         if not f['layout'].get('extra_by_bands') or '--relocate' in sys.argv:
             extra_by_bands(d, f, cfg)
+        if not f['layout'].get('by_boxes') and not f['layout'].get('boxes_checked') or '--relocate' in sys.argv:
+            if check_with_boxes(d, f):
+                print(f"  {f['id']}: question positions taken from the grey boxes")
+            f['layout']['boxes_checked'] = True
     json.dump(cfg, open(cfg_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
     path = os.path.join(d, 'index.html')
     page = open(path, encoding='utf-8').read()
@@ -377,6 +478,9 @@ def main(site):
     open(path, 'w', encoding='utf-8').write(page)
     print('files section updated:', site)
     for f in cfg['files']:
+        if f.get('kind') == 'slides':
+            print(f"  {f['id']:20} slides={f['pages']}, topics={len(f['topics'])}")
+            continue
         print(f"  {f['id']:20} " + ', '.join(f"{k}={len(v)}" for k, v in parts_of(f['layout']).items()) + f"  links: {sorted(linked_parts(f, cfg)) or '-'}")
 
 
