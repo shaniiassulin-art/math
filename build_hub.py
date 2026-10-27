@@ -106,12 +106,13 @@ TOPBAR_ASSETS = ("""<!-- hub:topbar-assets:start -->
     background:#1F2A47; font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; box-shadow:0 1px 0 rgba(255,255,255,.08); }
   .hub-topbar .hub-home{ display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#F5F0E1; text-decoration:none; font-weight:600; font-size:.95rem; }
   .hub-topbar .hub-home > span{ color:#E3B95C; font-weight:700; }
-  .hub-refresh{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 16px; border-radius:100px;
-    border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#F5F0E1;
-    font-family:inherit; font-weight:600; font-size:.92rem; cursor:pointer; }
+  .hub-refresh{ position:relative; display:inline-flex; align-items:center; gap:5px; min-height:30px; padding:0 11px; border-radius:100px;
+    border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.07); color:#F5F0E1;
+    font-family:inherit; font-weight:600; font-size:.82rem; line-height:1; cursor:pointer; }
+  .hub-refresh::after{ content:""; position:absolute; inset:-8px -4px; }   /* אזור לחיצה נוח (44px) גם כשהכפתור נראה קטן */
   .hub-refresh:hover{ background:rgba(255,255,255,.16); }
   .hub-refresh:focus-visible, .hub-topbar .hub-home:focus-visible{ outline:3px solid #E3B95C; outline-offset:2px; border-radius:100px; }
-  .hub-refresh svg{ width:17px; height:17px; }
+  .hub-refresh svg{ width:14px; height:14px; }
   .hub-refresh.spin svg{ animation:hubSpin .8s linear infinite; }
   @keyframes hubSpin{ to{ transform:rotate(360deg); } }
   @media (prefers-reduced-motion: reduce){ .hub-refresh.spin svg{ animation:none; } }
