@@ -289,107 +289,119 @@ def linked_parts(f, cfg):
     return out
 
 
-def build_slides(f, titles, label):
-    """A presentation: every slide whole, and a bar with links at the first slide of each topic."""
+TYPE_LABELS = {'q': 'שאלות', 's': 'פתרונות', 'p': 'מצגות'}
+
+
+def file_type(f):
+    if f.get('kind') == 'slides':
+        return 'p'
+    return 's' if f['id'].endswith('-solution') else 'q'
+
+
+def short_label(f):
+    if f.get('short'):
+        return f['short']
+    m = re.search(r'(פתרון )?תרגיל (כיתה|בית) \d+', f['title'])
+    if m:
+        return m.group(0)
+    return f['title'].split(' - ')[0].strip()
+
+
+def render_doc(f):
+    """The whole file, open: every page as an exact image (A4 pages cropped to the content width), no links."""
     e = html.escape
-    starts = {t['from']: (k, t) for k, t in enumerate(f['topics'], 1)}
-    jump = ' '.join(f'<a href="#file-{f["id"]}-t{k}">{e(t["title"])}</a>' for k, t in enumerate(f['topics'], 1))
-    body = ''
-    for p in range(1, f['pages'] + 1):
-        if p in starts:
-            k, t = starts[p]
-            links = ''.join(f'<a href="#{s}">{e(titles[s])}</a>' for s in t.get('links', []) if s in titles)
-            body += (f'\n        <div class="q-bar" id="file-{f["id"]}-t{k}"><span class="q-num">{e(t["title"])}</span>'
-                     + (f'<span class="q-lbl">{e(label)}</span>{links}' if links else '') + '</div>')
-        body += (f'\n        <div class="slide"><img src="files/{f["id"]}-p{p}.webp" alt="{e(f["title"])} - שקף {p}" '
-                 f'loading="lazy" decoding="async" width="1000" height="750"></div>')
+    if f.get('kind') == 'slides':
+        body = ''.join(f'\n          <div class="slide"><img src="files/{f["id"]}-p{p}.webp" alt="{e(f["title"])} - שקף {p}" '
+                       f'loading="lazy" decoding="async" width="1000" height="750"></div>' for p in range(1, f['pages'] + 1))
+        pages = f'<div class="file-pages slides">{body}\n        </div>'
+        hint = ''
+    else:
+        lay = f['layout']
+        W, H = lay['w'], lay['h']
+        cx0, cx1 = lay.get('crop', [0, W])
+        cw = cx1 - cx0
+        body = ''
+        for p in range(1, lay['pages'] + 1):
+            y1 = lay['end'][1] if p == lay['pages'] else H
+            cls = 'file-slice page-start' if p > 1 else 'file-slice'
+            body += (f'\n          <div class="{cls}" style="aspect-ratio:{cw:.1f} / {y1:.1f}">'
+                     f'<img src="files/{f["id"]}-p{p}.webp" alt="{e(f["title"])} - עמוד {p}" loading="lazy" decoding="async" '
+                     f'style="width:{W / cw * 100:.3f}%;margin-left:-{cx0 / cw * 100:.3f}%"></div>')
+        pages = f'<div class="file-scroll"><div class="file-pages">{body}\n        </div></div>'
+        hint = '\n        <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>'
     return f'''
-      <div class="file-doc">
-        <h3 class="file-title" id="file-{f["id"]}">{e(f["title"])}</h3>
+      <div class="file-doc" id="file-{f["id"]}" data-type="{file_type(f)}">
+        <h3 class="file-title">{e(f["title"])}</h3>
         <div class="file-actions">
           <a class="file-open" href="files/{e(f["pdf"])}" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump topics"><span>קפיצה לנושא:</span> {jump}</span>
-        </div>
-        <div class="file-pages slides">{body}
-        </div>
+        </div>{hint}
+        {pages}
       </div>'''
 
 
 def build(site, cfg, guide):
+    """Files section: choose the type (questions / solutions / presentations), then the file; one file is shown at a time."""
     e = html.escape
-    titles = {}
-    for hid, attrs, txt in re.findall(r'<h3 class="q" id="([^"]+)"([^>]*)>(.*?)</h3>', guide, re.S):
-        plain = re.search(r'data-plain="([^"]*)"', attrs)
-        if plain:
-            titles[hid] = html.unescape(plain.group(1)).strip()
-        else:
-            txt = re.sub(r'<annotation[^>]*>.*?</annotation>', '', txt, flags=re.S)
-            titles[hid] = re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', txt))).strip()
-    docs, toc = '', ''
+    types = []
     for f in cfg['files']:
-        if f.get('kind') == 'slides':
-            docs += build_slides(f, titles, cfg.get('link_label', 'במדריך:'))
-            toc += f'\n            <li><a href="#file-{f["id"]}" data-ex="files">{html.escape(f["title"])}</a></li>'
-            continue
-        lay = f['layout']
-        qmap = cfg['maps'].get(f.get('map') or '', {})
-        linked = linked_parts(f, cfg)
-        W = lay['w']
-        cx0, cx1 = lay.get('crop', [0, W])
-        cw = cx1 - cx0
-        jump = ''
-        for part in ('main', 'extra'):
-            if part in linked:
-                tag = 'q' if part == 'main' else 'x'
-                nums = ' '.join(f'<a href="#file-{f["id"]}-{tag}{n}">{n}</a>' for n in range(1, len(parts_of(lay)[part]) + 1))
-                jump += f'\n          <span class="file-jump"><span>{PART_JUMP[part]}</span> {nums}</span>'
-        note = '' if linked else (f'\n        <p class="file-note">{e(f["note"])}</p>' if f.get('note') else '')
-        body, seen_pages = '', set()
-        for label, segs in slices(lay):
-            if label and label[0] in linked:
-                part, q = label
-                tag = 'q' if part == 'main' else 'x'
-                links = ''.join(f'<a href="#{s}">{e(titles[s])}</a>' for s in qmap[part].get(str(q), []) if s in titles)
-                body += (f'\n        <div class="q-bar" id="file-{f["id"]}-{tag}{q}"><span class="q-num">{PART_NAMES[part]} {q}</span>'
-                         + (f'<span class="q-lbl">{e(cfg.get("link_label", "במדריך:"))}</span>{links}' if links else '<span class="q-lbl">אין לשאלה הזו סעיף במדריך</span>')
-                         + '</div>')
-            for p, y0, y1 in segs:
-                first = p not in seen_pages
-                seen_pages.add(p)
-                alt = f'{e(f["title"])} - עמוד {p}' if first else ''
-                cls = 'file-slice page-start' if first and p > 1 else 'file-slice'
-                body += (f'\n        <div class="{cls}" style="aspect-ratio:{cw:.1f} / {y1 - y0:.1f}">'
-                         f'<img src="files/{f["id"]}-p{p}.webp" alt="{alt}" loading="lazy" decoding="async" '
-                         f'style="width:{W / cw * 100:.3f}%;margin-left:-{cx0 / cw * 100:.3f}%;margin-top:-{y0 / cw * 100:.3f}%"></div>')
-        docs += f'''
-      <div class="file-doc">
-        <h3 class="file-title" id="file-{f["id"]}">{e(f["title"])}</h3>
-        <div class="file-actions">
-          <a class="file-open" href="files/{e(f["pdf"])}" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>{jump}
-        </div>{note}
-        <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
-        <div class="file-scroll"><div class="file-pages">{body}
-        </div></div>
-      </div>'''
-        toc += f'\n            <li><a href="#file-{f["id"]}" data-ex="files">{e(f["title"])}</a></li>'
+        t = file_type(f)
+        if t not in types:
+            types.append(t)
+    type_btns = ''.join(f'<button type="button" class="ff-type" data-type="{t}" aria-pressed="false">{TYPE_LABELS[t]}</button>'
+                        for t in types)
+    groups = ''
+    for t in types:
+        chips = ''.join(f'<button type="button" class="ff-file" data-file="{e(f["id"])}" aria-pressed="false">{e(short_label(f))}</button>'
+                        for f in cfg['files'] if file_type(f) == t)
+        groups += f'\n          <div class="ff-group" data-type="{t}">{chips}</div>'
+    docs = ''.join(render_doc(f) for f in cfg['files'])
     section = f'''<!-- files-section:start -->
     <section class="files-section" id="files">
       <div class="ex-header">
         <div class="ex-badge" aria-hidden="true">📄</div>
         <h2 class="files-title">{e(cfg["section_title"])}</h2>
       </div>
-      <p class="ex-intro">{e(cfg["section_intro"])}</p>{docs}
+      <p class="ex-intro">{e(cfg["section_intro"])}</p>
+      <div class="files-filter" id="filesFilter" hidden>
+        <div class="ff-types{' single' if len(types) == 1 else ''}" role="group" aria-label="סוג הקובץ">{type_btns}</div>
+        <div class="ff-files" role="group" aria-label="בחירת קובץ">{groups}
+        </div>
+      </div>{docs}
+      <script>
+      (function(){{
+        try {{
+          var box = document.getElementById('filesFilter'); if(!box) return;
+          var KEY = 'filesView_' + location.pathname;
+          var docs = [].slice.call(document.querySelectorAll('.files-section .file-doc'));
+          var types = [].slice.call(box.querySelectorAll('.ff-type'));
+          var state = {{}};
+          try {{ state = JSON.parse(localStorage.getItem(KEY) || '{{}}') || {{}}; }} catch(e){{ state = {{}}; }}
+          function firstOf(t){{ var d = docs.filter(function(x){{ return x.dataset.type === t; }})[0]; return d ? d.id.slice(5) : null; }}
+          function show(t, id){{
+            if(!t) t = types[0].dataset.type;
+            if(!id || !document.getElementById('file-' + id) || document.getElementById('file-' + id).dataset.type !== t) id = (state.files || {{}})[t] || firstOf(t);
+            if(!document.getElementById('file-' + id)) id = firstOf(t);
+            state.type = t; state.files = state.files || {{}}; state.files[t] = id;
+            types.forEach(function(b){{ b.setAttribute('aria-pressed', String(b.dataset.type === t)); }});
+            [].forEach.call(box.querySelectorAll('.ff-group'), function(g){{ g.hidden = g.dataset.type !== t; }});
+            [].forEach.call(box.querySelectorAll('.ff-file'), function(b){{ b.setAttribute('aria-pressed', String(b.dataset.file === id)); }});
+            docs.forEach(function(d){{ d.hidden = d.id !== 'file-' + id; }});
+            try {{ localStorage.setItem(KEY, JSON.stringify(state)); }} catch(e){{}}
+          }}
+          types.forEach(function(b){{ b.addEventListener('click', function(){{ show(b.dataset.type); }}); }});
+          [].forEach.call(box.querySelectorAll('.ff-file'), function(b){{
+            b.addEventListener('click', function(){{ show(b.closest('.ff-group').dataset.type, b.dataset.file); }});
+          }});
+          box.hidden = false;
+          show(state.type, state.type && state.files ? state.files[state.type] : null);
+        }} catch(err){{}}
+      }})();
+      </script>
     </section>
     <!-- files-section:end -->
 '''
     toc_group = f'''<!-- files-toc:start -->
-      <li class="toc-group">
-        <details class="toc-details" id="details-files">
-          <summary><a href="#files" class="top-link" data-ex="files"><span class="num">📄</span><span>{e(cfg["section_title"])}</span></a></summary>
-          <ul class="sub-toc">{toc}
-          </ul>
-        </details>
-      </li>
+      <li><a href="#files"><span class="num">📄</span><span>{e(cfg["section_title"])}</span></a></li>
       <!-- files-toc:end -->
 '''
     return section, toc_group
@@ -400,7 +412,7 @@ CSS = '''<!-- files-css:start -->
   /* ===== קבצי הקורס ===== */
   .files-section{ margin-top:70px; padding-top:30px; border-top:1px solid var(--line); scroll-margin-top:60px; }
   .files-title{ font-size:1.85rem; margin:0; }
-  .file-doc{ margin:30px 0 44px; }
+  .file-doc{ margin:22px 0 44px; }
   .file-title{ font-size:1.3rem; margin:0 0 8px; scroll-margin-top:70px; }
   .file-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-bottom:12px; font-size:.92rem; }
   .file-open{ display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border-radius:100px;
@@ -430,7 +442,19 @@ CSS = '''<!-- files-css:start -->
   .file-pages.slides .q-bar{ border:1px solid #D5DBEA; border-radius:10px; margin:22px 0 10px; }
   .file-jump.topics a{ min-width:0; padding:4px 10px; }
   @media (max-width:700px){ .file-pages.slides{ width:auto; } }
-  @media print{ .file-actions, .q-bar{ display:none; } }
+  /* בחירת קובץ: סוג ואז קובץ */
+  .files-filter{ margin:18px 0 6px; display:grid; gap:10px; }
+  .ff-types{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ff-types.single{ display:none; }
+  .ff-type{ min-height:44px; padding:0 22px; border-radius:100px; border:1.5px solid var(--indigo-2); background:var(--paper);
+    color:var(--indigo-2); font-family:'Assistant',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; }
+  .ff-type[aria-pressed="true"]{ background:var(--indigo-2); color:#fff; }
+  .ff-group{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ff-file{ min-height:44px; padding:0 16px; border-radius:10px; border:1px solid var(--line); background:var(--paper);
+    color:var(--ink); font-family:'Assistant',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; }
+  .ff-file[aria-pressed="true"]{ border-color:var(--gold); background:var(--gold-soft); color:var(--gold-text); box-shadow:inset 0 0 0 1px var(--gold); }
+  .file-doc[hidden], .ff-group[hidden]{ display:none !important; }
+  @media print{ .file-actions, .files-filter{ display:none; } }
 </style>
 <!-- files-css:end -->
 '''

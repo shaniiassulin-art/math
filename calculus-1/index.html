@@ -927,7 +927,7 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
   /* ===== קבצי הקורס ===== */
   .files-section{ margin-top:70px; padding-top:30px; border-top:1px solid var(--line); scroll-margin-top:60px; }
   .files-title{ font-size:1.85rem; margin:0; }
-  .file-doc{ margin:30px 0 44px; }
+  .file-doc{ margin:22px 0 44px; }
   .file-title{ font-size:1.3rem; margin:0 0 8px; scroll-margin-top:70px; }
   .file-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-bottom:12px; font-size:.92rem; }
   .file-open{ display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border-radius:100px;
@@ -957,12 +957,26 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
   .file-pages.slides .q-bar{ border:1px solid #D5DBEA; border-radius:10px; margin:22px 0 10px; }
   .file-jump.topics a{ min-width:0; padding:4px 10px; }
   @media (max-width:700px){ .file-pages.slides{ width:auto; } }
-  @media print{ .file-actions, .q-bar{ display:none; } }
+  /* בחירת קובץ: סוג ואז קובץ */
+  .files-filter{ margin:18px 0 6px; display:grid; gap:10px; }
+  .ff-types{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ff-types.single{ display:none; }
+  .ff-type{ min-height:44px; padding:0 22px; border-radius:100px; border:1.5px solid var(--indigo-2); background:var(--paper);
+    color:var(--indigo-2); font-family:'Assistant',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; }
+  .ff-type[aria-pressed="true"]{ background:var(--indigo-2); color:#fff; }
+  .ff-group{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ff-file{ min-height:44px; padding:0 16px; border-radius:10px; border:1px solid var(--line); background:var(--paper);
+    color:var(--ink); font-family:'Assistant',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; }
+  .ff-file[aria-pressed="true"]{ border-color:var(--gold); background:var(--gold-soft); color:var(--gold-text); box-shadow:inset 0 0 0 1px var(--gold); }
+  .file-doc[hidden], .ff-group[hidden]{ display:none !important; }
+  @media print{ .file-actions, .files-filter{ display:none; } }
 </style>
 <!-- files-css:end -->
 </head>
 <body>
-<div class="hub-back-bar" style="background:#1F2A47;padding:0 16px;font-family:'Assistant',system-ui,sans-serif;"><a href="../" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#F5F0E1;text-decoration:none;font-size:.95rem;font-weight:600;"><span aria-hidden="true" style="color:#E3B95C;">⌂</span> כל אתרי המתמטיקה</a></div>
+<!-- hub:topbar:start -->
+<div class="hub-topbar" role="navigation" aria-label="אתר המתמטיקה"><a class="hub-home" href="../"><span aria-hidden="true">⌂</span> כל אתרי המתמטיקה</a><button type="button" class="hub-refresh" id="hubRefresh" aria-label="רענון: טעינת הגרסה העדכנית של האתר" title="רענון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><polyline points="20 4 20 9 15 9"/></svg><span>רענון</span></button></div>
+<!-- hub:topbar:end -->
 
 <input type="checkbox" id="menuToggle" class="menu-toggle-input">
 <div class="layout">
@@ -1030,21 +1044,7 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
 <li><a href="#ex2-s14" data-ex="2">14. "עולה ממש בתוך עולה חלש" - איפה הנימוק נשבר</a></li>
 </ul></details></li>
     <!-- files-toc:start -->
-      <li class="toc-group">
-        <details class="toc-details" id="details-files">
-          <summary><a href="#files" class="top-link" data-ex="files"><span class="num">📄</span><span>קבצי הקורס</span></a></summary>
-          <ul class="sub-toc">
-            <li><a href="#file-hw1" data-ex="files">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1</a></li>
-            <li><a href="#file-hw1-solution" data-ex="files">חדו״א 1 - פתרון תרגיל בית 1</a></li>
-            <li><a href="#file-hw2" data-ex="files">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2</a></li>
-            <li><a href="#file-hw2-solution" data-ex="files">חדו״א 1 - פתרון תרגיל בית 2</a></li>
-            <li><a href="#file-hw3" data-ex="files">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3</a></li>
-            <li><a href="#file-hw3-solution" data-ex="files">חדו״א 1 - פתרון תרגיל בית 3</a></li>
-            <li><a href="#file-hw4" data-ex="files">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4</a></li>
-            <li><a href="#file-hw4-solution" data-ex="files">חדו״א 1 - פתרון תרגיל בית 4</a></li>
-          </ul>
-        </details>
-      </li>
+      <li><a href="#files"><span class="num">📄</span><span>קבצי הקורס</span></a></li>
       <!-- files-toc:end -->
 </ul>
     <div class="toc-note">טיפ: אפשר לחפש בעמוד עם Ctrl+F - כל התוכן נמצא באותו דף אחד.</div>
@@ -2002,432 +2002,207 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
         <div class="ex-badge" aria-hidden="true">📄</div>
         <h2 class="files-title">קבצי הקורס</h2>
       </div>
-      <p class="ex-intro">הקבצים המקוריים של הקורס, בדיוק כפי שהם. לפני כל שאלה יש קישור לסעיף במדריך שמסביר איך פותרים אותה.</p>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw1">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1</h3>
+      <p class="ex-intro">הקבצים המקוריים של הקורס, בדיוק כפי שהם. בחרי שאלות או פתרונות, ואז את התרגיל.</p>
+      <div class="files-filter" id="filesFilter" hidden>
+        <div class="ff-types" role="group" aria-label="סוג הקובץ"><button type="button" class="ff-type" data-type="q" aria-pressed="false">שאלות</button><button type="button" class="ff-type" data-type="s" aria-pressed="false">פתרונות</button></div>
+        <div class="ff-files" role="group" aria-label="בחירת קובץ">
+          <div class="ff-group" data-type="q"><button type="button" class="ff-file" data-file="hw1" aria-pressed="false">תרגיל בית 1</button><button type="button" class="ff-file" data-file="hw2" aria-pressed="false">תרגיל בית 2</button><button type="button" class="ff-file" data-file="hw3" aria-pressed="false">תרגיל בית 3</button><button type="button" class="ff-file" data-file="hw4" aria-pressed="false">תרגיל בית 4</button></div>
+          <div class="ff-group" data-type="s"><button type="button" class="ff-file" data-file="hw1-solution" aria-pressed="false">פתרון תרגיל בית 1</button><button type="button" class="ff-file" data-file="hw2-solution" aria-pressed="false">פתרון תרגיל בית 2</button><button type="button" class="ff-file" data-file="hw3-solution" aria-pressed="false">פתרון תרגיל בית 3</button><button type="button" class="ff-file" data-file="hw4-solution" aria-pressed="false">פתרון תרגיל בית 4</button></div>
+        </div>
+      </div>
+      <div class="file-doc" id="file-hw1" data-type="q">
+        <h3 class="file-title">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw1.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-hw1-q1">1</a> <a href="#file-hw1-q2">2</a> <a href="#file-hw1-q3">3</a> <a href="#file-hw1-q4">4</a> <a href="#file-hw1-q5">5</a> <a href="#file-hw1-q6">6</a> <a href="#file-hw1-q7">7</a> <a href="#file-hw1-q8">8</a> <a href="#file-hw1-q9">9</a></span>
-          <span class="file-jump"><span>תרגול נוסף:</span> <a href="#file-hw1-x1">1</a> <a href="#file-hw1-x2">2</a> <a href="#file-hw1-x3">3</a> <a href="#file-hw1-x4">4</a> <a href="#file-hw1-x5">5</a> <a href="#file-hw1-x6">6</a> <a href="#file-hw1-x7">7</a> <a href="#file-hw1-x8">8</a> <a href="#file-hw1-x9">9</a> <a href="#file-hw1-x10">10</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:549.5 / 241.3"><img src="files/hw1-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 1" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s1">1. איך מוצאים תחום הגדרה טבעי?</a><a href="#ex1-s3">3. תחום של tan ו-cot - הוצאת נקודות שחוזרות במחזוריות</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 145.4"><img src="files/hw1-p1.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-43.913%"></div>
-        <div class="q-bar" id="file-hw1-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. איך משרטטים גרף בעזרת הזזות, מתיחות ושיקופים?</a><a href="#ex1-s5">5. ארגומנט עם מקדם: הוצאת גורם משותף לפני ההזזה</a><a href="#ex1-s6">6. מחזור, תמונה ואסימפטוטה אחרי טרנספורמציה</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 78.7"><img src="files/hw1-p1.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-70.373%"></div>
-        <div class="q-bar" id="file-hw1-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. איך בודקים אם פונקציה זוגית, אי-זוגית או אף אחת מהן?</a><a href="#ex1-s8">8. זוגיות של פונקציה מורכבת - פנימית וחיצונית</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 92.6"><img src="files/hw1-p1.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-84.695%"></div>
-        <div class="q-bar" id="file-hw1-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. הוכחה כללית: סכום ומכפלה של פונקציות זוגיות/אי-זוגיות</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 105.2"><img src="files/hw1-p1.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-101.547%"></div>
-        <div class="q-bar" id="file-hw1-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. חישוב הרכבה f∘g ו-g∘f</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 128.8"><img src="files/hw1-p1.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-120.692%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:549.5 / 42.0"><img src="files/hw1-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 2" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s11">11. פירוק פונקציה להרכבה f∘g∘h</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 62.5"><img src="files/hw1-p2.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-7.643%"></div>
-        <div class="q-bar" id="file-hw1-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. בניית מודל מורכב: גודל שתלוי בגודל שתלוי בזמן</a><a href="#ex1-s15">15. הצבה במודל ושאלות &quot;פי כמה&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 222.5"><img src="files/hw1-p2.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-19.017%"></div>
-        <div class="q-bar" id="file-hw1-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. בניית מודל מורכב: גודל שתלוי בגודל שתלוי בזמן</a><a href="#ex1-s15">15. הצבה במודל ושאלות &quot;פי כמה&quot;</a><a href="#ex1-s16">16. מתי מגיעים לערך מסוים? - פתרון משוואה במודל</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 244.0"><img src="files/hw1-p2.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-59.509%"></div>
-        <div class="q-bar" id="file-hw1-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s18">18. איתור טעות בסדר הטרנספורמציות</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 221.0"><img src="files/hw1-p2.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-103.913%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:549.5 / 46.0"><img src="files/hw1-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 3" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 57.5"><img src="files/hw1-p3.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-8.371%"></div>
-        <div class="q-bar" id="file-hw1-x1"><span class="q-num">תרגול נוסף · שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s1">1. איך מוצאים תחום הגדרה טבעי?</a><a href="#ex1-s2">2. תנאי עם שבר או ביטוי ריבועי - טבלת סימנים</a><a href="#ex1-s3">3. תחום של tan ו-cot - הוצאת נקודות שחוזרות במחזוריות</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 298.1"><img src="files/hw1-p3.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-18.835%"></div>
-        <div class="q-bar" id="file-hw1-x2"><span class="q-num">תרגול נוסף · שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s19">19. חוקי לוגריתמים ותחום הגדרה - מתי מותר לפשט?</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 390.4"><img src="files/hw1-p3.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-73.085%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:549.5 / 44.5"><img src="files/hw1-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 4" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-x3"><span class="q-num">תרגול נוסף · שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. איך משרטטים גרף בעזרת הזזות, מתיחות ושיקופים?</a><a href="#ex1-s5">5. ארגומנט עם מקדם: הוצאת גורם משותף לפני ההזזה</a><a href="#ex1-s6">6. מחזור, תמונה ואסימפטוטה אחרי טרנספורמציה</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 165.5"><img src="files/hw1-p4.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-8.098%"></div>
-        <div class="q-bar" id="file-hw1-x4"><span class="q-num">תרגול נוסף · שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. איך משרטטים גרף בעזרת הזזות, מתיחות ושיקופים?</a><a href="#ex1-s6">6. מחזור, תמונה ואסימפטוטה אחרי טרנספורמציה</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 124.4"><img src="files/hw1-p4.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-38.217%"></div>
-        <div class="q-bar" id="file-hw1-x5"><span class="q-num">תרגול נוסף · שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. איך בודקים אם פונקציה זוגית, אי-זוגית או אף אחת מהן?</a><a href="#ex1-s8">8. זוגיות של פונקציה מורכבת - פנימית וחיצונית</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 104.6"><img src="files/hw1-p4.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-60.855%"></div>
-        <div class="q-bar" id="file-hw1-x6"><span class="q-num">תרגול נוסף · שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. חישוב הרכבה f∘g ו-g∘f</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 122.0"><img src="files/hw1-p4.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-79.891%"></div>
-        <div class="q-bar" id="file-hw1-x7"><span class="q-num">תרגול נוסף · שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s11">11. פירוק פונקציה להרכבה f∘g∘h</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 93.0"><img src="files/hw1-p4.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-102.093%"></div>
-        <div class="q-bar" id="file-hw1-x8"><span class="q-num">תרגול נוסף · שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s12">12. הרכבה וזוגיות - הוכחה כללית</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 138.0"><img src="files/hw1-p4.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-119.017%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:549.5 / 59.0"><img src="files/hw1-p5.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 5" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-x9"><span class="q-num">תרגול נוסף · שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. הוכחה כללית: סכום ומכפלה של פונקציות זוגיות/אי-זוגיות</a><a href="#ex1-s13">13. שאלה אמריקאית: &quot;מה לא ניתן להסיק?&quot; - זוגיות והרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 134.3"><img src="files/hw1-p5.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-10.737%"></div>
-        <div class="q-bar" id="file-hw1-x10"><span class="q-num">תרגול נוסף · שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. בניית מודל מורכב: גודל שתלוי בגודל שתלוי בזמן</a><a href="#ex1-s15">15. הצבה במודל ושאלות &quot;פי כמה&quot;</a><a href="#ex1-s17">17. האם המודל עומד בדרישה? - ערך מרבי בעזרת החסם של cos</a></div>
-        <div class="file-slice" style="aspect-ratio:549.5 / 585.9"><img src="files/hw1-p5.webp" alt="" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%;margin-top:-35.177%"></div>
+          <div class="file-slice" style="aspect-ratio:549.5 / 792.0"><img src="files/hw1-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 1" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:549.5 / 792.0"><img src="files/hw1-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 2" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:549.5 / 792.0"><img src="files/hw1-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 3" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:549.5 / 792.0"><img src="files/hw1-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 4" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:549.5 / 779.2"><img src="files/hw1-p5.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 1 - עמוד 5" loading="lazy" decoding="async" style="width:111.374%;margin-left:-7.261%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw1-solution">חדו״א 1 - פתרון תרגיל בית 1</h3>
+      <div class="file-doc" id="file-hw1-solution" data-type="s">
+        <h3 class="file-title">חדו״א 1 - פתרון תרגיל בית 1</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw1-solution.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-hw1-solution-q1">1</a> <a href="#file-hw1-solution-q2">2</a> <a href="#file-hw1-solution-q3">3</a> <a href="#file-hw1-solution-q4">4</a> <a href="#file-hw1-solution-q5">5</a> <a href="#file-hw1-solution-q6">6</a> <a href="#file-hw1-solution-q7">7</a> <a href="#file-hw1-solution-q8">8</a> <a href="#file-hw1-solution-q9">9</a></span>
-          <span class="file-jump"><span>תרגול נוסף:</span> <a href="#file-hw1-solution-x1">1</a> <a href="#file-hw1-solution-x2">2</a> <a href="#file-hw1-solution-x3">3</a> <a href="#file-hw1-solution-x4">4</a> <a href="#file-hw1-solution-x5">5</a> <a href="#file-hw1-solution-x6">6</a> <a href="#file-hw1-solution-x7">7</a> <a href="#file-hw1-solution-x8">8</a> <a href="#file-hw1-solution-x9">9</a> <a href="#file-hw1-solution-x10">10</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:505.0 / 94.8"><img src="files/hw1-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 1" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s1">1. איך מוצאים תחום הגדרה טבעי?</a><a href="#ex1-s3">3. תחום של tan ו-cot - הוצאת נקודות שחוזרות במחזוריות</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 567.2"><img src="files/hw1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-18.772%"></div>
-        <div class="q-bar" id="file-hw1-solution-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. איך משרטטים גרף בעזרת הזזות, מתיחות ושיקופים?</a><a href="#ex1-s5">5. ארגומנט עם מקדם: הוצאת גורם משותף לפני ההזזה</a><a href="#ex1-s6">6. מחזור, תמונה ואסימפטוטה אחרי טרנספורמציה</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 179.9"><img src="files/hw1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-131.089%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 2" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 225.0"><img src="files/hw1-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 3" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. איך בודקים אם פונקציה זוגית, אי-זוגית או אף אחת מהן?</a><a href="#ex1-s8">8. זוגיות של פונקציה מורכבת - פנימית וחיצונית</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 410.0"><img src="files/hw1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-44.554%"></div>
-        <div class="q-bar" id="file-hw1-solution-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. הוכחה כללית: סכום ומכפלה של פונקציות זוגיות/אי-זוגיות</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 206.9"><img src="files/hw1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-125.743%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 287.0"><img src="files/hw1-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 4" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. חישוב הרכבה f∘g ו-g∘f</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 218.0"><img src="files/hw1-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-56.832%"></div>
-        <div class="q-bar" id="file-hw1-solution-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s11">11. פירוק פונקציה להרכבה f∘g∘h</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 336.9"><img src="files/hw1-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-100.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 40.0"><img src="files/hw1-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 5" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. בניית מודל מורכב: גודל שתלוי בגודל שתלוי בזמן</a><a href="#ex1-s15">15. הצבה במודל ושאלות &quot;פי כמה&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 801.9"><img src="files/hw1-solution-p5.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-7.921%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 40.0"><img src="files/hw1-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 6" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. בניית מודל מורכב: גודל שתלוי בגודל שתלוי בזמן</a><a href="#ex1-s15">15. הצבה במודל ושאלות &quot;פי כמה&quot;</a><a href="#ex1-s16">16. מתי מגיעים לערך מסוים? - פתרון משוואה במודל</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 574.0"><img src="files/hw1-solution-p6.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-7.921%"></div>
-        <div class="q-bar" id="file-hw1-solution-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s18">18. איתור טעות בסדר הטרנספורמציות</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 227.9"><img src="files/hw1-solution-p6.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-121.584%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 40.0"><img src="files/hw1-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 7" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x1"><span class="q-num">תרגול נוסף · שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s1">1. איך מוצאים תחום הגדרה טבעי?</a><a href="#ex1-s2">2. תנאי עם שבר או ביטוי ריבועי - טבלת סימנים</a><a href="#ex1-s3">3. תחום של tan ו-cot - הוצאת נקודות שחוזרות במחזוריות</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 801.9"><img src="files/hw1-solution-p7.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-7.921%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 262.3"><img src="files/hw1-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 8" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x2"><span class="q-num">תרגול נוסף · שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s19">19. חוקי לוגריתמים ותחום הגדרה - מתי מותר לפשט?</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 579.6"><img src="files/hw1-solution-p8.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-51.941%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 48.8"><img src="files/hw1-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 9" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x3"><span class="q-num">תרגול נוסף · שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. איך משרטטים גרף בעזרת הזזות, מתיחות ושיקופים?</a><a href="#ex1-s5">5. ארגומנט עם מקדם: הוצאת גורם משותף לפני ההזזה</a><a href="#ex1-s6">6. מחזור, תמונה ואסימפטוטה אחרי טרנספורמציה</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 793.1"><img src="files/hw1-solution-p9.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-9.663%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 10" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 425.9"><img src="files/hw1-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 11" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x4"><span class="q-num">תרגול נוסף · שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. איך משרטטים גרף בעזרת הזזות, מתיחות ושיקופים?</a><a href="#ex1-s6">6. מחזור, תמונה ואסימפטוטה אחרי טרנספורמציה</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 416.0"><img src="files/hw1-solution-p11.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-84.337%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 713.2"><img src="files/hw1-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 12" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x5"><span class="q-num">תרגול נוסף · שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. איך בודקים אם פונקציה זוגית, אי-זוגית או אף אחת מהן?</a><a href="#ex1-s8">8. זוגיות של פונקציה מורכבת - פנימית וחיצונית</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 128.7"><img src="files/hw1-solution-p12.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-141.228%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 390.4"><img src="files/hw1-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 13" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x6"><span class="q-num">תרגול נוסף · שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. חישוב הרכבה f∘g ו-g∘f</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 179.4"><img src="files/hw1-solution-p13.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-77.307%"></div>
-        <div class="q-bar" id="file-hw1-solution-x7"><span class="q-num">תרגול נוסף · שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s11">11. פירוק פונקציה להרכבה f∘g∘h</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 272.1"><img src="files/hw1-solution-p13.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-112.832%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 48.8"><img src="files/hw1-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 14" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x8"><span class="q-num">תרגול נוסף · שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s12">12. הרכבה וזוגיות - הוכחה כללית</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 528.2"><img src="files/hw1-solution-p14.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-9.663%"></div>
-        <div class="q-bar" id="file-hw1-solution-x9"><span class="q-num">תרגול נוסף · שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. הוכחה כללית: סכום ומכפלה של פונקציות זוגיות/אי-זוגיות</a><a href="#ex1-s13">13. שאלה אמריקאית: &quot;מה לא ניתן להסיק?&quot; - זוגיות והרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 264.9"><img src="files/hw1-solution-p14.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-114.257%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:505.0 / 95.4"><img src="files/hw1-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 15" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw1-solution-x10"><span class="q-num">תרגול נוסף · שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. בניית מודל מורכב: גודל שתלוי בגודל שתלוי בזמן</a><a href="#ex1-s15">15. הצבה במודל ושאלות &quot;פי כמה&quot;</a><a href="#ex1-s17">17. האם המודל עומד בדרישה? - ערך מרבי בעזרת החסם של cos</a></div>
-        <div class="file-slice" style="aspect-ratio:505.0 / 655.7"><img src="files/hw1-solution-p15.webp" alt="" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%;margin-top:-18.891%"></div>
+          <div class="file-slice" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 1" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 2" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 3" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 4" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 5" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 6" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 7" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 8" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 9" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 10" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 11" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 12" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 13" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 841.9"><img src="files/hw1-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 14" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:505.0 / 751.1"><img src="files/hw1-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 1 - עמוד 15" loading="lazy" decoding="async" style="width:117.885%;margin-left:-8.950%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw2">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2</h3>
+      <div class="file-doc" id="file-hw2" data-type="q">
+        <h3 class="file-title">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw2.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-hw2-q1">1</a> <a href="#file-hw2-q2">2</a> <a href="#file-hw2-q3">3</a> <a href="#file-hw2-q4">4</a> <a href="#file-hw2-q5">5</a> <a href="#file-hw2-q6">6</a> <a href="#file-hw2-q7">7</a> <a href="#file-hw2-q8">8</a> <a href="#file-hw2-q9">9</a> <a href="#file-hw2-q10">10</a> <a href="#file-hw2-q11">11</a> <a href="#file-hw2-q12">12</a></span>
-          <span class="file-jump"><span>תרגול נוסף:</span> <a href="#file-hw2-x1">1</a> <a href="#file-hw2-x2">2</a> <a href="#file-hw2-x3">3</a> <a href="#file-hw2-x4">4</a> <a href="#file-hw2-x5">5</a> <a href="#file-hw2-x6">6</a> <a href="#file-hw2-x7">7</a> <a href="#file-hw2-x8">8</a> <a href="#file-hw2-x9">9</a> <a href="#file-hw2-x10">10</a> <a href="#file-hw2-x11">11</a> <a href="#file-hw2-x12">12</a> <a href="#file-hw2-x13">13</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:515.5 / 224.8"><img src="files/hw2-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 1" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. איך משרטטים פונקציה מוגדרת למקוטעין?</a><a href="#ex2-s2">2. פונקציה עם ערך מוחלט - פירוק למקרים לפי נקודות השבירה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 138.7"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-43.608%"></div>
-        <div class="q-bar" id="file-hw2-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 63.5"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-70.514%"></div>
-        <div class="q-bar" id="file-hw2-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex2-s4">4. סדר הפעולות כשיש הזזה וערך מוחלט יחד</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 54.0"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-82.832%"></div>
-        <div class="q-bar" id="file-hw2-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a><a href="#ex2-s4">4. סדר הפעולות כשיש הזזה וערך מוחלט יחד</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 119.0"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-93.307%"></div>
-        <div class="q-bar" id="file-hw2-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex2-s5">5. איך משרטטים ביטוי עם ערך שלם?</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 51.3"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-116.392%"></div>
-        <div class="q-bar" id="file-hw2-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. הוכחת מונוטוניות לפי ההגדרה (סכום והפרש)</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 57.7"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-126.343%"></div>
-        <div class="q-bar" id="file-hw2-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. הוכחת מונוטוניות לפי ההגדרה (סכום והפרש)</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 30.0"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-137.536%"></div>
-        <div class="q-bar" id="file-hw2-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. מונוטוניות של הרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 102.9"><img src="files/hw2-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-143.356%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:515.5 / 44.5"><img src="files/hw2-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 2" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex2-s9">9. בחירת תחום וטווח כדי שהפונקציה תהיה חד-חד-ערכית או &quot;על&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 103.5"><img src="files/hw2-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-8.632%"></div>
-        <div class="q-bar" id="file-hw2-q10"><span class="q-num">שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex2-s10">10. חד-חד-ערכיות של הרכבה - הוכחה או הפרכה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 86.0"><img src="files/hw2-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-28.710%"></div>
-        <div class="q-bar" id="file-hw2-q11"><span class="q-num">שאלה 11</span><span class="q-lbl">במדריך:</span><a href="#ex2-s11">11. סכום של פונקציות חד-חד-ערכיות או &quot;על&quot; - דוגמאות</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 76.7"><img src="files/hw2-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-45.393%"></div>
-        <div class="q-bar" id="file-hw2-q12"><span class="q-num">שאלה 12</span><span class="q-lbl">במדריך:</span><a href="#ex2-s12">12. מודל עם רוויה - מונוטוניות, חד-חד-ערכיות, תמונה ו&quot;על&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 531.2"><img src="files/hw2-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-60.272%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:515.5 / 37.0"><img src="files/hw2-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 3" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 76.5"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-7.177%"></div>
-        <div class="q-bar" id="file-hw2-x1"><span class="q-num">תרגול נוסף · שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. איך משרטטים פונקציה מוגדרת למקוטעין?</a><a href="#ex2-s2">2. פונקציה עם ערך מוחלט - פירוק למקרים לפי נקודות השבירה</a><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 89.5"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-22.017%"></div>
-        <div class="q-bar" id="file-hw2-x2"><span class="q-num">תרגול נוסף · שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 150.0"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-39.379%"></div>
-        <div class="q-bar" id="file-hw2-x3"><span class="q-num">תרגול נוסף · שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 47.4"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-68.477%"></div>
-        <div class="q-bar" id="file-hw2-x4"><span class="q-num">תרגול נוסף · שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex2-s5">5. איך משרטטים ביטוי עם ערך שלם?</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 48.9"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-77.672%"></div>
-        <div class="q-bar" id="file-hw2-x5"><span class="q-num">תרגול נוסף · שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. הוכחת מונוטוניות לפי ההגדרה (סכום והפרש)</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 47.7"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-87.158%"></div>
-        <div class="q-bar" id="file-hw2-x6"><span class="q-num">תרגול נוסף · שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. מונוטוניות של הרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 35.0"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-96.411%"></div>
-        <div class="q-bar" id="file-hw2-x7"><span class="q-num">תרגול נוסף · שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. מונוטוניות של הרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 32.9"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-103.201%"></div>
-        <div class="q-bar" id="file-hw2-x8"><span class="q-num">תרגול נוסף · שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex2-s8">8. מונוטונית ממש ← חד-חד-ערכית (ולא להפך)</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 44.1"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-109.583%"></div>
-        <div class="q-bar" id="file-hw2-x9"><span class="q-num">תרגול נוסף · שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex2-s8">8. מונוטונית ממש ← חד-חד-ערכית (ולא להפך)</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 33.0"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-118.138%"></div>
-        <div class="q-bar" id="file-hw2-x10"><span class="q-num">תרגול נוסף · שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex2-s9">9. בחירת תחום וטווח כדי שהפונקציה תהיה חד-חד-ערכית או &quot;על&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 199.9"><img src="files/hw2-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-124.539%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:515.5 / 37.0"><img src="files/hw2-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 4" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-x11"><span class="q-num">תרגול נוסף · שאלה 11</span><span class="q-lbl">במדריך:</span><a href="#ex2-s11">11. סכום של פונקציות חד-חד-ערכיות או &quot;על&quot; - דוגמאות</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 54.5"><img src="files/hw2-p4.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-7.177%"></div>
-        <div class="q-bar" id="file-hw2-x12"><span class="q-num">תרגול נוסף · שאלה 12</span><span class="q-lbl">במדריך:</span><a href="#ex2-s13">13. מודל &quot;מדרגות&quot; עם ערך שלם</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 226.9"><img src="files/hw2-p4.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-17.750%"></div>
-        <div class="q-bar" id="file-hw2-x13"><span class="q-num">תרגול נוסף · שאלה 13</span><span class="q-lbl">במדריך:</span><a href="#ex2-s14">14. &quot;עולה ממש בתוך עולה חלש&quot; - איפה הנימוק נשבר</a></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 516.1"><img src="files/hw2-p4.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-61.765%"></div>
+          <div class="file-slice" style="aspect-ratio:515.5 / 841.9"><img src="files/hw2-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 1" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:515.5 / 841.9"><img src="files/hw2-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 2" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:515.5 / 841.9"><img src="files/hw2-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 3" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:515.5 / 834.5"><img src="files/hw2-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 2 - עמוד 4" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw2-solution">חדו״א 1 - פתרון תרגיל בית 2</h3>
+      <div class="file-doc" id="file-hw2-solution" data-type="s">
+        <h3 class="file-title">חדו״א 1 - פתרון תרגיל בית 2</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw2-solution.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-hw2-solution-q1">1</a> <a href="#file-hw2-solution-q2">2</a> <a href="#file-hw2-solution-q3">3</a> <a href="#file-hw2-solution-q4">4</a> <a href="#file-hw2-solution-q5">5</a> <a href="#file-hw2-solution-q6">6</a> <a href="#file-hw2-solution-q7">7</a> <a href="#file-hw2-solution-q8">8</a> <a href="#file-hw2-solution-q9">9</a> <a href="#file-hw2-solution-q10">10</a> <a href="#file-hw2-solution-q11">11</a> <a href="#file-hw2-solution-q12">12</a></span>
-          <span class="file-jump"><span>תרגול נוסף:</span> <a href="#file-hw2-solution-x1">1</a> <a href="#file-hw2-solution-x2">2</a> <a href="#file-hw2-solution-x3">3</a> <a href="#file-hw2-solution-x4">4</a> <a href="#file-hw2-solution-x5">5</a> <a href="#file-hw2-solution-x6">6</a> <a href="#file-hw2-solution-x7">7</a> <a href="#file-hw2-solution-x8">8</a> <a href="#file-hw2-solution-x9">9</a> <a href="#file-hw2-solution-x10">10</a> <a href="#file-hw2-solution-x11">11</a> <a href="#file-hw2-solution-x12">12</a> <a href="#file-hw2-solution-x13">13</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:504.5 / 94.8"><img src="files/hw2-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 1" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. איך משרטטים פונקציה מוגדרת למקוטעין?</a><a href="#ex2-s2">2. פונקציה עם ערך מוחלט - פירוק למקרים לפי נקודות השבירה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 747.1"><img src="files/hw2-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-18.791%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 614.8"><img src="files/hw2-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 2" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 227.1"><img src="files/hw2-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-121.863%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 273.3"><img src="files/hw2-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 3" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex2-s4">4. סדר הפעולות כשיש הזזה וערך מוחלט יחד</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 568.6"><img src="files/hw2-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-54.172%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 254.0"><img src="files/hw2-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 4" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a><a href="#ex2-s4">4. סדר הפעולות כשיש הזזה וערך מוחלט יחד</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 587.9"><img src="files/hw2-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-50.347%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 731.0"><img src="files/hw2-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 5" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex2-s5">5. איך משרטטים ביטוי עם ערך שלם?</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 110.9"><img src="files/hw2-solution-p5.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-144.896%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 348.0"><img src="files/hw2-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 6" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. הוכחת מונוטוניות לפי ההגדרה (סכום והפרש)</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 229.0"><img src="files/hw2-solution-p6.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-68.979%"></div>
-        <div class="q-bar" id="file-hw2-solution-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. הוכחת מונוטוניות לפי ההגדרה (סכום והפרש)</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 264.9"><img src="files/hw2-solution-p6.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-114.371%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 109.0"><img src="files/hw2-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 7" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. מונוטוניות של הרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 232.0"><img src="files/hw2-solution-p7.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-21.606%"></div>
-        <div class="q-bar" id="file-hw2-solution-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex2-s9">9. בחירת תחום וטווח כדי שהפונקציה תהיה חד-חד-ערכית או &quot;על&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 500.9"><img src="files/hw2-solution-p7.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-67.592%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 340.0"><img src="files/hw2-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 8" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q10"><span class="q-num">שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex2-s10">10. חד-חד-ערכיות של הרכבה - הוכחה או הפרכה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 501.9"><img src="files/hw2-solution-p8.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-67.393%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 154.0"><img src="files/hw2-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 9" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-q11"><span class="q-num">שאלה 11</span><span class="q-lbl">במדריך:</span><a href="#ex2-s11">11. סכום של פונקציות חד-חד-ערכיות או &quot;על&quot; - דוגמאות</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 344.0"><img src="files/hw2-solution-p9.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-30.525%"></div>
-        <div class="q-bar" id="file-hw2-solution-q12"><span class="q-num">שאלה 12</span><span class="q-lbl">במדריך:</span><a href="#ex2-s12">12. מודל עם רוויה - מונוטוניות, חד-חד-ערכיות, תמונה ו&quot;על&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 343.9"><img src="files/hw2-solution-p9.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-98.712%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 10" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 95.0"><img src="files/hw2-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 11" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 7.5"><img src="files/hw2-solution-p11.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-18.831%"></div>
-        <div class="q-bar" id="file-hw2-solution-x1"><span class="q-num">תרגול נוסף · שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. איך משרטטים פונקציה מוגדרת למקוטעין?</a><a href="#ex2-s2">2. פונקציה עם ערך מוחלט - פירוק למקרים לפי נקודות השבירה</a><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 739.4"><img src="files/hw2-solution-p11.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-20.317%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 625.0"><img src="files/hw2-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 12" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-x2"><span class="q-num">תרגול נוסף · שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 216.9"><img src="files/hw2-solution-p12.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-123.885%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 562.0"><img src="files/hw2-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 13" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-x3"><span class="q-num">תרגול נוסף · שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex2-s3">3. ערך מוחלט על הפונקציה מול ערך מוחלט על המשתנה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 279.9"><img src="files/hw2-solution-p13.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-111.397%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 254.0"><img src="files/hw2-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 14" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-x4"><span class="q-num">תרגול נוסף · שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex2-s5">5. איך משרטטים ביטוי עם ערך שלם?</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 424.0"><img src="files/hw2-solution-p14.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-50.347%"></div>
-        <div class="q-bar" id="file-hw2-solution-x5"><span class="q-num">תרגול נוסף · שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. הוכחת מונוטוניות לפי ההגדרה (סכום והפרש)</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 163.9"><img src="files/hw2-solution-p14.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-134.390%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 152.0"><img src="files/hw2-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 15" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-x6"><span class="q-num">תרגול נוסף · שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. מונוטוניות של הרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 187.0"><img src="files/hw2-solution-p15.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-30.129%"></div>
-        <div class="q-bar" id="file-hw2-solution-x7"><span class="q-num">תרגול נוסף · שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. מונוטוניות של הרכבה</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 187.0"><img src="files/hw2-solution-p15.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-67.195%"></div>
-        <div class="q-bar" id="file-hw2-solution-x8"><span class="q-num">תרגול נוסף · שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex2-s8">8. מונוטונית ממש ← חד-חד-ערכית (ולא להפך)</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 186.0"><img src="files/hw2-solution-p15.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-104.262%"></div>
-        <div class="q-bar" id="file-hw2-solution-x9"><span class="q-num">תרגול נוסף · שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex2-s8">8. מונוטונית ממש ← חד-חד-ערכית (ולא להפך)</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 129.9"><img src="files/hw2-solution-p15.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-141.130%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 375.0"><img src="files/hw2-solution-p16.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 16" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-x10"><span class="q-num">תרגול נוסף · שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex2-s9">9. בחירת תחום וטווח כדי שהפונקציה תהיה חד-חד-ערכית או &quot;על&quot;</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 466.9"><img src="files/hw2-solution-p16.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-74.331%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 248.0"><img src="files/hw2-solution-p17.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 17" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-x11"><span class="q-num">תרגול נוסף · שאלה 11</span><span class="q-lbl">במדריך:</span><a href="#ex2-s11">11. סכום של פונקציות חד-חד-ערכיות או &quot;על&quot; - דוגמאות</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 344.0"><img src="files/hw2-solution-p17.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-49.158%"></div>
-        <div class="q-bar" id="file-hw2-solution-x12"><span class="q-num">תרגול נוסף · שאלה 12</span><span class="q-lbl">במדריך:</span><a href="#ex2-s13">13. מודל &quot;מדרגות&quot; עם ערך שלם</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 249.9"><img src="files/hw2-solution-p17.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-117.344%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p18.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 18" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 40.0"><img src="files/hw2-solution-p19.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 19" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-hw2-solution-x13"><span class="q-num">תרגול נוסף · שאלה 13</span><span class="q-lbl">במדריך:</span><a href="#ex2-s14">14. &quot;עולה ממש בתוך עולה חלש&quot; - איפה הנימוק נשבר</a></div>
-        <div class="file-slice" style="aspect-ratio:504.5 / 801.9"><img src="files/hw2-solution-p19.webp" alt="" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-7.929%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:504.5 / 223.5"><img src="files/hw2-solution-p20.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 20" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%;margin-top:-0.000%"></div>
+          <div class="file-slice" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 1" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 2" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 3" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 4" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 5" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 6" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 7" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 8" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 9" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 10" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 11" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 12" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 13" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 14" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 15" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p16.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 16" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p17.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 17" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p18.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 18" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 841.9"><img src="files/hw2-solution-p19.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 19" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:504.5 / 223.5"><img src="files/hw2-solution-p20.webp" alt="חדו״א 1 - פתרון תרגיל בית 2 - עמוד 20" loading="lazy" decoding="async" style="width:118.002%;margin-left:-8.959%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw3">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3</h3>
+      <div class="file-doc" id="file-hw3" data-type="q">
+        <h3 class="file-title">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw3.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
         </div>
-        <p class="file-note">לתרגיל הזה עוד אין פרק במדריך, ולכן אין כאן קישורים מהשאלות למדריך.</p>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:515.5 / 239.2"><img src="files/hw3-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 1" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 201.0"><img src="files/hw3-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-46.402%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 86.8"><img src="files/hw3-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-85.393%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 94.1"><img src="files/hw3-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-102.231%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 220.8"><img src="files/hw3-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-120.485%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:515.5 / 44.0"><img src="files/hw3-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 2" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 128.1"><img src="files/hw3-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-8.535%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 127.6"><img src="files/hw3-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-33.385%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 201.0"><img src="files/hw3-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-58.138%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 341.2"><img src="files/hw3-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-97.129%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:515.5 / 37.0"><img src="files/hw3-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 3" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 64.1"><img src="files/hw3-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-7.177%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 37.9"><img src="files/hw3-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-19.612%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 261.0"><img src="files/hw3-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-26.964%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 69.0"><img src="files/hw3-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-77.595%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 39.8"><img src="files/hw3-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-90.980%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 194.8"><img src="files/hw3-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-98.700%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 138.3"><img src="files/hw3-p3.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-136.489%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:515.5 / 51.0"><img src="files/hw3-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 4" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:515.5 / 510.2"><img src="files/hw3-p4.webp" alt="" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%;margin-top:-9.893%"></div>
+          <div class="file-slice" style="aspect-ratio:515.5 / 841.9"><img src="files/hw3-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 1" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:515.5 / 841.9"><img src="files/hw3-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 2" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:515.5 / 841.9"><img src="files/hw3-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 3" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:515.5 / 561.2"><img src="files/hw3-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 3 - עמוד 4" loading="lazy" decoding="async" style="width:115.484%;margin-left:-7.740%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw3-solution">חדו״א 1 - פתרון תרגיל בית 3</h3>
+      <div class="file-doc" id="file-hw3-solution" data-type="s">
+        <h3 class="file-title">חדו״א 1 - פתרון תרגיל בית 3</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw3-solution.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
         </div>
-        <p class="file-note">לתרגיל הזה עוד אין פרק במדריך, ולכן אין כאן קישורים מהשאלות למדריך.</p>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:494.0 / 119.0"><img src="files/hw3-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 1" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 722.9"><img src="files/hw3-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-24.089%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 597.0"><img src="files/hw3-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 2" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 244.9"><img src="files/hw3-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-120.850%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 157.0"><img src="files/hw3-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 3" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 684.9"><img src="files/hw3-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-31.781%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 138.0"><img src="files/hw3-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 4" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 703.9"><img src="files/hw3-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-27.935%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 145.0"><img src="files/hw3-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 5" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 696.9"><img src="files/hw3-solution-p5.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-29.352%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 412.0"><img src="files/hw3-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 6" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 429.9"><img src="files/hw3-solution-p6.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-83.401%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 269.0"><img src="files/hw3-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 7" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 572.9"><img src="files/hw3-solution-p7.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-54.453%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 40.0"><img src="files/hw3-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 8" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 497.0"><img src="files/hw3-solution-p8.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-8.097%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 31.0"><img src="files/hw3-solution-p8.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-108.704%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 273.9"><img src="files/hw3-solution-p8.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-114.980%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 9" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 605.0"><img src="files/hw3-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 10" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 236.9"><img src="files/hw3-solution-p10.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-122.470%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 148.0"><img src="files/hw3-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 11" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 286.0"><img src="files/hw3-solution-p11.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-29.960%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 245.0"><img src="files/hw3-solution-p11.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-87.854%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 162.9"><img src="files/hw3-solution-p11.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-137.449%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 12" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 483.0"><img src="files/hw3-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 13" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 358.9"><img src="files/hw3-solution-p13.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-97.773%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 163.0"><img src="files/hw3-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 14" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 514.0"><img src="files/hw3-solution-p14.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-32.996%"></div>
-        <div class="file-slice" style="aspect-ratio:494.0 / 164.9"><img src="files/hw3-solution-p14.webp" alt="" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-137.045%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:494.0 / 471.8"><img src="files/hw3-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 15" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%;margin-top:-0.000%"></div>
+          <div class="file-slice" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 1" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 2" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 3" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 4" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 5" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 6" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 7" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 8" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 9" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 10" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 11" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 12" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 13" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 841.9"><img src="files/hw3-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 14" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:494.0 / 471.8"><img src="files/hw3-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 3 - עמוד 15" loading="lazy" decoding="async" style="width:120.510%;margin-left:-11.174%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw4">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4</h3>
+      <div class="file-doc" id="file-hw4" data-type="q">
+        <h3 class="file-title">חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw4.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
         </div>
-        <p class="file-note">לתרגיל הזה עוד אין פרק במדריך, ולכן אין כאן קישורים מהשאלות למדריך.</p>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:517.9 / 221.0"><img src="files/hw4-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 1" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 66.2"><img src="files/hw4-p1.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-42.672%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 84.8"><img src="files/hw4-p1.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-55.455%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 35.6"><img src="files/hw4-p1.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-71.829%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 109.4"><img src="files/hw4-p1.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-78.702%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 132.8"><img src="files/hw4-p1.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-99.826%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 192.1"><img src="files/hw4-p1.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-125.468%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:517.9 / 69.0"><img src="files/hw4-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 2" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 128.5"><img src="files/hw4-p2.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-13.323%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 313.7"><img src="files/hw4-p2.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-38.135%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 330.7"><img src="files/hw4-p2.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-98.706%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:517.9 / 37.0"><img src="files/hw4-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 3" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 53.5"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-7.144%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 136.2"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-17.474%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 94.3"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-43.773%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 79.0"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-61.981%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 95.0"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-77.235%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 35.9"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-95.578%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 77.7"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-102.510%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 233.3"><img src="files/hw4-p3.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-117.513%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:517.9 / 66.0"><img src="files/hw4-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 4" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 406.4"><img src="files/hw4-p4.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-12.744%"></div>
-        <div class="file-slice" style="aspect-ratio:517.9 / 337.9"><img src="files/hw4-p4.webp" alt="" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%;margin-top:-91.215%"></div>
+          <div class="file-slice" style="aspect-ratio:517.9 / 841.9"><img src="files/hw4-p1.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 1" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:517.9 / 841.9"><img src="files/hw4-p2.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 2" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:517.9 / 841.9"><img src="files/hw4-p3.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 3" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:517.9 / 810.3"><img src="files/hw4-p4.webp" alt="חדו&quot;א 1, 30105-71029-96002, תשפ&quot;ז, תרגיל בית 4 - עמוד 4" loading="lazy" decoding="async" style="width:114.949%;margin-left:-7.704%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-hw4-solution">חדו״א 1 - פתרון תרגיל בית 4</h3>
+      <div class="file-doc" id="file-hw4-solution" data-type="s">
+        <h3 class="file-title">חדו״א 1 - פתרון תרגיל בית 4</h3>
         <div class="file-actions">
           <a class="file-open" href="files/hw4-solution.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
         </div>
-        <p class="file-note">לתרגיל הזה עוד אין פרק במדריך, ולכן אין כאן קישורים מהשאלות למדריך.</p>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:478.6 / 149.0"><img src="files/hw4-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 1" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 692.9"><img src="files/hw4-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-31.132%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 531.0"><img src="files/hw4-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 2" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 310.9"><img src="files/hw4-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-110.949%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 340.0"><img src="files/hw4-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 3" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 318.0"><img src="files/hw4-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-71.041%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 183.9"><img src="files/hw4-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-137.484%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 4" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 65.0"><img src="files/hw4-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 5" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 776.9"><img src="files/hw4-solution-p5.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-13.581%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 506.0"><img src="files/hw4-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 6" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 335.9"><img src="files/hw4-solution-p6.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-105.725%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 7" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 447.0"><img src="files/hw4-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 8" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 394.9"><img src="files/hw4-solution-p8.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-93.397%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 672.0"><img src="files/hw4-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 9" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 169.9"><img src="files/hw4-solution-p9.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-140.410%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 10" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 168.0"><img src="files/hw4-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 11" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 673.9"><img src="files/hw4-solution-p11.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-35.102%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 606.0"><img src="files/hw4-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 12" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 57.0"><img src="files/hw4-solution-p12.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-126.619%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 178.9"><img src="files/hw4-solution-p12.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-138.529%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 13" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 139.0"><img src="files/hw4-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 14" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 702.9"><img src="files/hw4-solution-p14.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-29.043%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 346.0"><img src="files/hw4-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 15" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 355.0"><img src="files/hw4-solution-p15.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-72.294%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 140.9"><img src="files/hw4-solution-p15.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-146.469%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 464.0"><img src="files/hw4-solution-p16.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 16" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 377.9"><img src="files/hw4-solution-p16.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-96.949%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 65.0"><img src="files/hw4-solution-p17.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 17" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 776.9"><img src="files/hw4-solution-p17.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-13.581%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 341.0"><img src="files/hw4-solution-p18.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 18" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 500.9"><img src="files/hw4-solution-p18.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-71.249%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p19.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 19" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 65.0"><img src="files/hw4-solution-p20.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 20" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 776.9"><img src="files/hw4-solution-p20.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-13.581%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 242.0"><img src="files/hw4-solution-p21.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 21" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice" style="aspect-ratio:478.6 / 599.9"><img src="files/hw4-solution-p21.webp" alt="" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-50.564%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p22.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 22" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p23.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 23" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:478.6 / 319.1"><img src="files/hw4-solution-p24.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 24" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%;margin-top:-0.000%"></div>
+          <div class="file-slice" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p1.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 1" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p2.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 2" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p3.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 3" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p4.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 4" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p5.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 5" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p6.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 6" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p7.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 7" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p8.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 8" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p9.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 9" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p10.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 10" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p11.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 11" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p12.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 12" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p13.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 13" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p14.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 14" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p15.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 15" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p16.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 16" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p17.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 17" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p18.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 18" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p19.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 19" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p20.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 20" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p21.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 21" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p22.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 22" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 841.9"><img src="files/hw4-solution-p23.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 23" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:478.6 / 319.1"><img src="files/hw4-solution-p24.webp" alt="חדו״א 1 - פתרון תרגיל בית 4 - עמוד 24" loading="lazy" decoding="async" style="width:124.388%;margin-left:-14.751%"></div>
         </div></div>
       </div>
+      <script>
+      (function(){
+        try {
+          var box = document.getElementById('filesFilter'); if(!box) return;
+          var KEY = 'filesView_' + location.pathname;
+          var docs = [].slice.call(document.querySelectorAll('.files-section .file-doc'));
+          var types = [].slice.call(box.querySelectorAll('.ff-type'));
+          var state = {};
+          try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e){ state = {}; }
+          function firstOf(t){ var d = docs.filter(function(x){ return x.dataset.type === t; })[0]; return d ? d.id.slice(5) : null; }
+          function show(t, id){
+            if(!t) t = types[0].dataset.type;
+            if(!id || !document.getElementById('file-' + id) || document.getElementById('file-' + id).dataset.type !== t) id = (state.files || {})[t] || firstOf(t);
+            if(!document.getElementById('file-' + id)) id = firstOf(t);
+            state.type = t; state.files = state.files || {}; state.files[t] = id;
+            types.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.type === t)); });
+            [].forEach.call(box.querySelectorAll('.ff-group'), function(g){ g.hidden = g.dataset.type !== t; });
+            [].forEach.call(box.querySelectorAll('.ff-file'), function(b){ b.setAttribute('aria-pressed', String(b.dataset.file === id)); });
+            docs.forEach(function(d){ d.hidden = d.id !== 'file-' + id; });
+            try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+          }
+          types.forEach(function(b){ b.addEventListener('click', function(){ show(b.dataset.type); }); });
+          [].forEach.call(box.querySelectorAll('.ff-file'), function(b){
+            b.addEventListener('click', function(){ show(b.closest('.ff-group').dataset.type, b.dataset.file); });
+          });
+          box.hidden = false;
+          show(state.type, state.type && state.files ? state.files[state.type] : null);
+        } catch(err){}
+      })();
+      </script>
     </section>
     <!-- files-section:end -->
 <footer class="site-footer">נבנה עבורך לצורך חזרה למבחן - כל השיטות מנוסחות באופן כללי כדי שיתאימו לכל שאלה מאותו סוג.</footer>
@@ -2524,7 +2299,7 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
     if(!scrollTarget) return;
     const rect = scrollTarget.getBoundingClientRect();
     const elTop = rect.top + window.scrollY;
-    const OFFSET = 45; // small gap below the top of the viewport
+    const OFFSET = 97; // small gap below the top of the viewport
     const target = Math.max(0, elTop - OFFSET);
     window.scrollTo({ top: target, behavior: (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' });
     try {
@@ -2708,6 +2483,7 @@ try {
       <button type="button" class="ai-close" id="aiClose" aria-label="סגירה">✕</button>
     </div>
     <p class="ai-sub">העלי תמונה של תרגיל, או כתבי אותו במילים. ה-AI יבין מה התרגיל שואל ויפנה אותך לסעיפים באתר שצריך בשבילו.</p>
+    <!-- hub:keynote --><p class="hub-key-note" id="hubKeyNote" hidden>🔑 החיפוש החכם צריך מפתח של Google, שמדביקים <b>פעם אחת</b> ב<a href="../#key">דף הבית של אתר המתמטיקה</a>. אחרי זה הוא עובד בכל האתרים.</p>
     <div class="ai-setup" id="aiSetup" hidden>
       <div class="ai-setup-title">🔑 הגדרה חד-פעמית (חינם): מפתח של Google</div>
       <p>באתר הזה החיפוש החכם עובד דרך Gemini של Google, שיש לו שימוש חינמי. צריך רק "מפתח" - מעין סיסמה שמחברת את האתר לחשבון Google שלך. בלי כרטיס אשראי ובלי תשלום. עושים את זה פעם אחת בכל מחשב או טלפון:</p>
@@ -2908,8 +2684,8 @@ try {
   }
   const MSG={not_granted:'לא אושר שימוש ב-Claude בדף הזה.', sampling_disabled:'Claude לא זמין בחשבון הזה.', rate_limited:'הגעת למגבלת השימוש החינמי לרגע זה. חכי דקה ונסי שוב.',
     session_expired:'צריך להתחבר מחדש ל-Claude.', image_rejected:'התמונה לא התקבלה. נסי תמונה אחרת (JPG או PNG).', images_unavailable:'אי אפשר לשלוח תמונות בתצוגה הזאת - כתבי את התרגיל במילים.',
-    refused:'הבקשה לא עובדה. נסי לנסח את התרגיל אחרת.', invalid_json:'התשובה לא הגיעה בפורמט הנכון. נסי שוב.', no_key:'קודם צריך לשמור מפתח בתיבה הצהובה למעלה.',
-    bad_key:'המפתח לא תקין. לחצי על "החלפת מפתח" והדביקי אותו שוב.', prompt_too_large:'הטקסט ארוך מדי. קצרי אותו.'};
+    refused:'הבקשה לא עובדה. נסי לנסח את התרגיל אחרת.', invalid_json:'התשובה לא הגיעה בפורמט הנכון. נסי שוב.', no_key:'קודם צריך להדביק מפתח פעם אחת בדף הבית של אתר המתמטיקה.',
+    bad_key:'המפתח לא תקין. אפשר להחליף אותו בדף הבית של אתר המתמטיקה.', prompt_too_large:'הטקסט ארוך מדי. קצרי אותו.'};
 
   // ---------- run ----------
   goBtn.onclick=async ()=>{
@@ -2977,7 +2753,7 @@ try {
   function jump(id){
     const el=document.getElementById(id); if(!el) return;
     close();
-    const y=el.getBoundingClientRect().top+window.scrollY-45;
+    const y=el.getBoundingClientRect().top+window.scrollY-97;
     const reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({top:Math.max(0,y), behavior: reduce?'auto':'smooth'});
     el.classList.remove('ai-flash'); void el.offsetWidth; el.classList.add('ai-flash');
@@ -3097,5 +2873,63 @@ try {
   } catch(err){}
 })();
 </script>
+<!-- hub:topbar-assets:start -->
+<style>
+  /* סרגל עליון קבוע: חזרה לדף הבית + רענון, באותו מקום בכל האתרים */
+  .hub-topbar{ position:sticky; top:0; z-index:35; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    min-height:52px; padding:0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
+    background:#1F2A47; font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; box-shadow:0 1px 0 rgba(255,255,255,.08); }
+  .hub-topbar .hub-home{ display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#F5F0E1; text-decoration:none; font-weight:600; font-size:.95rem; }
+  .hub-topbar .hub-home > span{ color:#E3B95C; font-weight:700; }
+  .hub-refresh{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 16px; border-radius:100px;
+    border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#F5F0E1;
+    font-family:inherit; font-weight:600; font-size:.92rem; cursor:pointer; }
+  .hub-refresh:hover{ background:rgba(255,255,255,.16); }
+  .hub-refresh:focus-visible, .hub-topbar .hub-home:focus-visible{ outline:3px solid #E3B95C; outline-offset:2px; border-radius:100px; }
+  .hub-refresh svg{ width:17px; height:17px; }
+  .hub-refresh.spin svg{ animation:hubSpin .8s linear infinite; }
+  @keyframes hubSpin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .hub-refresh.spin svg{ animation:none; } }
+  /* כפתור הרענון הצף הישן לא נחוץ יותר; כפתור "למעלה" חוזר למקומו */
+  #refreshBtn{ display:none !important; }
+  a.top-btn#topBtn{ bottom:calc(26px + env(safe-area-inset-bottom, 0px)) !important; left:calc(20px + env(safe-area-inset-left, 0px)) !important; }
+  /* במחשב: סרגל הצד מתחיל מתחת לסרגל העליון */
+  @media (min-width: 881px){ .sidebar{ top:52px !important; height:calc(100vh - 52px) !important; } }
+  /* מפתח החיפוש החכם מנוהל בדף הבית בלבד */
+  #aiSetup, #aiKeyOk{ display:none !important; }
+  .hub-key-note{ margin:4px 0 14px; padding:12px 16px; border-radius:12px; background:#FFF6D6; border:2px solid #E3B95C; color:#3A2E10; font-size:.95rem; }
+  .hub-key-note a{ color:#1F2A47; font-weight:700; }
+  @media print{ .hub-topbar{ display:none !important; } }
+</style>
+<script>
+(function(){
+  try {
+    var KEY = 'hubRefreshY', btn = document.getElementById('hubRefresh');
+    if(btn) btn.addEventListener('click', function(){
+      btn.classList.add('spin');
+      try { sessionStorage.setItem(KEY, String(window.scrollY)); } catch(e){}
+      location.replace(location.pathname + '?r=' + Date.now());
+    });
+    var y = null;
+    try { y = sessionStorage.getItem(KEY); sessionStorage.removeItem(KEY); } catch(e){}
+    if(/[?&]r=\d+/.test(location.search)){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
+    if(y !== null){
+      var go = function(){ window.scrollTo({top: parseFloat(y) || 0, behavior: 'instant'}); };
+      requestAnimationFrame(function(){ requestAnimationFrame(go); });
+      window.addEventListener('load', function(){ setTimeout(go, 120); setTimeout(go, 500); });
+    }
+  } catch(err){}
+  try {
+    var note = document.getElementById('hubKeyNote');
+    if(note){
+      var has = function(){ try { return !!localStorage.getItem('mathGeminiKey_v1'); } catch(e){ return false; } };
+      var upd = function(){ note.hidden = has(); };
+      document.addEventListener('click', function(e){ if(e.target.closest && e.target.closest('[data-ai-open]')) upd(); }, true);
+      upd();
+    }
+  } catch(err){}
+})();
+</script>
+<!-- hub:topbar-assets:end -->
 </body>
 </html>

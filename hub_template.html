@@ -75,7 +75,7 @@
   .site-card:hover .site-go{ background:var(--indigo); }
 
   /* מפתח החיפוש החכם - אחד לכל האתרים */
-  .key-box{
+  .key-box{ scroll-margin-top:70px;
     margin-top:44px; background:var(--paper); border:1px solid var(--line); border-radius:16px;
     border-inline-start:5px solid var(--gold); padding:18px 20px;
   }
@@ -105,7 +105,7 @@
 </style>
 </head>
 <body>
-  <header class="top">
+{{TOPBAR}}  <header class="top">
     <div class="top-inner">
       <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">{{ICON_INNER}}</svg>
       <h1>{{TITLE}}</h1>
@@ -114,7 +114,7 @@
   </header>
   <main>
 {{GROUPS}}
-    <section class="key-box" aria-labelledby="keyTitle">
+    <section class="key-box" id="key" aria-labelledby="keyTitle">
       <h2 id="keyTitle">🔑 מפתח לחיפוש החכם - אחד לכל האתרים</h2>
       <div id="keyMissing">
         <p>החיפוש החכם (העלאת תמונה של תרגיל) עובד דרך Gemini של Google, בחינם. מדביקים כאן את המפתח פעם אחת, והוא עובד בכל האתרים שבדף הזה, בטלפון או במחשב הזה.</p>
@@ -165,5 +165,5 @@
   } catch(err){}
 })();
 </script>
-</body>
+{{TOPBAR_ASSETS}}</body>
 </html>

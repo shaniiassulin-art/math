@@ -919,7 +919,7 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
   /* ===== קבצי הקורס ===== */
   .files-section{ margin-top:70px; padding-top:30px; border-top:1px solid var(--line); scroll-margin-top:60px; }
   .files-title{ font-size:1.85rem; margin:0; }
-  .file-doc{ margin:30px 0 44px; }
+  .file-doc{ margin:22px 0 44px; }
   .file-title{ font-size:1.3rem; margin:0 0 8px; scroll-margin-top:70px; }
   .file-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-bottom:12px; font-size:.92rem; }
   .file-open{ display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border-radius:100px;
@@ -949,12 +949,26 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
   .file-pages.slides .q-bar{ border:1px solid #D5DBEA; border-radius:10px; margin:22px 0 10px; }
   .file-jump.topics a{ min-width:0; padding:4px 10px; }
   @media (max-width:700px){ .file-pages.slides{ width:auto; } }
-  @media print{ .file-actions, .q-bar{ display:none; } }
+  /* בחירת קובץ: סוג ואז קובץ */
+  .files-filter{ margin:18px 0 6px; display:grid; gap:10px; }
+  .ff-types{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ff-types.single{ display:none; }
+  .ff-type{ min-height:44px; padding:0 22px; border-radius:100px; border:1.5px solid var(--indigo-2); background:var(--paper);
+    color:var(--indigo-2); font-family:'Assistant',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; }
+  .ff-type[aria-pressed="true"]{ background:var(--indigo-2); color:#fff; }
+  .ff-group{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ff-file{ min-height:44px; padding:0 16px; border-radius:10px; border:1px solid var(--line); background:var(--paper);
+    color:var(--ink); font-family:'Assistant',sans-serif; font-size:.95rem; font-weight:600; cursor:pointer; }
+  .ff-file[aria-pressed="true"]{ border-color:var(--gold); background:var(--gold-soft); color:var(--gold-text); box-shadow:inset 0 0 0 1px var(--gold); }
+  .file-doc[hidden], .ff-group[hidden]{ display:none !important; }
+  @media print{ .file-actions, .files-filter{ display:none; } }
 </style>
 <!-- files-css:end -->
 </head>
 <body>
-<div class="hub-back-bar" style="background:#1F2A47;padding:0 16px;font-family:'Assistant',system-ui,sans-serif;"><a href="../" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;color:#F5F0E1;text-decoration:none;font-size:.95rem;font-weight:600;"><span aria-hidden="true" style="color:#E3B95C;">⌂</span> כל אתרי המתמטיקה</a></div>
+<!-- hub:topbar:start -->
+<div class="hub-topbar" role="navigation" aria-label="אתר המתמטיקה"><a class="hub-home" href="../"><span aria-hidden="true">⌂</span> כל אתרי המתמטיקה</a><button type="button" class="hub-refresh" id="hubRefresh" aria-label="רענון: טעינת הגרסה העדכנית של האתר" title="רענון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><polyline points="20 4 20 9 15 9"/></svg><span>רענון</span></button></div>
+<!-- hub:topbar:end -->
 
 <input type="checkbox" id="menuToggle" class="menu-toggle-input">
 <div class="layout">
@@ -1010,20 +1024,7 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
         </details>
       </li>
     <!-- files-toc:start -->
-      <li class="toc-group">
-        <details class="toc-details" id="details-files">
-          <summary><a href="#files" class="top-link" data-ex="files"><span class="num">📄</span><span>קבצי הקורס</span></a></summary>
-          <ul class="sub-toc">
-            <li><a href="#file-class-1" data-ex="files">תרגיל כיתה 1 אלגברה ליניארית</a></li>
-            <li><a href="#file-class-1-solution" data-ex="files">פתרון תרגיל כיתה 1 אלגברה ליניארית</a></li>
-            <li><a href="#file-home-1" data-ex="files">תרגיל בית 1 אלגברה ליניארית</a></li>
-            <li><a href="#file-home-1-solution" data-ex="files">פתרון תרגיל בית 1 אלגברה ליניארית</a></li>
-            <li><a href="#file-class-2" data-ex="files">תרגיל כיתה 2 אלגברה ליניארית</a></li>
-            <li><a href="#file-home-2" data-ex="files">תרגיל בית 2 אלגברה ליניארית</a></li>
-            <li><a href="#file-home-2-solution" data-ex="files">פתרון תרגיל בית 2 אלגברה ליניארית</a></li>
-          </ul>
-        </details>
-      </li>
+      <li><a href="#files"><span class="num">📄</span><span>קבצי הקורס</span></a></li>
       <!-- files-toc:end -->
 </ul>
     <div class="toc-note">טיפ: אפשר לחפש בעמוד עם Ctrl+F - כל התוכן נמצא באותו דף אחד.</div>
@@ -1525,246 +1526,128 @@ details.legend[open] > summary::after{ content:"לחצי לסגירה"; }
         <div class="ex-badge" aria-hidden="true">📄</div>
         <h2 class="files-title">קבצי הקורס</h2>
       </div>
-      <p class="ex-intro">הקבצים המקוריים של הקורס, בדיוק כפי שהם. לפני כל שאלה יש קישור לסעיף במדריך שמסביר איך פותרים אותה.</p>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-class-1">תרגיל כיתה 1 אלגברה ליניארית</h3>
+      <p class="ex-intro">הקבצים המקוריים של הקורס, בדיוק כפי שהם. בחרי שאלות או פתרונות, ואז את התרגיל.</p>
+      <div class="files-filter" id="filesFilter" hidden>
+        <div class="ff-types" role="group" aria-label="סוג הקובץ"><button type="button" class="ff-type" data-type="q" aria-pressed="false">שאלות</button><button type="button" class="ff-type" data-type="s" aria-pressed="false">פתרונות</button></div>
+        <div class="ff-files" role="group" aria-label="בחירת קובץ">
+          <div class="ff-group" data-type="q"><button type="button" class="ff-file" data-file="class-1" aria-pressed="false">תרגיל כיתה 1</button><button type="button" class="ff-file" data-file="home-1" aria-pressed="false">תרגיל בית 1</button><button type="button" class="ff-file" data-file="class-2" aria-pressed="false">תרגיל כיתה 2</button><button type="button" class="ff-file" data-file="home-2" aria-pressed="false">תרגיל בית 2</button></div>
+          <div class="ff-group" data-type="s"><button type="button" class="ff-file" data-file="class-1-solution" aria-pressed="false">פתרון תרגיל כיתה 1</button><button type="button" class="ff-file" data-file="home-1-solution" aria-pressed="false">פתרון תרגיל בית 1</button><button type="button" class="ff-file" data-file="home-2-solution" aria-pressed="false">פתרון תרגיל בית 2</button></div>
+        </div>
+      </div>
+      <div class="file-doc" id="file-class-1" data-type="q">
+        <h3 class="file-title">תרגיל כיתה 1 אלגברה ליניארית</h3>
         <div class="file-actions">
           <a class="file-open" href="files/class-1.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-class-1-q1">1</a> <a href="#file-class-1-q2">2</a> <a href="#file-class-1-q3">3</a> <a href="#file-class-1-q4">4</a> <a href="#file-class-1-q5">5</a> <a href="#file-class-1-q6">6</a> <a href="#file-class-1-q7">7</a> <a href="#file-class-1-q8">8</a> <a href="#file-class-1-q9">9</a> <a href="#file-class-1-q10">10</a> <a href="#file-class-1-q11">11</a> <a href="#file-class-1-q12">12</a> <a href="#file-class-1-q13">13</a> <a href="#file-class-1-q14">14</a> <a href="#file-class-1-q15">15</a> <a href="#file-class-1-q16">16</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:517.1 / 69.0"><img src="files/class-1-p1.webp" alt="תרגיל כיתה 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s2">2. פתיחת סוגריים: כפל וריבוע בהצגה קרטזית</a><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 97.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-13.344%"></div>
-        <div class="q-bar" id="file-class-1-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. חזקות של i</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 112.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-32.102%"></div>
-        <div class="q-bar" id="file-class-1-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 101.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-53.761%"></div>
-        <div class="q-bar" id="file-class-1-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 57.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-73.293%"></div>
-        <div class="q-bar" id="file-class-1-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s6">6. משוואה שבה מופיעים z והצמוד שלו יחד</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 57.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-84.316%"></div>
-        <div class="q-bar" id="file-class-1-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 58.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-95.339%"></div>
-        <div class="q-bar" id="file-class-1-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s6">6. משוואה שבה מופיעים z והצמוד שלו יחד</a><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 48.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-106.556%"></div>
-        <div class="q-bar" id="file-class-1-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 54.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-115.838%"></div>
-        <div class="q-bar" id="file-class-1-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 43.0"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-126.281%"></div>
-        <div class="q-bar" id="file-class-1-q10"><span class="q-num">שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 146.2"><img src="files/class-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-134.597%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:517.1 / 34.0"><img src="files/class-1-p2.webp" alt="תרגיל כיתה 1 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-q11"><span class="q-num">שאלה 11</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 57.0"><img src="files/class-1-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-6.575%"></div>
-        <div class="q-bar" id="file-class-1-q12"><span class="q-num">שאלה 12</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 70.0"><img src="files/class-1-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-17.598%"></div>
-        <div class="q-bar" id="file-class-1-q13"><span class="q-num">שאלה 13</span><span class="q-lbl">במדריך:</span><a href="#ex1-s11">11. תנאי שקובע צורה ל-z: למשל Re(z)=Im(z)</a><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 105.0"><img src="files/class-1-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-31.135%"></div>
-        <div class="q-bar" id="file-class-1-q14"><span class="q-num">שאלה 14</span><span class="q-lbl">במדריך:</span><a href="#ex1-s12">12. מעבר להצגה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 73.0"><img src="files/class-1-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-51.441%"></div>
-        <div class="q-bar" id="file-class-1-q15"><span class="q-num">שאלה 15</span><span class="q-lbl">במדריך:</span><a href="#ex1-s13">13. חזקה גבוהה: נוסחת דה-מואבר</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 53.0"><img src="files/class-1-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-65.558%"></div>
-        <div class="q-bar" id="file-class-1-q16"><span class="q-num">שאלה 16</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. הוכחת זהויות טריגונומטריות בעזרת הצגה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:517.1 / 92.1"><img src="files/class-1-p2.webp" alt="" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%;margin-top:-75.807%"></div>
+          <div class="file-slice" style="aspect-ratio:517.1 / 842.2"><img src="files/class-1-p1.webp" alt="תרגיל כיתה 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:517.1 / 484.1"><img src="files/class-1-p2.webp" alt="תרגיל כיתה 1 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:115.161%;margin-left:-10.230%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-class-1-solution">פתרון תרגיל כיתה 1 אלגברה ליניארית</h3>
+      <div class="file-doc" id="file-class-1-solution" data-type="s">
+        <h3 class="file-title">פתרון תרגיל כיתה 1 אלגברה ליניארית</h3>
         <div class="file-actions">
           <a class="file-open" href="files/class-1-solution.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-class-1-solution-q1">1</a> <a href="#file-class-1-solution-q2">2</a> <a href="#file-class-1-solution-q3">3</a> <a href="#file-class-1-solution-q4">4</a> <a href="#file-class-1-solution-q5">5</a> <a href="#file-class-1-solution-q6">6</a> <a href="#file-class-1-solution-q7">7</a> <a href="#file-class-1-solution-q8">8</a> <a href="#file-class-1-solution-q9">9</a> <a href="#file-class-1-solution-q10">10</a> <a href="#file-class-1-solution-q11">11</a> <a href="#file-class-1-solution-q12">12</a> <a href="#file-class-1-solution-q13">13</a> <a href="#file-class-1-solution-q14">14</a> <a href="#file-class-1-solution-q15">15</a> <a href="#file-class-1-solution-q16">16</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:557.0 / 70.0"><img src="files/class-1-solution-p1.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-solution-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s2">2. פתיחת סוגריים: כפל וריבוע בהצגה קרטזית</a><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 404.0"><img src="files/class-1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-12.567%"></div>
-        <div class="q-bar" id="file-class-1-solution-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s4">4. חזקות של i</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 368.2"><img src="files/class-1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-85.099%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:557.0 / 75.0"><img src="files/class-1-solution-p2.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-solution-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 292.4"><img src="files/class-1-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-13.465%"></div>
-        <div class="q-bar" id="file-class-1-solution-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 169.6"><img src="files/class-1-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-65.961%"></div>
-        <div class="q-bar" id="file-class-1-solution-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s6">6. משוואה שבה מופיעים z והצמוד שלו יחד</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 305.2"><img src="files/class-1-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-96.409%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:557.0 / 49.0"><img src="files/class-1-solution-p3.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 3" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-solution-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 163.9"><img src="files/class-1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-8.797%"></div>
-        <div class="q-bar" id="file-class-1-solution-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s6">6. משוואה שבה מופיעים z והצמוד שלו יחד</a><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 273.0"><img src="files/class-1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-38.223%"></div>
-        <div class="q-bar" id="file-class-1-solution-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 356.4"><img src="files/class-1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-87.235%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:557.0 / 39.0"><img src="files/class-1-solution-p4.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 4" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-solution-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 115.0"><img src="files/class-1-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-7.002%"></div>
-        <div class="q-bar" id="file-class-1-solution-q10"><span class="q-num">שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 167.8"><img src="files/class-1-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-27.648%"></div>
-        <div class="q-bar" id="file-class-1-solution-q11"><span class="q-num">שאלה 11</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 219.8"><img src="files/class-1-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-57.774%"></div>
-        <div class="q-bar" id="file-class-1-solution-q12"><span class="q-num">שאלה 12</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 300.6"><img src="files/class-1-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-97.235%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:557.0 / 49.0"><img src="files/class-1-solution-p5.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 5" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-solution-q13"><span class="q-num">שאלה 13</span><span class="q-lbl">במדריך:</span><a href="#ex1-s11">11. תנאי שקובע צורה ל-z: למשל Re(z)=Im(z)</a><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 297.0"><img src="files/class-1-solution-p5.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-8.797%"></div>
-        <div class="q-bar" id="file-class-1-solution-q14"><span class="q-num">שאלה 14</span><span class="q-lbl">במדריך:</span><a href="#ex1-s12">12. מעבר להצגה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 496.2"><img src="files/class-1-solution-p5.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-62.118%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:557.0 / 348.0"><img src="files/class-1-solution-p6.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 6" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-solution-q15"><span class="q-num">שאלה 15</span><span class="q-lbl">במדריך:</span><a href="#ex1-s13">13. חזקה גבוהה: נוסחת דה-מואבר</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 494.2"><img src="files/class-1-solution-p6.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-62.478%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:557.0 / 122.0"><img src="files/class-1-solution-p7.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 7" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-1-solution-q16"><span class="q-num">שאלה 16</span><span class="q-lbl">במדריך:</span><a href="#ex1-s14">14. הוכחת זהויות טריגונומטריות בעזרת הצגה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:557.0 / 311.4"><img src="files/class-1-solution-p7.webp" alt="" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%;margin-top:-21.903%"></div>
+          <div class="file-slice" style="aspect-ratio:557.0 / 842.2"><img src="files/class-1-solution-p1.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:557.0 / 842.2"><img src="files/class-1-solution-p2.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:557.0 / 842.2"><img src="files/class-1-solution-p3.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 3" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:557.0 / 842.2"><img src="files/class-1-solution-p4.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 4" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:557.0 / 842.2"><img src="files/class-1-solution-p5.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 5" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:557.0 / 842.2"><img src="files/class-1-solution-p6.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 6" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:557.0 / 433.4"><img src="files/class-1-solution-p7.webp" alt="פתרון תרגיל כיתה 1 אלגברה ליניארית - עמוד 7" loading="lazy" decoding="async" style="width:106.912%;margin-left:-3.627%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-home-1">תרגיל בית 1 אלגברה ליניארית</h3>
+      <div class="file-doc" id="file-home-1" data-type="q">
+        <h3 class="file-title">תרגיל בית 1 אלגברה ליניארית</h3>
         <div class="file-actions">
           <a class="file-open" href="files/home-1.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-home-1-q1">1</a> <a href="#file-home-1-q2">2</a> <a href="#file-home-1-q3">3</a> <a href="#file-home-1-q4">4</a> <a href="#file-home-1-q5">5</a> <a href="#file-home-1-q6">6</a> <a href="#file-home-1-q7">7</a> <a href="#file-home-1-q8">8</a> <a href="#file-home-1-q9">9</a> <a href="#file-home-1-q10">10</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:485.9 / 60.0"><img src="files/home-1-p1.webp" alt="תרגיל בית 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-1-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 70.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-12.348%"></div>
-        <div class="q-bar" id="file-home-1-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 54.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-26.754%"></div>
-        <div class="q-bar" id="file-home-1-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 48.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-37.868%"></div>
-        <div class="q-bar" id="file-home-1-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 50.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-47.746%"></div>
-        <div class="q-bar" id="file-home-1-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 52.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-58.037%"></div>
-        <div class="q-bar" id="file-home-1-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</a><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 73.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-68.738%"></div>
-        <div class="q-bar" id="file-home-1-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 100.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-83.762%"></div>
-        <div class="q-bar" id="file-home-1-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 66.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-104.342%"></div>
-        <div class="q-bar" id="file-home-1-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s12">12. מעבר להצגה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 51.0"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-117.925%"></div>
-        <div class="q-bar" id="file-home-1-q10"><span class="q-num">שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex1-s13">13. חזקה גבוהה: נוסחת דה-מואבר</a></div>
-        <div class="file-slice" style="aspect-ratio:485.9 / 92.2"><img src="files/home-1-p1.webp" alt="" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%;margin-top:-128.421%"></div>
+          <div class="file-slice" style="aspect-ratio:485.9 / 716.2"><img src="files/home-1-p1.webp" alt="תרגיל בית 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:122.556%;margin-left:-17.802%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-home-1-solution">פתרון תרגיל בית 1 אלגברה ליניארית</h3>
+      <div class="file-doc" id="file-home-1-solution" data-type="s">
+        <h3 class="file-title">פתרון תרגיל בית 1 אלגברה ליניארית</h3>
         <div class="file-actions">
           <a class="file-open" href="files/home-1-solution.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-home-1-solution-q1">1</a> <a href="#file-home-1-solution-q2">2</a> <a href="#file-home-1-solution-q3">3</a> <a href="#file-home-1-solution-q4">4</a> <a href="#file-home-1-solution-q5">5</a> <a href="#file-home-1-solution-q6">6</a> <a href="#file-home-1-solution-q7">7</a> <a href="#file-home-1-solution-q8">8</a> <a href="#file-home-1-solution-q9">9</a> <a href="#file-home-1-solution-q10">10</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:559.4 / 61.0"><img src="files/home-1-solution-p1.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-1-solution-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 178.8"><img src="files/home-1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-10.905%"></div>
-        <div class="q-bar" id="file-home-1-solution-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 130.5"><img src="files/home-1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-42.867%"></div>
-        <div class="q-bar" id="file-home-1-solution-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex1-s3">3. חילוק: כפל בצמוד של המכנה</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 157.9"><img src="files/home-1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-66.196%"></div>
-        <div class="q-bar" id="file-home-1-solution-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 314.0"><img src="files/home-1-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-94.423%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:559.4 / 27.0"><img src="files/home-1-solution-p2.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-1-solution-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex1-s5">5. מציאת a,b: השוואת חלק ממשי וחלק מדומה</a><a href="#ex1-s7">7. מציאת |z| או ערך מוחלט של ביטוי - בלי לחשב את z</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 180.6"><img src="files/home-1-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-4.827%"></div>
-        <div class="q-bar" id="file-home-1-solution-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex1-s10">10. נתון |z|=1 (או z בחזקה שווה למספר בעל ערך מוחלט 1)</a><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 256.4"><img src="files/home-1-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-37.111%"></div>
-        <div class="q-bar" id="file-home-1-solution-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex1-s9">9. נתון שוויון ערכים מוחלטים: מעבר לריבוע</a><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 378.2"><img src="files/home-1-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-82.946%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:559.4 / 29.0"><img src="files/home-1-solution-p3.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 3" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-1-solution-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex1-s8">8. הוכחה שביטוי הוא ממשי או מדומה טהור</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 236.0"><img src="files/home-1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-5.184%"></div>
-        <div class="q-bar" id="file-home-1-solution-q9"><span class="q-num">שאלה 9</span><span class="q-lbl">במדריך:</span><a href="#ex1-s12">12. מעבר להצגה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 296.0"><img src="files/home-1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-47.372%"></div>
-        <div class="q-bar" id="file-home-1-solution-q10"><span class="q-num">שאלה 10</span><span class="q-lbl">במדריך:</span><a href="#ex1-s13">13. חזקה גבוהה: נוסחת דה-מואבר</a></div>
-        <div class="file-slice" style="aspect-ratio:559.4 / 281.2"><img src="files/home-1-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-100.286%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:559.4 / 267.9"><img src="files/home-1-solution-p4.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 4" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%;margin-top:-0.000%"></div>
+          <div class="file-slice" style="aspect-ratio:559.4 / 842.2"><img src="files/home-1-solution-p1.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:559.4 / 842.2"><img src="files/home-1-solution-p2.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:559.4 / 842.2"><img src="files/home-1-solution-p3.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 3" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:559.4 / 267.9"><img src="files/home-1-solution-p4.webp" alt="פתרון תרגיל בית 1 אלגברה ליניארית - עמוד 4" loading="lazy" decoding="async" style="width:106.453%;margin-left:-3.611%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-class-2">תרגיל כיתה 2 אלגברה ליניארית</h3>
+      <div class="file-doc" id="file-class-2" data-type="q">
+        <h3 class="file-title">תרגיל כיתה 2 אלגברה ליניארית</h3>
         <div class="file-actions">
           <a class="file-open" href="files/class-2.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-class-2-q1">1</a> <a href="#file-class-2-q2">2</a> <a href="#file-class-2-q3">3</a> <a href="#file-class-2-q4">4</a> <a href="#file-class-2-q5">5</a> <a href="#file-class-2-q6">6</a> <a href="#file-class-2-q7">7</a> <a href="#file-class-2-q8">8</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:479.6 / 74.0"><img src="files/class-2-p1.webp" alt="תרגיל כיתה 2 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-class-2-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 58.0"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-15.430%"></div>
-        <div class="q-bar" id="file-class-2-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex2-s2">2. משוואה עם z בכל האיברים: הוצאת גורם משותף</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 51.0"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-27.523%"></div>
-        <div class="q-bar" id="file-class-2-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 63.0"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-38.157%"></div>
-        <div class="q-bar" id="file-class-2-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a><a href="#ex2-s5">5. חזקה בצורה קוטבית, ו-z חלקי הצמוד שלו</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 125.0"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-51.293%"></div>
-        <div class="q-bar" id="file-class-2-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex2-s4">4. הצבה: (ביטוי ב-z) בחזקת n = מספר</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 40.0"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-77.356%"></div>
-        <div class="q-bar" id="file-class-2-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. משוואה ריבועית עם Δ שלילית</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 29.0"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-85.696%"></div>
-        <div class="q-bar" id="file-class-2-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. פולינום עם מקדמים ממשיים ושורש מרוכב נתון</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 63.0"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-91.743%"></div>
-        <div class="q-bar" id="file-class-2-q8"><span class="q-num">שאלה 8</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. פולינום עם מקדמים ממשיים ושורש מרוכב נתון</a></div>
-        <div class="file-slice" style="aspect-ratio:479.6 / 89.6"><img src="files/class-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%;margin-top:-104.879%"></div>
+          <div class="file-slice" style="aspect-ratio:479.6 / 592.6"><img src="files/class-2-p1.webp" alt="תרגיל כיתה 2 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:124.128%;margin-left:-18.912%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-home-2">תרגיל בית 2 אלגברה ליניארית</h3>
+      <div class="file-doc" id="file-home-2" data-type="q">
+        <h3 class="file-title">תרגיל בית 2 אלגברה ליניארית</h3>
         <div class="file-actions">
           <a class="file-open" href="files/home-2.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-home-2-q1">1</a> <a href="#file-home-2-q2">2</a> <a href="#file-home-2-q3">3</a> <a href="#file-home-2-q4">4</a> <a href="#file-home-2-q5">5</a> <a href="#file-home-2-q6">6</a> <a href="#file-home-2-q7">7</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:433.0 / 84.0"><img src="files/home-2-p1.webp" alt="תרגיל בית 2 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-2-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s2">2. משוואה עם z בכל האיברים: הוצאת גורם משותף</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:433.0 / 89.0"><img src="files/home-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-19.400%"></div>
-        <div class="q-bar" id="file-home-2-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:433.0 / 76.0"><img src="files/home-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-39.954%"></div>
-        <div class="q-bar" id="file-home-2-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex2-s4">4. הצבה: (ביטוי ב-z) בחזקת n = מספר</a></div>
-        <div class="file-slice" style="aspect-ratio:433.0 / 75.0"><img src="files/home-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-57.506%"></div>
-        <div class="q-bar" id="file-home-2-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s5">5. חזקה בצורה קוטבית, ו-z חלקי הצמוד שלו</a></div>
-        <div class="file-slice" style="aspect-ratio:433.0 / 185.0"><img src="files/home-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-74.827%"></div>
-        <div class="q-bar" id="file-home-2-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a><a href="#ex2-s8">8. הוכחה על הפתרונות: כולם על מעגל אחד</a></div>
-        <div class="file-slice" style="aspect-ratio:433.0 / 86.0"><img src="files/home-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-117.552%"></div>
-        <div class="q-bar" id="file-home-2-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. משוואה ריבועית עם Δ שלילית</a></div>
-        <div class="file-slice" style="aspect-ratio:433.0 / 66.0"><img src="files/home-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-137.413%"></div>
-        <div class="q-bar" id="file-home-2-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. פולינום עם מקדמים ממשיים ושורש מרוכב נתון</a></div>
-        <div class="file-slice" style="aspect-ratio:433.0 / 89.1"><img src="files/home-2-p1.webp" alt="" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%;margin-top:-152.656%"></div>
+          <div class="file-slice" style="aspect-ratio:433.0 / 750.1"><img src="files/home-2-p1.webp" alt="תרגיל בית 2 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:137.487%;margin-left:-31.478%"></div>
         </div></div>
       </div>
-      <div class="file-doc">
-        <h3 class="file-title" id="file-home-2-solution">פתרון תרגיל בית 2 אלגברה ליניארית</h3>
+      <div class="file-doc" id="file-home-2-solution" data-type="s">
+        <h3 class="file-title">פתרון תרגיל בית 2 אלגברה ליניארית</h3>
         <div class="file-actions">
           <a class="file-open" href="files/home-2-solution.pdf" target="_blank" rel="noopener">פתיחת ה-PDF המקורי</a>
-          <span class="file-jump"><span>קפיצה לשאלה:</span> <a href="#file-home-2-solution-q1">1</a> <a href="#file-home-2-solution-q2">2</a> <a href="#file-home-2-solution-q3">3</a> <a href="#file-home-2-solution-q4">4</a> <a href="#file-home-2-solution-q5">5</a> <a href="#file-home-2-solution-q6">6</a> <a href="#file-home-2-solution-q7">7</a></span>
         </div>
         <div class="file-hint">↔ אפשר לגלול את הקובץ הצידה, או להגדיל בשתי אצבעות.</div>
         <div class="file-scroll"><div class="file-pages">
-        <div class="file-slice" style="aspect-ratio:555.4 / 85.0"><img src="files/home-2-solution-p1.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-2-solution-q1"><span class="q-num">שאלה 1</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s2">2. משוואה עם z בכל האיברים: הוצאת גורם משותף</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:555.4 / 756.9"><img src="files/home-2-solution-p1.webp" alt="" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-15.304%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:555.4 / 427.3"><img src="files/home-2-solution-p2.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-2-solution-q2"><span class="q-num">שאלה 2</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a></div>
-        <div class="file-slice" style="aspect-ratio:555.4 / 141.0"><img src="files/home-2-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-76.936%"></div>
-        <div class="q-bar" id="file-home-2-solution-q3"><span class="q-num">שאלה 3</span><span class="q-lbl">במדריך:</span><a href="#ex2-s4">4. הצבה: (ביטוי ב-z) בחזקת n = מספר</a></div>
-        <div class="file-slice" style="aspect-ratio:555.4 / 273.6"><img src="files/home-2-solution-p2.webp" alt="" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-102.323%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:555.4 / 349.5"><img src="files/home-2-solution-p3.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 3" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-2-solution-q4"><span class="q-num">שאלה 4</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s5">5. חזקה בצורה קוטבית, ו-z חלקי הצמוד שלו</a></div>
-        <div class="file-slice" style="aspect-ratio:555.4 / 492.4"><img src="files/home-2-solution-p3.webp" alt="" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-62.928%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:555.4 / 32.5"><img src="files/home-2-solution-p4.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 4" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-2-solution-q5"><span class="q-num">שאלה 5</span><span class="q-lbl">במדריך:</span><a href="#ex2-s1">1. פתרון המשוואה z בחזקת n = w (נוסחת השורש)</a><a href="#ex2-s3">3. צד ימין מסובך: קודם לפשט לצורה קוטבית</a><a href="#ex2-s8">8. הוכחה על הפתרונות: כולם על מעגל אחד</a></div>
-        <div class="file-slice" style="aspect-ratio:555.4 / 495.5"><img src="files/home-2-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-5.852%"></div>
-        <div class="q-bar" id="file-home-2-solution-q6"><span class="q-num">שאלה 6</span><span class="q-lbl">במדריך:</span><a href="#ex2-s6">6. משוואה ריבועית עם Δ שלילית</a></div>
-        <div class="file-slice" style="aspect-ratio:555.4 / 313.9"><img src="files/home-2-solution-p4.webp" alt="" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-95.067%"></div>
-        <div class="file-slice page-start" style="aspect-ratio:555.4 / 49.0"><img src="files/home-2-solution-p5.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 5" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-0.000%"></div>
-        <div class="q-bar" id="file-home-2-solution-q7"><span class="q-num">שאלה 7</span><span class="q-lbl">במדריך:</span><a href="#ex2-s7">7. פולינום עם מקדמים ממשיים ושורש מרוכב נתון</a></div>
-        <div class="file-slice" style="aspect-ratio:555.4 / 481.9"><img src="files/home-2-solution-p5.webp" alt="" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%;margin-top:-8.822%"></div>
+          <div class="file-slice" style="aspect-ratio:555.4 / 841.9"><img src="files/home-2-solution-p1.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 1" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:555.4 / 841.9"><img src="files/home-2-solution-p2.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 2" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:555.4 / 841.9"><img src="files/home-2-solution-p3.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 3" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:555.4 / 841.9"><img src="files/home-2-solution-p4.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 4" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%"></div>
+          <div class="file-slice page-start" style="aspect-ratio:555.4 / 530.9"><img src="files/home-2-solution-p5.webp" alt="פתרון תרגיל בית 2 אלגברה ליניארית - עמוד 5" loading="lazy" decoding="async" style="width:107.188%;margin-left:-3.547%"></div>
         </div></div>
       </div>
+      <script>
+      (function(){
+        try {
+          var box = document.getElementById('filesFilter'); if(!box) return;
+          var KEY = 'filesView_' + location.pathname;
+          var docs = [].slice.call(document.querySelectorAll('.files-section .file-doc'));
+          var types = [].slice.call(box.querySelectorAll('.ff-type'));
+          var state = {};
+          try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e){ state = {}; }
+          function firstOf(t){ var d = docs.filter(function(x){ return x.dataset.type === t; })[0]; return d ? d.id.slice(5) : null; }
+          function show(t, id){
+            if(!t) t = types[0].dataset.type;
+            if(!id || !document.getElementById('file-' + id) || document.getElementById('file-' + id).dataset.type !== t) id = (state.files || {})[t] || firstOf(t);
+            if(!document.getElementById('file-' + id)) id = firstOf(t);
+            state.type = t; state.files = state.files || {}; state.files[t] = id;
+            types.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.type === t)); });
+            [].forEach.call(box.querySelectorAll('.ff-group'), function(g){ g.hidden = g.dataset.type !== t; });
+            [].forEach.call(box.querySelectorAll('.ff-file'), function(b){ b.setAttribute('aria-pressed', String(b.dataset.file === id)); });
+            docs.forEach(function(d){ d.hidden = d.id !== 'file-' + id; });
+            try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+          }
+          types.forEach(function(b){ b.addEventListener('click', function(){ show(b.dataset.type); }); });
+          [].forEach.call(box.querySelectorAll('.ff-file'), function(b){
+            b.addEventListener('click', function(){ show(b.closest('.ff-group').dataset.type, b.dataset.file); });
+          });
+          box.hidden = false;
+          show(state.type, state.type && state.files ? state.files[state.type] : null);
+        } catch(err){}
+      })();
+      </script>
     </section>
     <!-- files-section:end -->
 <footer class="site-footer">נבנה עבורך לצורך חזרה למבחן - כל השיטות מנוסחות באופן כללי כדי שיתאימו לכל שאלה מאותו סוג.</footer>
@@ -1858,7 +1741,7 @@ try {
     if(!scrollTarget) return;
     const rect = scrollTarget.getBoundingClientRect();
     const elTop = rect.top + window.scrollY;
-    const OFFSET = 45; // small gap below the top of the viewport
+    const OFFSET = 97; // small gap below the top of the viewport
     const target = Math.max(0, elTop - OFFSET);
     window.scrollTo({ top: target, behavior: (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' });
     try {
@@ -2041,6 +1924,7 @@ try {
       <button type="button" class="ai-close" id="aiClose" aria-label="סגירה">✕</button>
     </div>
     <p class="ai-sub">העלי תמונה של תרגיל, או כתבי אותו במילים. ה-AI יבין מה התרגיל שואל ויפנה אותך לסעיפים באתר שצריך בשבילו.</p>
+    <!-- hub:keynote --><p class="hub-key-note" id="hubKeyNote" hidden>🔑 החיפוש החכם צריך מפתח של Google, שמדביקים <b>פעם אחת</b> ב<a href="../#key">דף הבית של אתר המתמטיקה</a>. אחרי זה הוא עובד בכל האתרים.</p>
     <div class="ai-setup" id="aiSetup" hidden>
       <div class="ai-setup-title">🔑 הגדרה חד-פעמית (חינם): מפתח של Google</div>
       <p>באתר הזה החיפוש החכם עובד דרך Gemini של Google, שיש לו שימוש חינמי. צריך רק "מפתח" - מעין סיסמה שמחברת את האתר לחשבון Google שלך. בלי כרטיס אשראי ובלי תשלום. עושים את זה פעם אחת בכל מחשב או טלפון:</p>
@@ -2241,8 +2125,8 @@ try {
   }
   const MSG={not_granted:'לא אושר שימוש ב-Claude בדף הזה.', sampling_disabled:'Claude לא זמין בחשבון הזה.', rate_limited:'הגעת למגבלת השימוש החינמי לרגע זה. חכי דקה ונסי שוב.',
     session_expired:'צריך להתחבר מחדש ל-Claude.', image_rejected:'התמונה לא התקבלה. נסי תמונה אחרת (JPG או PNG).', images_unavailable:'אי אפשר לשלוח תמונות בתצוגה הזאת - כתבי את התרגיל במילים.',
-    refused:'הבקשה לא עובדה. נסי לנסח את התרגיל אחרת.', invalid_json:'התשובה לא הגיעה בפורמט הנכון. נסי שוב.', no_key:'קודם צריך לשמור מפתח בתיבה הצהובה למעלה.',
-    bad_key:'המפתח לא תקין. לחצי על "החלפת מפתח" והדביקי אותו שוב.', prompt_too_large:'הטקסט ארוך מדי. קצרי אותו.'};
+    refused:'הבקשה לא עובדה. נסי לנסח את התרגיל אחרת.', invalid_json:'התשובה לא הגיעה בפורמט הנכון. נסי שוב.', no_key:'קודם צריך להדביק מפתח פעם אחת בדף הבית של אתר המתמטיקה.',
+    bad_key:'המפתח לא תקין. אפשר להחליף אותו בדף הבית של אתר המתמטיקה.', prompt_too_large:'הטקסט ארוך מדי. קצרי אותו.'};
 
   // ---------- run ----------
   goBtn.onclick=async ()=>{
@@ -2310,7 +2194,7 @@ try {
   function jump(id){
     const el=document.getElementById(id); if(!el) return;
     close();
-    const y=el.getBoundingClientRect().top+window.scrollY-45;
+    const y=el.getBoundingClientRect().top+window.scrollY-97;
     const reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({top:Math.max(0,y), behavior: reduce?'auto':'smooth'});
     el.classList.remove('ai-flash'); void el.offsetWidth; el.classList.add('ai-flash');
@@ -2413,5 +2297,63 @@ try {
   } catch(err){}
 })();
 </script>
+<!-- hub:topbar-assets:start -->
+<style>
+  /* סרגל עליון קבוע: חזרה לדף הבית + רענון, באותו מקום בכל האתרים */
+  .hub-topbar{ position:sticky; top:0; z-index:35; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    min-height:52px; padding:0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
+    background:#1F2A47; font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; box-shadow:0 1px 0 rgba(255,255,255,.08); }
+  .hub-topbar .hub-home{ display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#F5F0E1; text-decoration:none; font-weight:600; font-size:.95rem; }
+  .hub-topbar .hub-home > span{ color:#E3B95C; font-weight:700; }
+  .hub-refresh{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 16px; border-radius:100px;
+    border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#F5F0E1;
+    font-family:inherit; font-weight:600; font-size:.92rem; cursor:pointer; }
+  .hub-refresh:hover{ background:rgba(255,255,255,.16); }
+  .hub-refresh:focus-visible, .hub-topbar .hub-home:focus-visible{ outline:3px solid #E3B95C; outline-offset:2px; border-radius:100px; }
+  .hub-refresh svg{ width:17px; height:17px; }
+  .hub-refresh.spin svg{ animation:hubSpin .8s linear infinite; }
+  @keyframes hubSpin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .hub-refresh.spin svg{ animation:none; } }
+  /* כפתור הרענון הצף הישן לא נחוץ יותר; כפתור "למעלה" חוזר למקומו */
+  #refreshBtn{ display:none !important; }
+  a.top-btn#topBtn{ bottom:calc(26px + env(safe-area-inset-bottom, 0px)) !important; left:calc(20px + env(safe-area-inset-left, 0px)) !important; }
+  /* במחשב: סרגל הצד מתחיל מתחת לסרגל העליון */
+  @media (min-width: 881px){ .sidebar{ top:52px !important; height:calc(100vh - 52px) !important; } }
+  /* מפתח החיפוש החכם מנוהל בדף הבית בלבד */
+  #aiSetup, #aiKeyOk{ display:none !important; }
+  .hub-key-note{ margin:4px 0 14px; padding:12px 16px; border-radius:12px; background:#FFF6D6; border:2px solid #E3B95C; color:#3A2E10; font-size:.95rem; }
+  .hub-key-note a{ color:#1F2A47; font-weight:700; }
+  @media print{ .hub-topbar{ display:none !important; } }
+</style>
+<script>
+(function(){
+  try {
+    var KEY = 'hubRefreshY', btn = document.getElementById('hubRefresh');
+    if(btn) btn.addEventListener('click', function(){
+      btn.classList.add('spin');
+      try { sessionStorage.setItem(KEY, String(window.scrollY)); } catch(e){}
+      location.replace(location.pathname + '?r=' + Date.now());
+    });
+    var y = null;
+    try { y = sessionStorage.getItem(KEY); sessionStorage.removeItem(KEY); } catch(e){}
+    if(/[?&]r=\d+/.test(location.search)){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
+    if(y !== null){
+      var go = function(){ window.scrollTo({top: parseFloat(y) || 0, behavior: 'instant'}); };
+      requestAnimationFrame(function(){ requestAnimationFrame(go); });
+      window.addEventListener('load', function(){ setTimeout(go, 120); setTimeout(go, 500); });
+    }
+  } catch(err){}
+  try {
+    var note = document.getElementById('hubKeyNote');
+    if(note){
+      var has = function(){ try { return !!localStorage.getItem('mathGeminiKey_v1'); } catch(e){ return false; } };
+      var upd = function(){ note.hidden = has(); };
+      document.addEventListener('click', function(e){ if(e.target.closest && e.target.closest('[data-ai-open]')) upd(); }, true);
+      upd();
+    }
+  } catch(err){}
+})();
+</script>
+<!-- hub:topbar-assets:end -->
 </body>
 </html>

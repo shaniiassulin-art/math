@@ -75,7 +75,7 @@
   .site-card:hover .site-go{ background:var(--indigo); }
 
   /* מפתח החיפוש החכם - אחד לכל האתרים */
-  .key-box{
+  .key-box{ scroll-margin-top:70px;
     margin-top:44px; background:var(--paper); border:1px solid var(--line); border-radius:16px;
     border-inline-start:5px solid var(--gold); padding:18px 20px;
   }
@@ -105,6 +105,9 @@
 </style>
 </head>
 <body>
+<!-- hub:topbar:start -->
+<div class="hub-topbar" role="navigation" aria-label="אתר המתמטיקה"><span class="hub-home"><span aria-hidden="true">π</span> מתמטיקה</span><button type="button" class="hub-refresh" id="hubRefresh" aria-label="רענון: טעינת הגרסה העדכנית של האתר" title="רענון"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><polyline points="20 4 20 9 15 9"/></svg><span>רענון</span></button></div>
+<!-- hub:topbar:end -->
   <header class="top">
     <div class="top-inner">
       <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#2C3A5E"/><path d="M14 23.5C18 19 24 19.5 32 19.5S45 19 50.5 18" fill="none" stroke="#E3B95C" stroke-width="5" stroke-linecap="round"/><path d="M26 20.5C26.5 31 25 40 19 47" fill="none" stroke="#E3B95C" stroke-width="5" stroke-linecap="round"/><path d="M39.5 20C38.5 31 38.5 41 47 46" fill="none" stroke="#E3B95C" stroke-width="5" stroke-linecap="round"/></svg>
@@ -150,7 +153,7 @@
       </div>
     </section>
 
-    <section class="key-box" aria-labelledby="keyTitle">
+    <section class="key-box" id="key" aria-labelledby="keyTitle">
       <h2 id="keyTitle">🔑 מפתח לחיפוש החכם - אחד לכל האתרים</h2>
       <div id="keyMissing">
         <p>החיפוש החכם (העלאת תמונה של תרגיל) עובד דרך Gemini של Google, בחינם. מדביקים כאן את המפתח פעם אחת, והוא עובד בכל האתרים שבדף הזה, בטלפון או במחשב הזה.</p>
@@ -201,5 +204,63 @@
   } catch(err){}
 })();
 </script>
+<!-- hub:topbar-assets:start -->
+<style>
+  /* סרגל עליון קבוע: חזרה לדף הבית + רענון, באותו מקום בכל האתרים */
+  .hub-topbar{ position:sticky; top:0; z-index:35; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    min-height:52px; padding:0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
+    background:#1F2A47; font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; box-shadow:0 1px 0 rgba(255,255,255,.08); }
+  .hub-topbar .hub-home{ display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#F5F0E1; text-decoration:none; font-weight:600; font-size:.95rem; }
+  .hub-topbar .hub-home > span{ color:#E3B95C; font-weight:700; }
+  .hub-refresh{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 16px; border-radius:100px;
+    border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#F5F0E1;
+    font-family:inherit; font-weight:600; font-size:.92rem; cursor:pointer; }
+  .hub-refresh:hover{ background:rgba(255,255,255,.16); }
+  .hub-refresh:focus-visible, .hub-topbar .hub-home:focus-visible{ outline:3px solid #E3B95C; outline-offset:2px; border-radius:100px; }
+  .hub-refresh svg{ width:17px; height:17px; }
+  .hub-refresh.spin svg{ animation:hubSpin .8s linear infinite; }
+  @keyframes hubSpin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .hub-refresh.spin svg{ animation:none; } }
+  /* כפתור הרענון הצף הישן לא נחוץ יותר; כפתור "למעלה" חוזר למקומו */
+  #refreshBtn{ display:none !important; }
+  a.top-btn#topBtn{ bottom:calc(26px + env(safe-area-inset-bottom, 0px)) !important; left:calc(20px + env(safe-area-inset-left, 0px)) !important; }
+  /* במחשב: סרגל הצד מתחיל מתחת לסרגל העליון */
+  @media (min-width: 881px){ .sidebar{ top:52px !important; height:calc(100vh - 52px) !important; } }
+  /* מפתח החיפוש החכם מנוהל בדף הבית בלבד */
+  #aiSetup, #aiKeyOk{ display:none !important; }
+  .hub-key-note{ margin:4px 0 14px; padding:12px 16px; border-radius:12px; background:#FFF6D6; border:2px solid #E3B95C; color:#3A2E10; font-size:.95rem; }
+  .hub-key-note a{ color:#1F2A47; font-weight:700; }
+  @media print{ .hub-topbar{ display:none !important; } }
+</style>
+<script>
+(function(){
+  try {
+    var KEY = 'hubRefreshY', btn = document.getElementById('hubRefresh');
+    if(btn) btn.addEventListener('click', function(){
+      btn.classList.add('spin');
+      try { sessionStorage.setItem(KEY, String(window.scrollY)); } catch(e){}
+      location.replace(location.pathname + '?r=' + Date.now());
+    });
+    var y = null;
+    try { y = sessionStorage.getItem(KEY); sessionStorage.removeItem(KEY); } catch(e){}
+    if(/[?&]r=\d+/.test(location.search)){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
+    if(y !== null){
+      var go = function(){ window.scrollTo({top: parseFloat(y) || 0, behavior: 'instant'}); };
+      requestAnimationFrame(function(){ requestAnimationFrame(go); });
+      window.addEventListener('load', function(){ setTimeout(go, 120); setTimeout(go, 500); });
+    }
+  } catch(err){}
+  try {
+    var note = document.getElementById('hubKeyNote');
+    if(note){
+      var has = function(){ try { return !!localStorage.getItem('mathGeminiKey_v1'); } catch(e){ return false; } };
+      var upd = function(){ note.hidden = has(); };
+      document.addEventListener('click', function(e){ if(e.target.closest && e.target.closest('[data-ai-open]')) upd(); }, true);
+      upd();
+    }
+  } catch(err){}
+})();
+</script>
+<!-- hub:topbar-assets:end -->
 </body>
 </html>

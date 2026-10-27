@@ -81,6 +81,124 @@ SWIPE_BACK = r"""<!-- hub:swipe-back -->
 """
 
 
+BAR_H = 52   # גובה הסרגל העליון (px)
+
+REFRESH_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+               'stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><polyline points="20 4 20 9 15 9"/></svg>')
+
+
+def topbar(home_html):
+    return ('<!-- hub:topbar:start -->\n'
+            '<div class="hub-topbar" role="navigation" aria-label="אתר המתמטיקה">'
+            + home_html +
+            '<button type="button" class="hub-refresh" id="hubRefresh" aria-label="רענון: טעינת הגרסה העדכנית של האתר" title="רענון">'
+            + REFRESH_SVG + '<span>רענון</span></button></div>\n<!-- hub:topbar:end -->\n')
+
+
+SUB_BAR = topbar('<a class="hub-home" href="../"><span aria-hidden="true">⌂</span> כל אתרי המתמטיקה</a>')
+HUB_BAR = topbar('<span class="hub-home"><span aria-hidden="true">π</span> מתמטיקה</span>')
+
+TOPBAR_ASSETS = ("""<!-- hub:topbar-assets:start -->
+<style>
+  /* סרגל עליון קבוע: חזרה לדף הבית + רענון, באותו מקום בכל האתרים */
+  .hub-topbar{ position:sticky; top:0; z-index:35; display:flex; align-items:center; justify-content:space-between; gap:12px;
+    min-height:%(h)dpx; padding:0 max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
+    background:#1F2A47; font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; box-shadow:0 1px 0 rgba(255,255,255,.08); }
+  .hub-topbar .hub-home{ display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#F5F0E1; text-decoration:none; font-weight:600; font-size:.95rem; }
+  .hub-topbar .hub-home > span{ color:#E3B95C; font-weight:700; }
+  .hub-refresh{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 16px; border-radius:100px;
+    border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#F5F0E1;
+    font-family:inherit; font-weight:600; font-size:.92rem; cursor:pointer; }
+  .hub-refresh:hover{ background:rgba(255,255,255,.16); }
+  .hub-refresh:focus-visible, .hub-topbar .hub-home:focus-visible{ outline:3px solid #E3B95C; outline-offset:2px; border-radius:100px; }
+  .hub-refresh svg{ width:17px; height:17px; }
+  .hub-refresh.spin svg{ animation:hubSpin .8s linear infinite; }
+  @keyframes hubSpin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .hub-refresh.spin svg{ animation:none; } }
+  /* כפתור הרענון הצף הישן לא נחוץ יותר; כפתור "למעלה" חוזר למקומו */
+  #refreshBtn{ display:none !important; }
+  a.top-btn#topBtn{ bottom:calc(26px + env(safe-area-inset-bottom, 0px)) !important; left:calc(20px + env(safe-area-inset-left, 0px)) !important; }
+  /* במחשב: סרגל הצד מתחיל מתחת לסרגל העליון */
+  @media (min-width: 881px){ .sidebar{ top:%(h)dpx !important; height:calc(100vh - %(h)dpx) !important; } }
+  /* מפתח החיפוש החכם מנוהל בדף הבית בלבד */
+  #aiSetup, #aiKeyOk{ display:none !important; }
+  .hub-key-note{ margin:4px 0 14px; padding:12px 16px; border-radius:12px; background:#FFF6D6; border:2px solid #E3B95C; color:#3A2E10; font-size:.95rem; }
+  .hub-key-note a{ color:#1F2A47; font-weight:700; }
+  @media print{ .hub-topbar{ display:none !important; } }
+</style>
+<script>
+(function(){
+  try {
+    var KEY = 'hubRefreshY', btn = document.getElementById('hubRefresh');
+    if(btn) btn.addEventListener('click', function(){
+      btn.classList.add('spin');
+      try { sessionStorage.setItem(KEY, String(window.scrollY)); } catch(e){}
+      location.replace(location.pathname + '?r=' + Date.now());
+    });
+    var y = null;
+    try { y = sessionStorage.getItem(KEY); sessionStorage.removeItem(KEY); } catch(e){}
+    if(/[?&]r=\\d+/.test(location.search)){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
+    if(y !== null){
+      var go = function(){ window.scrollTo({top: parseFloat(y) || 0, behavior: 'instant'}); };
+      requestAnimationFrame(function(){ requestAnimationFrame(go); });
+      window.addEventListener('load', function(){ setTimeout(go, 120); setTimeout(go, 500); });
+    }
+  } catch(err){}
+  try {
+    var note = document.getElementById('hubKeyNote');
+    if(note){
+      var has = function(){ try { return !!localStorage.getItem('%(key)s'); } catch(e){ return false; } };
+      var upd = function(){ note.hidden = has(); };
+      document.addEventListener('click', function(e){ if(e.target.closest && e.target.closest('[data-ai-open]')) upd(); }, true);
+      upd();
+    }
+  } catch(err){}
+})();
+</script>
+<!-- hub:topbar-assets:end -->
+""" % {'h': BAR_H, 'key': SHARED_KEY})
+
+KEY_NOTE = ('<!-- hub:keynote --><p class="hub-key-note" id="hubKeyNote" hidden>🔑 החיפוש החכם צריך מפתח של Google, '
+            'שמדביקים <b>פעם אחת</b> ב<a href="../#key">דף הבית של אתר המתמטיקה</a>. אחרי זה הוא עובד בכל האתרים.</p>')
+
+
+def put_between(page, start, end, block, fallback):
+    """Replace the block between markers; if there are none, call fallback(page, block)."""
+    if start in page:
+        a = page.index(start); b = page.index(end) + len(end)
+        if page[b:b + 1] == '\n':
+            b += 1
+        return page[:a] + block + page[b:]
+    return fallback(page, block)
+
+
+def ensure_topbar_and_key(page):
+    # 1. the top bar (replaces the old non-sticky "back" bar)
+    def add_bar(pg, block):
+        old = re.search(r'<div class="hub-back-bar"[^>]*>.*?</div>\n?', pg, re.S)
+        if old:
+            return pg[:old.start()] + block + pg[old.end():]
+        m = re.search(r'<body[^>]*>\n?', pg)
+        return pg[:m.end()] + block + pg[m.end():]
+    page = put_between(page, '<!-- hub:topbar:start -->', '<!-- hub:topbar:end -->', SUB_BAR, add_bar)
+    # 2. its styles and script
+    def add_assets(pg, block):
+        i = pg.rindex('</body>')
+        return pg[:i] + block + pg[i:]
+    page = put_between(page, '<!-- hub:topbar-assets:start -->', '<!-- hub:topbar-assets:end -->', TOPBAR_ASSETS, add_assets)
+    # 3. headings land below the sticky bar
+    page = page.replace('const OFFSET = 45;', f'const OFFSET = {45 + BAR_H};')
+    page = page.replace('getBoundingClientRect().top+window.scrollY-45', f'getBoundingClientRect().top+window.scrollY-{45 + BAR_H}')
+    # 4. smart-search key: set once in the home page, not in every site
+    if 'hub:keynote' not in page:
+        m = re.search(r'<p class="ai-sub">.*?</p>', page, re.S)
+        if m:
+            page = page[:m.end()] + '\n    ' + KEY_NOTE + page[m.end():]
+    page = page.replace('קודם צריך לשמור מפתח בתיבה הצהובה למעלה.', 'קודם צריך להדביק מפתח פעם אחת בדף הבית של אתר המתמטיקה.')
+    page = re.sub(r"המפתח לא תקין\.[^']*", 'המפתח לא תקין. אפשר להחליף אותו בדף הבית של אתר המתמטיקה.', page)
+    return page
+
+
 def ensure_sub_extras(page):
     """Bottom space (so a host badge never hides content) + swipe right-to-left to go back."""
     add = ''
@@ -158,7 +276,9 @@ def hub(cfg, sites, old_keys):
                .replace('{{FAVICON}}', FAVICON)
                .replace('{{APPLE_ICON}}', 'data:image/png;base64,' + apple)
                .replace('{{KEY_NAME}}', SHARED_KEY)
-               .replace('{{OLD_KEYS}}', json.dumps(sorted(set(old_keys)))))
+               .replace('{{OLD_KEYS}}', json.dumps(sorted(set(old_keys))))
+               .replace('{{TOPBAR}}', HUB_BAR)
+               .replace('{{TOPBAR_ASSETS}}', TOPBAR_ASSETS))
 
 
 def main():
@@ -168,6 +288,7 @@ def main():
         path = os.path.join(ROOT, s['slug'], 'index.html')
         page, old = share_key(open(path, encoding='utf-8').read())
         page = ensure_sub_extras(page)
+        page = ensure_topbar_and_key(page)
         old_keys += old
         if write_if_changed(path, page):
             print(f"  עודכן: {s['slug']}/index.html")
