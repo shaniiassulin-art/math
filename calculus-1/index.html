@@ -2574,5 +2574,39 @@ try {
   })();
 } catch(err){}
 </script>
+<!-- hub:bottom-space -->
+<div class="hub-bottom-space" aria-hidden="true" style="height:calc(96px + env(safe-area-inset-bottom, 0px));"></div>
+<!-- hub:swipe-back -->
+<script>
+// החלקה מימין לשמאל = חזרה אחורה (לדף הקודם, או לדף הבית של אתר המתמטיקה)
+(function(){
+  try {
+    var sx = 0, sy = 0, st = 0, ok = false;
+    function blocked(el){
+      for(; el && el !== document.documentElement; el = el.parentElement){
+        if(el.matches && el.matches('input, textarea, select, math, pre, .ai-overlay, .sidebar')) return true;
+        var cs = window.getComputedStyle(el);
+        if((cs.overflowX === 'auto' || cs.overflowX === 'scroll') && el.scrollWidth > el.clientWidth + 2) return true;
+      }
+      return false;
+    }
+    document.addEventListener('touchstart', function(e){
+      if(e.touches.length !== 1){ ok = false; return; }
+      var t = e.touches[0]; sx = t.clientX; sy = t.clientY; st = Date.now();
+      var mt = document.getElementById('menuToggle'), ov = document.getElementById('aiOverlay');
+      ok = !blocked(e.target) && !(mt && mt.checked) && !(ov && !ov.hidden);
+    }, {passive: true});
+    document.addEventListener('touchmove', function(e){ if(e.touches.length !== 1) ok = false; }, {passive: true});
+    document.addEventListener('touchend', function(e){
+      if(!ok) return; ok = false;
+      var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+      if(dx < -90 && Math.abs(dy) < Math.abs(dx) * 0.5 && Date.now() - st < 800){
+        var fromHere = document.referrer && document.referrer.indexOf(location.origin) === 0;
+        if(fromHere && history.length > 1) history.back(); else location.href = '../';
+      }
+    }, {passive: true});
+  } catch(err){}
+})();
+</script>
 </body>
 </html>

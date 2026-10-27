@@ -43,6 +43,57 @@ def share_key(page):
     return page, [o for o in old if o != SHARED_KEY]
 
 
+BOTTOM_SPACE = ('<!-- hub:bottom-space -->\n<div class="hub-bottom-space" aria-hidden="true" '
+                'style="height:calc(96px + env(safe-area-inset-bottom, 0px));"></div>\n')
+
+SWIPE_BACK = r"""<!-- hub:swipe-back -->
+<script>
+// החלקה מימין לשמאל = חזרה אחורה (לדף הקודם, או לדף הבית של אתר המתמטיקה)
+(function(){
+  try {
+    var sx = 0, sy = 0, st = 0, ok = false;
+    function blocked(el){
+      for(; el && el !== document.documentElement; el = el.parentElement){
+        if(el.matches && el.matches('input, textarea, select, math, pre, .ai-overlay, .sidebar')) return true;
+        var cs = window.getComputedStyle(el);
+        if((cs.overflowX === 'auto' || cs.overflowX === 'scroll') && el.scrollWidth > el.clientWidth + 2) return true;
+      }
+      return false;
+    }
+    document.addEventListener('touchstart', function(e){
+      if(e.touches.length !== 1){ ok = false; return; }
+      var t = e.touches[0]; sx = t.clientX; sy = t.clientY; st = Date.now();
+      var mt = document.getElementById('menuToggle'), ov = document.getElementById('aiOverlay');
+      ok = !blocked(e.target) && !(mt && mt.checked) && !(ov && !ov.hidden);
+    }, {passive: true});
+    document.addEventListener('touchmove', function(e){ if(e.touches.length !== 1) ok = false; }, {passive: true});
+    document.addEventListener('touchend', function(e){
+      if(!ok) return; ok = false;
+      var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+      if(dx < -90 && Math.abs(dy) < Math.abs(dx) * 0.5 && Date.now() - st < 800){
+        var fromHere = document.referrer && document.referrer.indexOf(location.origin) === 0;
+        if(fromHere && history.length > 1) history.back(); else location.href = '../';
+      }
+    }, {passive: true});
+  } catch(err){}
+})();
+</script>
+"""
+
+
+def ensure_sub_extras(page):
+    """Bottom space (so a host badge never hides content) + swipe right-to-left to go back."""
+    add = ''
+    if 'hub:bottom-space' not in page:
+        add += BOTTOM_SPACE
+    if 'hub:swipe-back' not in page:
+        add += SWIPE_BACK
+    if add:
+        i = page.rindex('</body>')
+        page = page[:i] + add + page[i:]
+    return page
+
+
 def info(page):
     title = re.search(r'<title>(.*?)</title>', page, re.S)
     units = [re.sub(r'<[^>]+>', '', u).strip() for u in re.findall(r'<h2 class="ex-title"[^>]*>(.*?)</h2>', page, re.S)]
@@ -71,15 +122,10 @@ def card(s):
         src_box = (f'<span class="site-sources"><b>{e(s.get("sources_summary", "מבוסס על"))}:</b>'
                    + (f'<ul>{sources}</ul>' if sources else '') + '</span>')
     meta = []
-    n = len(s['units'])
-    if n:
-        meta.append('יחידה אחת' if n == 1 else f'{n} יחידות')
-    if s['topics']:
-        meta.append('נושא אחד' if s['topics'] == 1 else f'{s["topics"]} נושאים')
     if s['date']:
         meta.append('עודכן ' + hebrew_date(s['date']))
     return f'''
-      <a class="site-card {e(s.get('group', ''))}" href="{e(s['slug'])}/">
+      <a class="site-card {e(s.get('type', ''))}" href="{e(s['slug'])}/">
         <span class="site-kind">{e(s.get('kind', ''))}</span>
         <span class="site-name">{e(s['name'])}</span>
         <span class="site-desc">{e(s['description'])}</span>
@@ -121,9 +167,10 @@ def main():
     for s in cfg['sites']:
         path = os.path.join(ROOT, s['slug'], 'index.html')
         page, old = share_key(open(path, encoding='utf-8').read())
+        page = ensure_sub_extras(page)
         old_keys += old
         if write_if_changed(path, page):
-            print(f"  מפתח משותף הוגדר באתר {s['slug']}")
+            print(f"  עודכן: {s['slug']}/index.html")
         title, units, topics = info(page)
         out.append(dict(s, title=title, units=units, topics=topics, date=last_change(s['slug'])))
         print(f"✓ {s['slug']:20} {title}  ({len(units)} יחידות, {topics} נושאים)")

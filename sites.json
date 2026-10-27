@@ -1,36 +1,21 @@
 {
   "hub_title": "מתמטיקה - כל אתרי הלימוד",
-  "hub_subtitle": "כל אתרי הלימוד שלי במתמטיקה במקום אחד: הכנה למבחנים לפי שאלות ופתרונות, וידע תיאורטי לפי מצגות.",
+  "hub_subtitle": "כל אתרי הלימוד שלי במתמטיקה במקום אחד, מסודרים לפי מקצוע.",
   "groups": [
     {
-      "id": "exam",
-      "title": "הכנה למבחן - לפי שאלות ופתרונות"
+      "id": "algebra",
+      "title": "אלגברה לינארית"
     },
     {
-      "id": "theory",
-      "title": "ידע תיאורטי - לפי מצגות"
+      "id": "calculus",
+      "title": "חדו״א 1"
     }
   ],
   "sites": [
     {
-      "slug": "calculus-1",
-      "group": "exam",
-      "name": "חדו״א 1 - הכנה למבחן",
-      "kind": "שאלות ופתרונות",
-      "description": "שיטות פתרון לפי סוגי שאלות: איך מזהים את סוג השאלה, שלבי הפתרון, טעויות נפוצות ובדיקה.",
-      "sources_summary": "מבוסס על דפי התרגילים והפתרונות של הקורס",
-      "sources": [
-        "תרגיל 1",
-        "תרגיל 2",
-        "תרגול נוסף לתרגיל 1",
-        "תרגול נוסף לתרגיל 2"
-      ],
-      "copied_from": "shaniiassulin-art/hedva"
-    },
-    {
       "slug": "algebra-solutions",
-      "group": "exam",
-      "name": "אלגברה לינארית - הכנה למבחן",
+      "group": "algebra",
+      "name": "הכנה למבחן",
       "kind": "שאלות ופתרונות",
       "description": "שיטות פתרון לפי סוגי שאלות: איך מזהים את סוג השאלה, שלבי הפתרון, טעויות נפוצות ובדיקה.",
       "sources_summary": "מבוסס על 4 קבצים: 2 קבצי שאלות ו-2 קבצי פתרונות",
@@ -40,12 +25,13 @@
         "תרגיל בית 1",
         "פתרון תרגיל בית 1"
       ],
-      "copied_from": "shaniiassulin-art/algebritqu"
+      "copied_from": "shaniiassulin-art/algebritqu",
+      "type": "exam"
     },
     {
       "slug": "algebra-theory",
-      "group": "theory",
-      "name": "אלגברה לינארית - חומר תיאורטי",
+      "group": "algebra",
+      "name": "חומר תיאורטי",
       "kind": "מצגות",
       "description": "החומר מהמצגות של הקורס: הגדרות, משפטים, נוסחאות, הוכחות ודוגמאות.",
       "sources_summary": "מבוסס על 2 מצגות",
@@ -53,7 +39,24 @@
         "מצגת מספרים מרוכבים (368 שקפים)",
         "מצגת מטריצות (189 שקפים)"
       ],
-      "copied_from": "shaniiassulin-art/algebrit"
+      "copied_from": "shaniiassulin-art/algebrit",
+      "type": "theory"
+    },
+    {
+      "slug": "calculus-1",
+      "group": "calculus",
+      "name": "הכנה למבחן",
+      "kind": "שאלות ופתרונות",
+      "description": "שיטות פתרון לפי סוגי שאלות: איך מזהים את סוג השאלה, שלבי הפתרון, טעויות נפוצות ובדיקה.",
+      "sources_summary": "מבוסס על דפי התרגילים והפתרונות של הקורס",
+      "sources": [
+        "תרגיל 1",
+        "תרגיל 2",
+        "תרגול נוסף לתרגיל 1",
+        "תרגול נוסף לתרגיל 2"
+      ],
+      "copied_from": "shaniiassulin-art/hedva",
+      "type": "exam"
     }
   ],
   "old_key_names": [

@@ -98,7 +98,8 @@
   .key-status{ min-height:1.5em; margin-top:8px; font-size:.92rem; color:var(--ink-soft); }
   .key-status.err{ color:var(--rust); font-weight:600; }
 
-  footer{ padding:0 16px calc(40px + env(safe-area-inset-bottom, 0px)); color:var(--ink-soft); font-size:.88rem; }
+  /* מרווח בתחתית: תג של Netlify (או כל תג צף) לא יסתיר תוכן */
+  footer{ padding:0 16px calc(110px + env(safe-area-inset-bottom, 0px)); color:var(--ink-soft); font-size:.88rem; }
 
   @media (prefers-reduced-motion: reduce){ .site-card{ transition:none; } .site-card:hover{ transform:none; } }
 </style>
@@ -108,42 +109,42 @@
     <div class="top-inner">
       <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#2C3A5E"/><path d="M14 23.5C18 19 24 19.5 32 19.5S45 19 50.5 18" fill="none" stroke="#E3B95C" stroke-width="5" stroke-linecap="round"/><path d="M26 20.5C26.5 31 25 40 19 47" fill="none" stroke="#E3B95C" stroke-width="5" stroke-linecap="round"/><path d="M39.5 20C38.5 31 38.5 41 47 46" fill="none" stroke="#E3B95C" stroke-width="5" stroke-linecap="round"/></svg>
       <h1>מתמטיקה - כל אתרי הלימוד</h1>
-      <p>כל אתרי הלימוד שלי במתמטיקה במקום אחד: הכנה למבחנים לפי שאלות ופתרונות, וידע תיאורטי לפי מצגות.</p>
+      <p>כל אתרי הלימוד שלי במתמטיקה במקום אחד, מסודרים לפי מקצוע.</p>
     </div>
   </header>
   <main>
 
     <section class="group">
-      <h2>הכנה למבחן - לפי שאלות ופתרונות</h2>
+      <h2>אלגברה לינארית</h2>
       <div class="cards">
-      <a class="site-card exam" href="calculus-1/">
-        <span class="site-kind">שאלות ופתרונות</span>
-        <span class="site-name">חדו״א 1 - הכנה למבחן</span>
-        <span class="site-desc">שיטות פתרון לפי סוגי שאלות: איך מזהים את סוג השאלה, שלבי הפתרון, טעויות נפוצות ובדיקה.</span>
-        <span class="site-sources"><b>מבוסס על דפי התרגילים והפתרונות של הקורס:</b><ul><li>תרגיל 1</li><li>תרגיל 2</li><li>תרגול נוסף לתרגיל 1</li><li>תרגול נוסף לתרגיל 2</li></ul></span>
-        <span class="site-meta">2 יחידות · 33 נושאים · עודכן 26.10.2026</span>
-        <span class="site-go">פתיחה <span aria-hidden="true">←</span></span>
-      </a>
       <a class="site-card exam" href="algebra-solutions/">
         <span class="site-kind">שאלות ופתרונות</span>
-        <span class="site-name">אלגברה לינארית - הכנה למבחן</span>
+        <span class="site-name">הכנה למבחן</span>
         <span class="site-desc">שיטות פתרון לפי סוגי שאלות: איך מזהים את סוג השאלה, שלבי הפתרון, טעויות נפוצות ובדיקה.</span>
         <span class="site-sources"><b>מבוסס על 4 קבצים: 2 קבצי שאלות ו-2 קבצי פתרונות:</b><ul><li>תרגיל כיתה 1</li><li>פתרון תרגיל כיתה 1</li><li>תרגיל בית 1</li><li>פתרון תרגיל בית 1</li></ul></span>
-        <span class="site-meta">יחידה אחת · 14 נושאים · עודכן 26.10.2026</span>
+        <span class="site-meta">עודכן 26.10.2026</span>
+        <span class="site-go">פתיחה <span aria-hidden="true">←</span></span>
+      </a>
+      <a class="site-card theory" href="algebra-theory/">
+        <span class="site-kind">מצגות</span>
+        <span class="site-name">חומר תיאורטי</span>
+        <span class="site-desc">החומר מהמצגות של הקורס: הגדרות, משפטים, נוסחאות, הוכחות ודוגמאות.</span>
+        <span class="site-sources"><b>מבוסס על 2 מצגות:</b><ul><li>מצגת מספרים מרוכבים (368 שקפים)</li><li>מצגת מטריצות (189 שקפים)</li></ul></span>
+        <span class="site-meta">עודכן 26.10.2026</span>
         <span class="site-go">פתיחה <span aria-hidden="true">←</span></span>
       </a>
       </div>
     </section>
 
     <section class="group">
-      <h2>ידע תיאורטי - לפי מצגות</h2>
+      <h2>חדו״א 1</h2>
       <div class="cards">
-      <a class="site-card theory" href="algebra-theory/">
-        <span class="site-kind">מצגות</span>
-        <span class="site-name">אלגברה לינארית - חומר תיאורטי</span>
-        <span class="site-desc">החומר מהמצגות של הקורס: הגדרות, משפטים, נוסחאות, הוכחות ודוגמאות.</span>
-        <span class="site-sources"><b>מבוסס על 2 מצגות:</b><ul><li>מצגת מספרים מרוכבים (368 שקפים)</li><li>מצגת מטריצות (189 שקפים)</li></ul></span>
-        <span class="site-meta">2 יחידות · 18 נושאים · עודכן 26.10.2026</span>
+      <a class="site-card exam" href="calculus-1/">
+        <span class="site-kind">שאלות ופתרונות</span>
+        <span class="site-name">הכנה למבחן</span>
+        <span class="site-desc">שיטות פתרון לפי סוגי שאלות: איך מזהים את סוג השאלה, שלבי הפתרון, טעויות נפוצות ובדיקה.</span>
+        <span class="site-sources"><b>מבוסס על דפי התרגילים והפתרונות של הקורס:</b><ul><li>תרגיל 1</li><li>תרגיל 2</li><li>תרגול נוסף לתרגיל 1</li><li>תרגול נוסף לתרגיל 2</li></ul></span>
+        <span class="site-meta">עודכן 26.10.2026</span>
         <span class="site-go">פתיחה <span aria-hidden="true">←</span></span>
       </a>
       </div>
