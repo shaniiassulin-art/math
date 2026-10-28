@@ -20,6 +20,10 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import reminders as R
 
+_cs = importlib.util.spec_from_file_location('concepts', os.path.join(HERE, 'samples', 'concepts.py'))
+_cm = importlib.util.module_from_spec(_cs); _cs.loader.exec_module(_cm)
+CONCEPTS = _cm.C
+
 SITES = {'algebra-solutions': 'algebra_solutions', 'algebra-theory': 'algebra_theory', 'calculus-1': 'calculus_1'}
 
 
@@ -31,14 +35,36 @@ def mathify(s):
 def line(s):
     s = s.strip()
     if s.startswith('$$') and s.endswith('$$') and s.count('$$') == 2:
-        return '<div class="formula sol-formula">' + R.mwrap(s[2:-2], True) + '</div>'
+        # separate formulas written side by side (\qquad) go on separate lines; a single formula is never broken
+        return ''.join('<div class="formula sol-formula">' + R.mwrap(f, True) + '</div>'
+                       for f in s[2:-2].split('\\qquad') if f.strip())
     out = mathify(s)
     out = out.replace('\x00', '<span class="sol-disp">').replace('\x01', '</span>')
     return '<div class="sol-line">' + out + '</div>'
 
 
+def tip_line(x):
+    """a text line in an explanation: a long formula inside the sentence gets its own line (never broken)"""
+    x = x.strip()
+    if x.startswith('$$'):
+        return line(x).replace('formula sol-formula', 'formula tip-f')
+    parts = re.split(r'(\$[^$]+\$)', x)
+    out, buf = [], ''
+    for p in parts:
+        if p.startswith('$') and R._visible(p[1:-1]) > 16:
+            if buf.strip(' :,.-'):
+                out.append('<div class="tip-t">' + mathify(buf) + '</div>')
+            buf = ''
+            out.append('<div class="formula tip-f">' + R.m(p[1:-1], True) + '</div>')
+        else:
+            buf += p
+    if buf.strip(' :,.-') or not out:
+        out.append('<div class="tip-t">' + mathify(buf) + '</div>')
+    return ''.join(out)
+
+
 def tip_html(pid, label, lines):
-    body = ''.join(line(x).replace('sol-line', 'tip-t').replace('formula sol-formula', 'formula tip-f') for x in lines)
+    body = ''.join(f'<div class="tip-h">{mathify(x[1:])}</div>' if x.startswith('§') else tip_line(x) for x in lines)
     btn = (f'<button type="button" class="tip-btn" aria-expanded="false" aria-controls="{pid}">'
            f'{mathify(label)}</button>')
     panel = f'<div class="tip-panel" id="{pid}" hidden>{body}</div>'
@@ -210,7 +236,7 @@ LEGEND = '''<details class="legend">
           <div class="callout callout-check"><div class="callout-title"></div><p>איך מוודאים שהתשובה נכונה</p></div>
           <div class="callout callout-info"><div class="callout-title"></div><p>הבהרה או הרחבה קטנה</p></div>
           <div class="callout callout-proof"><div class="callout-title"></div><p>למה הנוסחה נכונה (נפתחת בלחיצה)</p></div>
-          <div class="tip-legend"><span class="tip-btn">תזכורת</span><p>כפתור בתוך "שלבי הפתרון", ליד מה שצריך להיזכר בו. לחיצה פותחת הסבר מפורט לדבר הזה, עם דוגמה</p></div>
+          <div class="tip-legend"><span class="tip-btn">מה צריך לדעת לשלב הזה</span><p>כפתור בכל שלב ב"שלבי הפתרון": לחיצה מסבירה מההתחלה כל מה שצריך לדעת כדי לבצע את השלב, עם דוגמאות</p></div>
         </div>
       </details>'''
 
@@ -290,6 +316,12 @@ ASSETS = '''<!-- samples-assets:start -->
   .tip-btn:focus-visible{ outline:3px solid #A8791E; outline-offset:2px; }
   .tip-panel{ margin:2px 0 10px; padding:10px 14px; background:#fff; border:1.5px solid #8A9BC4; border-inline-start-width:5px; border-radius:10px; }
   .tip-panel[hidden]{ display:none; }
+  .tip-h{ font-weight:800; color:#2C3A5E; margin:14px 0 4px; padding-top:10px; border-top:1px solid #DCE2EF; font-size:1rem; }
+  .tip-panel > .tip-h:first-child{ margin-top:0; padding-top:0; border-top:none; }
+  .tip-ref{ color:#6A6E78; font-size:.88rem; }
+  @media (max-width:560px){ .steps li .tip-panel{ margin-inline-start:-30px; } }
+  .tip-btn{ text-align:start; }
+
   .tip-t{ line-height:1.9; margin:4px 0; overflow-x:auto; }
   .tip-f{ margin:6px 0 !important; padding:6px 8px !important; background:#F3F5FA !important; border:none !important; border-radius:8px; text-align:center; overflow-x:auto; }
   .tip-panel math{ max-width:none !important; }
@@ -345,9 +377,27 @@ TIP_RE = re.compile(r'<!-- tip:start -->.*?<!-- tip:end -->', re.S)
 NEWSTEPS_RE = re.compile(r'\n?\s*<!-- newsteps:start -->.*?<!-- newsteps:end -->', re.S)
 
 
-def step_tips_html(prefix, tips):
-    items = [tip_html(f'{prefix}-{k + 1}', label, lines) for k, (label, lines) in enumerate(tips)]
-    return '<!-- tip:start -->' + tips_block(items) + '<!-- tip:end -->' if items else ''
+def concept_tip(keys, seen, stepno):
+    """one panel per step: every concept the step needs - in full the first time it appears in the section"""
+    C = CONCEPTS
+    lines = []
+    for k in keys:
+        lines.append('§' + C[k]['name'])
+        if k in seen:
+            lines.append(C[k]['short'] + f' <span class="tip-ref">(הסבר מלא בשלב {seen[k]})</span>')
+        else:
+            lines += C[k]['full']
+            seen[k] = stepno
+    label = 'מה צריך לדעת לשלב הזה: ' + ' · '.join(C[k]['name'] for k in keys)
+    return label, lines
+
+
+def step_tips_html(prefix, keys, seen, stepno):
+    if not keys:
+        return ''
+    label, lines = concept_tip(keys, seen, stepno)
+    btn, panel = tip_html(prefix, label, lines)
+    return '<!-- tip:start --><div class="tip-row">' + btn + '</div>' + panel + '<!-- tip:end -->'
 
 
 def apply_steps(page, stm):
@@ -357,25 +407,28 @@ def apply_steps(page, stm):
     out, last = [], 0
     for hid, a, b, stop in secs:
         seg = page[b:stop]
-        tips = getattr(stm, 'STEP_TIPS', {}).get(hid, {})
+        seen = {}
+        tips = getattr(stm, 'STEP_CONCEPTS', {}).get(hid, {})
         mm = re.search(r'<ol class="steps">(.*?)</ol>', seg, re.S)
         if tips:
             if not mm:
-                raise ValueError(f'{hid}: no steps list for tips')
+                raise ValueError(f'{hid}: no steps list')
             lis = list(re.finditer(r'<li>(.*?)</li>', mm.group(1), re.S))
             bad = [i for i in tips if i >= len(lis)]
             if bad:
-                raise ValueError(f'{hid}: tips for missing steps {bad}')
+                raise ValueError(f'{hid}: concepts for missing steps {bad}')
+            htmls = {i: step_tips_html(f'{hid}-st{i + 1}', tips[i], seen, i + 1) for i in sorted(tips)}
             body = mm.group(1)
             for i in sorted(tips, reverse=True):
                 e = lis[i].end() - len('</li>')
-                body = body[:e] + step_tips_html(f'{hid}-st{i + 1}', tips[i]) + body[e:]
+                body = body[:e] + htmls[i] + body[e:]
             seg = seg[:mm.start(1)] + body + seg[mm.end(1):]
         new = getattr(stm, 'NEW_STEPS', {}).get(hid)
         if new:
             if mm:
                 raise ValueError(f'{hid}: already has steps')
-            lis = ''.join(f'<li>{mathify(t)}{step_tips_html(f"{hid}-st{i + 1}", tl)}</li>' for i, (t, tl) in enumerate(new))
+            lis = ''.join(f'<li>{mathify(t)}{step_tips_html(f"{hid}-st{i + 1}", keys, seen, i + 1)}</li>'
+                          for i, (t, keys) in enumerate(new))
             block = ('\n      <!-- newsteps:start --><div class="callout callout-steps"><div class="callout-title"></div>'
                      f'<ol class="steps">{lis}</ol></div><!-- newsteps:end -->')
             j = section_end(seg, len(seg))
