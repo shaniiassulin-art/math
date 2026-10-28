@@ -37,12 +37,38 @@ def line(s):
     return '<div class="sol-line">' + out + '</div>'
 
 
-def render(sid, d):
+def tip_html(pid, label, lines):
+    body = ''.join(line(x).replace('sol-line', 'tip-t').replace('formula sol-formula', 'formula tip-f') for x in lines)
+    btn = (f'<button type="button" class="tip-btn" aria-expanded="false" aria-controls="{pid}">'
+           f'{mathify(label)}</button>')
+    panel = f'<div class="tip-panel" id="{pid}" hidden>{body}</div>'
+    return btn, panel
+
+
+def tips_block(items):
+    if not items:
+        return ''
+    btns, panels = zip(*items)
+    return '<div class="tip-row">' + ''.join(btns) + '</div>' + ''.join(panels)
+
+
+def render(sid, d, tips=()):
+    where = {}
+    for k, (si, li, label, lines) in enumerate(tips):
+        where.setdefault((si, li), []).append(tip_html(f'{sid}-tip{k + 1}', label, lines))
+    used = set()
     steps = ''
     for n, (title, lines) in enumerate(d['steps'], 1):
         title = re.sub(r'^שלב \d+( במצגת)?\s*[:\-]\s*', '', title)   # the step number is already on the green chip
-        steps += (f'<div class="sol-step"><div class="sol-n">שלב {n}</div><div class="sol-body">'
-                  f'<div class="sol-title">{mathify(title)}</div>' + ''.join(line(x) for x in lines) + '</div></div>')
+        body = f'<div class="sol-title">{mathify(title)}</div>' + tips_block(where.get((n - 1, -1)))
+        used.add((n - 1, -1))
+        for j, x in enumerate(lines):
+            body += line(x) + tips_block(where.get((n - 1, j)))
+            used.add((n - 1, j))
+        steps += f'<div class="sol-step"><div class="sol-n">שלב {n}</div><div class="sol-body">{body}</div></div>'
+    lost = set(where) - used
+    if lost:
+        raise ValueError(f'{sid}: tips point to missing lines {sorted(lost)}')
     return (f'\n      <!-- sample:start --><div class="box box-q sample" id="{sid}-sample">'
             f'<div class="box-title"><span class="sample-src">📍 {mathify(d["src"])}</span></div>'
             f'<p class="sample-q">{mathify(d["q"])}</p>'
@@ -184,7 +210,7 @@ LEGEND = '''<details class="legend">
           <div class="callout callout-check"><div class="callout-title"></div><p>איך מוודאים שהתשובה נכונה</p></div>
           <div class="callout callout-info"><div class="callout-title"></div><p>הבהרה או הרחבה קטנה</p></div>
           <div class="callout callout-proof"><div class="callout-title"></div><p>למה הנוסחה נכונה (נפתחת בלחיצה)</p></div>
-          <div class="rem-box rem-legend"><div class="rem-head">🔁 תזכורת לסעיף הזה</div><p>מושגים מסעיפים אחרים שהסעיף משתמש בהם. לחיצה על מושג פותחת תזכורת קצרה</p></div>
+          <div class="tip-legend"><span class="tip-btn">תזכורת</span><p>כפתור בתוך שלב בפתרון, ליד מה שצריך להיזכר בו. לחיצה פותחת הסבר קצר וממוקד בדיוק לדבר הזה</p></div>
         </div>
       </details>'''
 
@@ -248,6 +274,26 @@ ASSETS = '''<!-- samples-assets:start -->
   .sol-ans-lbl{ font-weight:800; color:#1E5A4F; margin-inline-end:6px; }
   @media (max-width:560px){ .sol-step{ flex-direction:column; align-items:stretch; gap:6px; padding:10px 12px; } .sol-n{ align-self:flex-start; } .sample-hint{ display:block; margin:8px 0 0; } }
 
+
+  /* 💡 תזכורת בתוך שלב בפתרון */
+  .tip-row{ display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 6px; }
+  .tip-btn{ min-height:38px; padding:4px 12px; border-radius:100px; border:1.5px solid #8A9BC4; background:#fff; color:#2C3A5E;
+    font:inherit; font-size:.88rem; font-weight:600; line-height:1.5; cursor:pointer; display:inline-flex; align-items:center; gap:6px; text-align:start; }
+  .tip-btn::before{ content:"💡"; }
+  .tip-btn[aria-expanded="true"]{ background:#5D6F9E; border-color:#5D6F9E; color:#fff; }
+  .tip-btn:focus-visible{ outline:3px solid #A8791E; outline-offset:2px; }
+  .tip-panel{ margin:2px 0 10px; padding:10px 14px; background:#fff; border:1.5px solid #8A9BC4; border-inline-start-width:5px; border-radius:10px; }
+  .tip-panel[hidden]{ display:none; }
+  .tip-t{ line-height:1.9; margin:4px 0; overflow-x:auto; }
+  .tip-f{ margin:6px 0 !important; padding:6px 8px !important; background:#F3F5FA !important; border:none !important; border-radius:8px; text-align:center; overflow-x:auto; }
+  .tip-panel math{ max-width:none !important; }
+  .tip-legend{ border:1.5px dashed #8A9BC4; border-radius:12px; padding:12px 14px; background:#fff; }
+  .tip-legend p{ margin:8px 0 0; }
+  .tip-legend .tip-btn{ cursor:default; }
+  .mwrap{ unicode-bidi:isolate; }
+  .mfrag{ display:inline-block; margin:1px .12em; vertical-align:middle; }
+  .mfrag.mgap{ margin-inline-start:1.2em; }
+
   /* "למשל" - דוגמה קצרה בתוך ההסבר */
   .eg{ margin:12px 0 18px; padding:6px 14px; border-inline-start:3px solid #CFC6B2; max-width:80ch; overflow-x:auto; }
   .eg > p{ margin:4px 0; }
@@ -259,7 +305,7 @@ ASSETS = '''<!-- samples-assets:start -->
   .legend-grid .sample > p{ font-size:.92rem !important; font-weight:400 !important; }
   .legend-grid .rem-legend{ margin:0; }
   .legend-grid .rem-legend p{ padding:8px 14px 10px; }
-  @media print{ .sample-sol[hidden]{ display:flex !important; } .sample-btn, .sample-hint{ display:none; } }
+  @media print{ .tip-panel[hidden]{ display:block !important; } .sample-sol[hidden]{ display:flex !important; } .sample-btn, .sample-hint{ display:none; } }
 </style>
 <script>
 (function(){
@@ -271,6 +317,15 @@ ASSETS = '''<!-- samples-assets:start -->
         var open = b.getAttribute('aria-expanded') === 'true';
         b.setAttribute('aria-expanded', String(!open)); sol.hidden = open;
         if(!open){ var r = b.getBoundingClientRect(); if(r.top < 60) b.scrollIntoView({block:'center'}); }
+      });
+    });
+
+    document.querySelectorAll('.tip-btn[aria-controls]').forEach(function(b){
+      var p = document.getElementById(b.getAttribute('aria-controls'));
+      if(!p) return;
+      b.addEventListener('click', function(){
+        var open = b.getAttribute('aria-expanded') === 'true';
+        b.setAttribute('aria-expanded', String(!open)); p.hidden = open;
       });
     });
   } catch(err){}
@@ -286,7 +341,17 @@ def apply(site, page):
     spec = importlib.util.spec_from_file_location(SITES[site], os.path.join(HERE, 'samples', SITES[site] + '.py'))
     mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
     data = mod.SAMPLES
+    tp = os.path.join(HERE, 'samples', 'tips_' + SITES[site] + '.py')
+    tips = {}
+    if os.path.exists(tp):
+        spec = importlib.util.spec_from_file_location('tips_' + SITES[site], tp)
+        tm = importlib.util.module_from_spec(spec); spec.loader.exec_module(tm)
+        tips = tm.TIPS
     page = SAMPLE_RE.sub('', page)
+    page = R.REM_RE.sub('', page)
+    a = page.find('<!-- rem-assets:start -->')
+    if a != -1:
+        page = page[:a] + page[page.index('<!-- rem-assets:end -->') + len('<!-- rem-assets:end -->\n'):]
     if site == 'algebra-theory':
         page = clean_theory(page)
     elif site == 'algebra-solutions':
@@ -303,7 +368,7 @@ def apply(site, page):
             missing.append(hid)
             continue
         ins = section_end(page, stop)
-        out.append(page[last:ins]); out.append(render(hid, data[hid])); last = ins
+        out.append(page[last:ins]); out.append(render(hid, data[hid], tips.get(hid, ()))); last = ins
     out.append(page[last:])
     page = ''.join(out)
     a = page.find('<!-- samples-assets:start -->')

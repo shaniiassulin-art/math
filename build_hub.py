@@ -125,6 +125,8 @@ TOPBAR_ASSETS = ("""<!-- hub:topbar-assets:start -->
   @media print{ .hub-topbar{ display:none !important; } }
   /* טבלאות: במרכז, ורק התאים לבנים - מחוץ לטבלה נשאר רקע העמוד */
   .content table{ margin-inline:auto !important; background:transparent !important; }
+  /* חיפוש חכם: כפתור העצירה (וכפתור הניקוי) באותו גודל כמו כפתור החיפוש */
+  .ai-go, .ai-stop{ min-height:46px; padding:11px 22px !important; font-size:1rem !important; font-weight:700 !important; border-radius:10px !important; line-height:1.4; }
   .content td{ background:var(--paper); }
   @media (max-width: 880px){
     .content table{ display:block; width:max-content !important; max-width:100%%; overflow-x:auto; }

@@ -457,4 +457,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # התזכורות בראש כל סעיף הוחלפו בתזכורות בתוך שלבי הפתרון (tools/samples/tips_*.py, דרך samples.py).
+    # הקובץ נשאר בשביל פונקציות ההמרה (m, mwrap) שמשמשות את samples.py.
+    print('reminders.py: section boxes are retired - run tools/samples.py')
