@@ -187,14 +187,105 @@ LIBRARY = [
 ]
 
 # ---------------------------------------------------------------- helpers
-def m(latex):
+def m(latex, display=False):
     x = convert(html.unescape(latex))
     x = x.replace('<mi>&#x000B1;</mi>', '<mo>&#x000B1;</mo>')
-    return x.replace('<math ', '<math dir="ltr" ', 1)
+    x = x.replace('<math ', '<math dir="ltr" ' + ('displaystyle="true" ' if display else ''), 1)
+    return x
+
+
+REL = ['\\Leftrightarrow', '\\Rightarrow', '\\Leftarrow', '\\iff', '\\leq', '\\geq', '\\neq', '\\approx', '=', '<', '>']
+GAPS = ['\\qquad', '\\quad']
+
+
+_STRUCT = {'frac', 'tfrac', 'dfrac', 'left', 'right', 'sqrt', 'begin', 'end', 'operatorname', 'mathbb', 'overline',
+           'quad', 'qquad', 'text', 'bmatrix', 'cases'}
+
+
+def _visible(t):
+    t = re.sub(r'\\([a-zA-Z]+)', lambda g: '' if g.group(1) in _STRUCT else '#', t)
+    return len(re.sub(r'[{}^_\s\\]', '', t))
+
+
+def split_top(latex, rel=None):
+    """split a formula at top-level relations / commas / \\quad so it can wrap between the pieces"""
+    parts, cur, depth, i, n = [], '', 0, 0, len(latex)
+    def word_at(j, w):
+        return latex.startswith(w, j) and not (w[0] == '\\' and latex[j + len(w):j + len(w) + 1].isalpha())
+    while i < n:
+        if word_at(i, '\\left') or word_at(i, '\\begin'):
+            depth += 1
+        elif word_at(i, '\\right') or word_at(i, '\\end'):
+            depth -= 1
+        c = latex[i]
+        if depth == 0 and c not in '{}()[]':
+            g = next((w for w in GAPS if word_at(i, w)), None)
+            if g:
+                if cur.strip(): parts.append(cur)
+                parts.append(None)          # a gap: never glue the pieces on both sides together
+                cur, i = '', i + len(g)
+                continue
+            r = next((w for w in (rel or REL) if word_at(i, w)), None)
+            if r and cur.strip() and not cur.rstrip().endswith(('\\', '&')):
+                parts.append(cur); cur = r; i += len(r)
+                continue
+            if c == ',' and i + 1 < n:
+                cur += ','; parts.append(cur); cur = ''; i += 1
+                continue
+        if c in '{([': depth += 1
+        elif c in '})]': depth -= 1
+        cur += c; i += 1
+    if cur.strip(): parts.append(cur)
+    return parts
+
+
+def mwrap(latex, display=False, limit=16):
+    """MathML that can break onto the next line between top-level pieces (for narrow phone screens)"""
+    latex = latex.strip()
+    if _visible(latex) <= limit:
+        return m(latex, display)
+    try:
+        groups, cur, gap = [], '', False
+        for p in split_top(latex):
+            if p is None:
+                if cur.strip(): groups.append((cur, gap))
+                cur, gap = '', True
+                continue
+            if cur and _visible(cur + p) <= limit:
+                cur += p
+            else:
+                if cur.strip(): groups.append((cur, gap)); gap = False
+                cur = p
+        if cur.strip(): groups.append((cur, gap))
+        fine = []                            # a piece that is still too long: break it at top-level + and -
+        for t, g in groups:
+            if _visible(t) > limit * 1.3:
+                sub, c2 = [], ''
+                for q in split_top(t, ['+', '-']):
+                    if q is None: continue
+                    if c2 and _visible(c2 + q) <= limit: c2 += q
+                    else:
+                        if c2: sub.append(c2)
+                        c2 = q
+                if c2: sub.append(c2)
+                fine += [(q, g if k == 0 else False) for k, q in enumerate(sub)]
+            else:
+                fine.append((t, g))
+        groups = fine
+        if len(groups) < 2:
+            return m(latex, display)
+        frags = []
+        for t, g in groups:
+            t = t.strip()
+            if t.startswith('\\ '): t = t[2:].strip()
+            frags.append(f'<span class="mfrag{" mgap" if g else ""}">{m(t, display)}</span>')
+    except Exception:
+        return m(latex, display)
+    return '<span class="mwrap" dir="ltr">' + ''.join(frags) + '</span>'
 
 
 def mathify(s):
-    return re.sub(r'\$(.+?)\$', lambda g: m(g.group(1)), s)
+    return re.sub(r'\$(.+?)\$', lambda g: mwrap(g.group(1)), s)
 
 
 def section_titles(page):
@@ -238,9 +329,30 @@ def used_concepts(site, hid, seg):
     return found[:MAX_PER_SECTION]
 
 
-def box(site, items, titles_by_site):
-    rows = ''
-    for c in items:
+def body_lines(body):
+    """the body as separate lines: a list of formulas joined by commas becomes one formula per line"""
+    out = []
+    for ln in body.split('<br>'):
+        ln = ln.strip()
+        mm = re.match(r'^((?:<b>[^<]*</b>)?[^$]*?)\s*((?:\$[^$]+\$[\s,.;]*(?:\\\s*)?)+)$', ln)
+        pieces = re.findall(r'\$([^$]+)\$', mm.group(2)) if mm else []
+        if mm and len(pieces) >= 2 and not re.sub(r'\$[^$]+\$|[\s,.;]|\\', '', mm.group(2)):
+            if mm.group(1).strip():
+                out.append(('t', mm.group(1).strip()))
+            for pc in pieces:
+                pc = re.sub(r'^\\\s+', '', pc.strip())
+                out.append(('f', pc))
+        else:
+            out.append(('t', ln))
+    return out
+
+
+def box(site, items, titles_by_site, hid=''):
+    chips, panels = '', ''
+    for k, c in enumerate(items):
+        pid = f'rem-{hid}-{c["id"]}'
+        chips += (f'<button type="button" class="rem-chip" aria-expanded="false" aria-controls="{pid}">'
+                  f'{mathify(c["title"])}</button>')
         home = c['sites'].get(site)
         link = ''
         if home and home in titles_by_site[site]:
@@ -249,47 +361,57 @@ def box(site, items, titles_by_site):
             osite, oid = c['link_other'][site]
             t = titles_by_site.get(osite, {}).get(oid, '')
             link = f'<a class="rem-link" href="../{osite}/#{oid}">↩ ההסבר המלא באתר החומר התיאורטי: {html.escape(t)}</a>'
-        rows += (f'<div class="rem-item"><button type="button" class="rem-toggle" aria-expanded="true">'
-                 f'<span>{mathify(c["title"])}</span></button>'
-                 f'<div class="rem-body">{mathify(c["body"])}{("<br>" + link) if link else ""}</div></div>')
-    return ('\n      <!-- rem:start --><div class="rem-box" role="note" aria-label="תזכורות לסעיף הזה">'
-            '<div class="rem-head">🔁 תזכורות לסעיף הזה <span>לחצי על מושג כדי לפתוח אותו</span></div>'
-            + rows + '</div><!-- rem:end -->')
+        lines = ''.join(f'<div class="rem-f">{mwrap(x, True)}</div>' if kind == 'f' else f'<div class="rem-t">{mathify(x)}</div>'
+                        for kind, x in body_lines(c['body']))
+        panels += (f'<div class="rem-panel" id="{pid}" hidden><div class="rem-ptitle">{mathify(c["title"])}</div>'
+                   f'{lines}{link}</div>')
+    return ('\n      <!-- rem:start --><div class="rem-box" role="note" aria-label="תזכורת לסעיף הזה">'
+            '<div class="rem-head">🔁 תזכורת לסעיף הזה <span>לחצי על מושג כדי לראות אותו</span></div>'
+            f'<div class="rem-chips">{chips}</div>{panels}</div><!-- rem:end -->')
 
 
-ASSETS = '''<!-- rem-assets:start -->
+ASSETS = """<!-- rem-assets:start -->
 <style>
-  /* תזכורות: מושגים מסעיפים אחרים שהסעיף משתמש בהם */
-  .rem-box{ margin:8px 0 20px; max-width:80ch; border:1.5px solid #8A9BC4; border-radius:12px; background:#F5F7FC; overflow:hidden; }
-  .rem-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; padding:8px 14px; background:#5D6F9E; color:#fff; font-weight:700; font-size:.95rem; }
+  /* 🔁 תזכורת: מושגים מסעיפים אחרים שהסעיף משתמש בהם */
+  .rem-box{ margin:10px 0 22px; max-width:80ch; border:1.5px solid #8A9BC4; border-radius:12px; background:#F7F8FC; overflow:hidden; }
+  .rem-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 10px; padding:8px 14px; background:#5D6F9E; color:#fff; font-weight:700; font-size:.95rem; }
   .rem-head span{ font-weight:400; font-size:.82rem; opacity:.9; }
-  .rem-item + .rem-item{ border-top:1px solid #DCE2EF; }
-  .rem-toggle{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:44px; padding:6px 14px;
-    background:none; border:0; font:inherit; font-weight:600; font-size:.97rem; color:#1F2A47; cursor:pointer; text-align:right; }
-  .rem-toggle::after{ content:"▾"; color:#A8791E; font-size:.85rem; flex:0 0 auto; }
-  .rem-toggle[aria-expanded="false"]::after{ content:"◂"; }
-  .rem-toggle:focus-visible{ outline:3px solid #A8791E; outline-offset:-3px; border-radius:8px; }
-  .rem-body{ padding:2px 16px 12px; font-size:.95rem; line-height:1.75; overflow-x:auto; }
-  .rem-body[hidden]{ display:none; }
-  .rem-link{ display:inline-block; margin-top:6px; font-size:.88rem; font-weight:600; color:#2C3A5E; }
-  @media print{ .rem-body[hidden]{ display:block; } .rem-toggle::after{ content:""; } }
+  .rem-chips{ display:flex; flex-wrap:wrap; gap:8px; padding:12px 14px; }
+  .rem-chip{ min-height:40px; padding:4px 14px; border-radius:100px; border:1.5px solid #8A9BC4; background:#fff; color:#1F2A47;
+    font:inherit; font-size:.93rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+  .rem-chip::after{ content:"▾"; color:#A8791E; font-size:.8rem; }
+  .rem-chip[aria-expanded="true"]{ background:#5D6F9E; color:#fff; border-color:#5D6F9E; }
+  .rem-chip[aria-expanded="true"]::after{ content:"▴"; color:#fff; }
+  .rem-chip:focus-visible{ outline:3px solid #A8791E; outline-offset:2px; }
+  .rem-panel{ margin:0 14px 14px; padding:12px 16px 14px; background:#fff; border:1px solid #DCE2EF; border-radius:10px; }
+  .rem-panel[hidden]{ display:none; }
+  .rem-ptitle{ font-weight:700; color:#2C3A5E; margin-bottom:8px; font-size:1rem; }
+  .rem-t{ line-height:1.9; margin:6px 0; }
+  .rem-f{ text-align:center; margin:6px 0; padding:6px 8px; background:#F3F5FA; border-radius:8px; overflow-x:auto; font-size:1.04rem; }
+  .mwrap{ unicode-bidi:isolate; }
+  .mfrag{ display:inline-block; margin:1px .12em; vertical-align:middle; }
+  .mfrag.mgap{ margin-inline-start:1.2em; }
+  .rem-link{ display:inline-block; margin-top:10px; font-size:.88rem; font-weight:600; color:#2C3A5E; }
+  @media print{ .rem-box{ display:none; } }
 </style>
 <script>
 (function(){
   try {
-    document.querySelectorAll('.rem-box .rem-toggle').forEach(function(b){
-      var body = b.nextElementSibling;
-      b.setAttribute('aria-expanded', 'false'); body.hidden = true;
-      b.addEventListener('click', function(){
-        var open = b.getAttribute('aria-expanded') === 'true';
-        b.setAttribute('aria-expanded', String(!open)); body.hidden = open;
+    document.querySelectorAll('.rem-box').forEach(function(box){
+      var chips = box.querySelectorAll('.rem-chip');
+      chips.forEach(function(b){
+        b.addEventListener('click', function(){
+          var open = b.getAttribute('aria-expanded') === 'true';
+          chips.forEach(function(o){ o.setAttribute('aria-expanded','false'); var p=document.getElementById(o.getAttribute('aria-controls')); if(p) p.hidden=true; });
+          if(!open){ b.setAttribute('aria-expanded','true'); var p=document.getElementById(b.getAttribute('aria-controls')); if(p) p.hidden=false; }
+        });
       });
     });
   } catch(err){}
 })();
 </script>
 <!-- rem-assets:end -->
-'''
+"""
 
 
 def apply(site, page, titles_by_site, report=None):
@@ -306,7 +428,7 @@ def apply(site, page, titles_by_site, report=None):
         mm = re.match(r'\s*<div class="src-tag[^"]*">.*?</div>', page[b:stop], re.S)
         if mm:
             ins = b + mm.end()
-        out.append(page[last:ins]); out.append(box(site, items, titles_by_site)); last = ins
+        out.append(page[last:ins]); out.append(box(site, items, titles_by_site, hid)); last = ins
     out.append(page[last:])
     page = ''.join(out)
     # keep the smart-search catalog clean: skip reminder boxes when building section summaries
