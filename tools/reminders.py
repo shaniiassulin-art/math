@@ -240,7 +240,13 @@ def split_top(latex, rel=None):
 
 
 def mwrap(latex, display=False, limit=16):
-    """MathML that can break onto the next line between top-level pieces (for narrow phone screens)"""
+    """A formula is never broken across lines (a line break in the middle of a calculation is hard to follow).
+    On a narrow screen the formula box scrolls sideways instead."""
+    return m(latex.strip(), display)
+
+
+def mwrap_split(latex, display=False, limit=16):
+    """(old behaviour, kept for reference: break between top-level pieces)"""
     latex = latex.strip()
     if _visible(latex) <= limit:
         return m(latex, display)

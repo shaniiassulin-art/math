@@ -268,7 +268,12 @@ ASSETS = '''<!-- samples-assets:start -->
   .sol-line{ line-height:1.9; margin:3px 0; overflow-x:auto; }
   .sol-formula{ margin:6px 0 !important; padding:8px 10px !important; background:rgba(255,255,255,.75) !important;
     border:none !important; border-radius:8px; overflow-x:auto; text-align:center; }
-  .sample math, .rem-panel math{ max-width:none !important; }
+  .sample math, .rem-panel math, .tip-panel math{ max-width:none !important; }
+  /* נוסחה לא נשברת לשורות: בטלפון היא קטנה מעט, ואם עדיין רחבה - גוללים אותה הצידה */
+  .sol-formula, .tip-f, .sol-line, .tip-t, .sol-ans, .sample-q{ -webkit-overflow-scrolling:touch; }
+  .sol-formula math, .tip-f math{ white-space:nowrap; }
+  .sol-formula, .tip-f{ direction:ltr; }   /* גלילה הצידה מתחילה מתחילת הנוסחה (משמאל) */
+  @media (max-width:560px){ .sol-formula, .tip-f{ font-size:.9em; } }
   .sol-disp{ display:block; text-align:center; margin:6px 0; }
   .sol-ans{ background:#fff; border:2px solid #2A6F63; border-radius:10px; padding:10px 14px; line-height:1.9; overflow-x:auto; }
   .sol-ans-lbl{ font-weight:800; color:#1E5A4F; margin-inline-end:6px; }
