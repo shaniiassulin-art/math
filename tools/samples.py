@@ -210,7 +210,7 @@ LEGEND = '''<details class="legend">
           <div class="callout callout-check"><div class="callout-title"></div><p>איך מוודאים שהתשובה נכונה</p></div>
           <div class="callout callout-info"><div class="callout-title"></div><p>הבהרה או הרחבה קטנה</p></div>
           <div class="callout callout-proof"><div class="callout-title"></div><p>למה הנוסחה נכונה (נפתחת בלחיצה)</p></div>
-          <div class="tip-legend"><span class="tip-btn">תזכורת</span><p>כפתור בתוך שלב בפתרון, ליד מה שצריך להיזכר בו. לחיצה פותחת הסבר קצר וממוקד בדיוק לדבר הזה</p></div>
+          <div class="tip-legend"><span class="tip-btn">תזכורת</span><p>כפתור בתוך "שלבי הפתרון", ליד מה שצריך להיזכר בו. לחיצה פותחת הסבר מפורט לדבר הזה, עם דוגמה</p></div>
         </div>
       </details>'''
 
@@ -276,7 +276,8 @@ ASSETS = '''<!-- samples-assets:start -->
 
 
   /* 💡 תזכורת בתוך שלב בפתרון */
-  .tip-row{ display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 6px; }
+  .tip-row{ display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 4px; }
+  .steps .tip-panel{ font-weight:400; }
   .tip-btn{ min-height:38px; padding:4px 12px; border-radius:100px; border:1.5px solid #8A9BC4; background:#fff; color:#2C3A5E;
     font:inherit; font-size:.88rem; font-weight:600; line-height:1.5; cursor:pointer; display:inline-flex; align-items:center; gap:6px; text-align:start; }
   .tip-btn::before{ content:"💡"; }
@@ -334,6 +335,50 @@ ASSETS = '''<!-- samples-assets:start -->
 <!-- samples-assets:end -->
 '''
 
+
+TIP_RE = re.compile(r'<!-- tip:start -->.*?<!-- tip:end -->', re.S)
+NEWSTEPS_RE = re.compile(r'\n?\s*<!-- newsteps:start -->.*?<!-- newsteps:end -->', re.S)
+
+
+def step_tips_html(prefix, tips):
+    items = [tip_html(f'{prefix}-{k + 1}', label, lines) for k, (label, lines) in enumerate(tips)]
+    return '<!-- tip:start -->' + tips_block(items) + '<!-- tip:end -->' if items else ''
+
+
+def apply_steps(page, stm):
+    page = TIP_RE.sub('', page)
+    page = NEWSTEPS_RE.sub('', page)
+    secs = R.sections(page)
+    out, last = [], 0
+    for hid, a, b, stop in secs:
+        seg = page[b:stop]
+        tips = getattr(stm, 'STEP_TIPS', {}).get(hid, {})
+        mm = re.search(r'<ol class="steps">(.*?)</ol>', seg, re.S)
+        if tips:
+            if not mm:
+                raise ValueError(f'{hid}: no steps list for tips')
+            lis = list(re.finditer(r'<li>(.*?)</li>', mm.group(1), re.S))
+            bad = [i for i in tips if i >= len(lis)]
+            if bad:
+                raise ValueError(f'{hid}: tips for missing steps {bad}')
+            body = mm.group(1)
+            for i in sorted(tips, reverse=True):
+                e = lis[i].end() - len('</li>')
+                body = body[:e] + step_tips_html(f'{hid}-st{i + 1}', tips[i]) + body[e:]
+            seg = seg[:mm.start(1)] + body + seg[mm.end(1):]
+        new = getattr(stm, 'NEW_STEPS', {}).get(hid)
+        if new:
+            if mm:
+                raise ValueError(f'{hid}: already has steps')
+            lis = ''.join(f'<li>{mathify(t)}{step_tips_html(f"{hid}-st{i + 1}", tl)}</li>' for i, (t, tl) in enumerate(new))
+            block = ('\n      <!-- newsteps:start --><div class="callout callout-steps"><div class="callout-title"></div>'
+                     f'<ol class="steps">{lis}</ol></div><!-- newsteps:end -->')
+            j = section_end(seg, len(seg))
+            seg = seg[:j] + block + seg[j:]
+        out.append(page[last:b]); out.append(seg); last = stop
+    out.append(page[last:])
+    return ''.join(out)
+
 SAMPLE_RE = re.compile(r'\n?\s*<!-- sample:start -->.*?<!-- sample:end -->', re.S)
 
 
@@ -341,12 +386,10 @@ def apply(site, page):
     spec = importlib.util.spec_from_file_location(SITES[site], os.path.join(HERE, 'samples', SITES[site] + '.py'))
     mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
     data = mod.SAMPLES
-    tp = os.path.join(HERE, 'samples', 'tips_' + SITES[site] + '.py')
     tips = {}
-    if os.path.exists(tp):
-        spec = importlib.util.spec_from_file_location('tips_' + SITES[site], tp)
-        tm = importlib.util.module_from_spec(spec); spec.loader.exec_module(tm)
-        tips = tm.TIPS
+    sp = os.path.join(HERE, 'samples', 'steps_' + SITES[site] + '.py')
+    spec = importlib.util.spec_from_file_location('steps_' + SITES[site], sp)
+    stm = importlib.util.module_from_spec(spec); spec.loader.exec_module(stm)
     page = SAMPLE_RE.sub('', page)
     page = R.REM_RE.sub('', page)
     a = page.find('<!-- rem-assets:start -->')
@@ -359,6 +402,7 @@ def apply(site, page):
     else:
         page = clean_calculus(page)
     page = wrap_steps(page)
+    page = apply_steps(page, stm)
     page = set_legend(page)
     missing = []
     secs = R.sections(page)
