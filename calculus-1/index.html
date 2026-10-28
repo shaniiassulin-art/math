@@ -2922,6 +2922,12 @@ try {
   .hub-key-note{ margin:4px 0 14px; padding:12px 16px; border-radius:12px; background:#FFF6D6; border:2px solid #E3B95C; color:#3A2E10; font-size:.95rem; }
   .hub-key-note a{ color:#1F2A47; font-weight:700; }
   @media print{ .hub-topbar{ display:none !important; } }
+  /* טבלאות: במרכז, ורק התאים לבנים - מחוץ לטבלה נשאר רקע העמוד */
+  .content table{ margin-inline:auto !important; background:transparent !important; }
+  .content td{ background:var(--paper); }
+  @media (max-width: 880px){
+    .content table{ display:block; width:max-content !important; max-width:100%; overflow-x:auto; }
+  }
 </style>
 <script>
 (function(){
