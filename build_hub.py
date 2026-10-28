@@ -43,9 +43,6 @@ def share_key(page):
     return page, [o for o in old if o != SHARED_KEY]
 
 
-BOTTOM_SPACE = ('<!-- hub:bottom-space -->\n<div class="hub-bottom-space" aria-hidden="true" '
-                'style="height:calc(96px + env(safe-area-inset-bottom, 0px));"></div>\n')
-
 SWIPE_BACK = r"""<!-- hub:swipe-back -->
 <script>
 // החלקה מימין לשמאל = חזרה אחורה (לדף הקודם, או לדף הבית של אתר המתמטיקה)
@@ -203,8 +200,8 @@ def ensure_topbar_and_key(page):
 def ensure_sub_extras(page):
     """Bottom space (so a host badge never hides content) + swipe right-to-left to go back."""
     add = ''
-    if 'hub:bottom-space' not in page:
-        add += BOTTOM_SPACE
+    # the extra space at the end of the page (for the Netlify badge) is no longer needed - remove it if present
+    page = re.sub(r'<!-- hub:bottom-space -->\n<div class="hub-bottom-space"[^>]*></div>\n', '', page)
     if 'hub:swipe-back' not in page:
         add += SWIPE_BACK
     if add:
