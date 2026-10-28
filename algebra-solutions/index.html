@@ -2102,28 +2102,51 @@ try {
     throw new Error('json');
   }
   async function askApi(prompt, signal){
+    // hub-ai-v2: ניסיון חוזר כש-Google עמוס, מודל גיבוי, והודעת שגיאה מדויקת
     const key=getKey();
     if(!key){ refreshKeyBox(); throw {code:'no_key'}; }
     const parts=[];
-    for(const f of images){ parts.push({inline_data:{mime_type:'image/jpeg', data: await toJpegBase64(f)}}); }
-    parts.push({text:prompt});
-    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',{method:'POST',signal,
-      headers:{'content-type':'application/json','x-goog-api-key':key},
-      body:JSON.stringify({contents:[{role:'user',parts}], generationConfig:{responseMimeType:'application/json', temperature:0.2}})});
-    if(!r.ok){
-      let msg=''; try{ msg=JSON.stringify(await r.json()); }catch(e){}
-      if(r.status===429) throw {code:'rate_limited'};
-      if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
-      if(r.status===401 || r.status===403) throw {code:'bad_key'};
-      throw {code:'upstream_error'};
+    for(const f of images){
+      let data;
+      try { data=await toJpegBase64(f); } catch(e){ throw {code:'image_rejected'}; }
+      parts.push({inline_data:{mime_type:'image/jpeg', data}});
     }
-    const data=await r.json();
-    const cand=(data.candidates||[])[0];
-    if(!cand){ throw {code:'refused'}; }
-    const text=((cand.content&&cand.content.parts)||[]).map(p=>p.text||'').join('');
-    return parseJsonLoose(text);
+    parts.push({text:prompt});
+    const body=JSON.stringify({contents:[{role:'user',parts}], generationConfig:{responseMimeType:'application/json', temperature:0.2}});
+    const MODELS=['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest'];
+    const wait=ms=>new Promise((res,rej)=>{ const t=setTimeout(res,ms); if(signal) signal.addEventListener('abort',()=>{ clearTimeout(t); rej({code:'cancelled'}); },{once:true}); });
+    let last={code:'upstream_error'}, sawLimit=false;
+    for(const model of MODELS){
+      for(let attempt=0; attempt<2; attempt++){
+        let r;
+        try {
+          r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',signal,
+            headers:{'content-type':'application/json','x-goog-api-key':key}, body});
+        } catch(e){
+          if(e && e.name==='AbortError') throw e;
+          last={code:'network'}; await wait(1200); continue;
+        }
+        if(r.ok){
+          const data=await r.json();
+          const cand=(data.candidates||[])[0];
+          if(!cand){ last={code:'refused'}; break; }
+          const text=((cand.content&&cand.content.parts)||[]).map(p=>p.text||'').join('');
+          try { return parseJsonLoose(text); } catch(e){ last={code:'invalid_json'}; continue; }
+        }
+        let msg='', gmsg='';
+        try { const j=await r.json(); msg=JSON.stringify(j); gmsg=(j.error&&j.error.message)||''; } catch(e){}
+        if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
+        if(r.status===401 || r.status===403) throw {code:'bad_key'};
+        if(r.status===429){ sawLimit=true; last={code:'rate_limited'}; break; }          // מכסה נגמרה במודל הזה - מנסים את הבא
+        if(r.status===404){ last={code:'upstream_error', detail:'404'}; break; }       // המודל לא זמין - מנסים את הבא
+        if(r.status>=500){ last={code:'overloaded', detail:String(r.status)}; await wait(1500*(attempt+1)); continue; }
+        last={code:'upstream_error', detail:(r.status+' '+gmsg).trim().slice(0,140)}; break;
+      }
+    }
+    if(sawLimit && last.code!=='invalid_json') throw {code:'rate_limited'};
+    throw last;
   }
-  const MSG={not_granted:'לא אושר שימוש ב-Claude בדף הזה.', sampling_disabled:'Claude לא זמין בחשבון הזה.', rate_limited:'הגעת למגבלת השימוש החינמי לרגע זה. חכי דקה ונסי שוב.',
+  const MSG={overloaded:'השרת של Google עמוס כרגע. ניסיתי שוב כמה פעמים ולא הצליח - נסי שוב בעוד דקה.', network:'אין חיבור ל-Google (אינטרנט או חסימה בדפדפן). בדקי את החיבור ונסי שוב.', upstream_error:'Google החזיר שגיאה.', not_granted:'לא אושר שימוש ב-Claude בדף הזה.', sampling_disabled:'Claude לא זמין בחשבון הזה.', rate_limited:'הגעת למגבלת השימוש החינמי לרגע זה. חכי דקה ונסי שוב.',
     session_expired:'צריך להתחבר מחדש ל-Claude.', image_rejected:'התמונה לא התקבלה. נסי תמונה אחרת (JPG או PNG).', images_unavailable:'אי אפשר לשלוח תמונות בתצוגה הזאת - כתבי את התרגיל במילים.',
     refused:'הבקשה לא עובדה. נסי לנסח את התרגיל אחרת.', invalid_json:'התשובה לא הגיעה בפורמט הנכון. נסי שוב.', no_key:'קודם צריך להדביק מפתח פעם אחת בדף הבית של אתר המתמטיקה.',
     bad_key:'המפתח לא תקין. אפשר להחליף אותו בדף הבית של אתר המתמטיקה.', prompt_too_large:'הטקסט ארוך מדי. קצרי אותו.'};
@@ -2151,7 +2174,7 @@ try {
       show(ans); setStatus(''); await saveLast(userText, ans, focus);
     } catch(e){
       if(e && (e.code==='cancelled' || e.name==='AbortError')) setStatus('נעצר.');
-      else setStatus((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.', true);
+      else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (' + e.detail + ')' : ''), true);
     } finally { goBtn.disabled=false; stopBtn.hidden=true; }
   };
   stopBtn.onclick=()=>{ if(ctl) ctl.abort(); };

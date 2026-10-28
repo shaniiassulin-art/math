@@ -197,6 +197,72 @@ def ensure_topbar_and_key(page):
     return page
 
 
+AI_ASK_V2 = """async function askApi(prompt, signal){
+    // hub-ai-v2: ניסיון חוזר כש-Google עמוס, מודל גיבוי, והודעת שגיאה מדויקת
+    const key=getKey();
+    if(!key){ refreshKeyBox(); throw {code:'no_key'}; }
+    const parts=[];
+    for(const f of images){
+      let data;
+      try { data=await toJpegBase64(f); } catch(e){ throw {code:'image_rejected'}; }
+      parts.push({inline_data:{mime_type:'image/jpeg', data}});
+    }
+    parts.push({text:prompt});
+    const body=JSON.stringify({contents:[{role:'user',parts}], generationConfig:{responseMimeType:'application/json', temperature:0.2}});
+    const MODELS=['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest'];
+    const wait=ms=>new Promise((res,rej)=>{ const t=setTimeout(res,ms); if(signal) signal.addEventListener('abort',()=>{ clearTimeout(t); rej({code:'cancelled'}); },{once:true}); });
+    let last={code:'upstream_error'}, sawLimit=false;
+    for(const model of MODELS){
+      for(let attempt=0; attempt<2; attempt++){
+        let r;
+        try {
+          r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',signal,
+            headers:{'content-type':'application/json','x-goog-api-key':key}, body});
+        } catch(e){
+          if(e && e.name==='AbortError') throw e;
+          last={code:'network'}; await wait(1200); continue;
+        }
+        if(r.ok){
+          const data=await r.json();
+          const cand=(data.candidates||[])[0];
+          if(!cand){ last={code:'refused'}; break; }
+          const text=((cand.content&&cand.content.parts)||[]).map(p=>p.text||'').join('');
+          try { return parseJsonLoose(text); } catch(e){ last={code:'invalid_json'}; continue; }
+        }
+        let msg='', gmsg='';
+        try { const j=await r.json(); msg=JSON.stringify(j); gmsg=(j.error&&j.error.message)||''; } catch(e){}
+        if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
+        if(r.status===401 || r.status===403) throw {code:'bad_key'};
+        if(r.status===429){ sawLimit=true; last={code:'rate_limited'}; break; }          // מכסה נגמרה במודל הזה - מנסים את הבא
+        if(r.status===404){ last={code:'upstream_error', detail:'404'}; break; }       // המודל לא זמין - מנסים את הבא
+        if(r.status>=500){ last={code:'overloaded', detail:String(r.status)}; await wait(1500*(attempt+1)); continue; }
+        last={code:'upstream_error', detail:(r.status+' '+gmsg).trim().slice(0,140)}; break;
+      }
+    }
+    if(sawLimit && last.code!=='invalid_json') throw {code:'rate_limited'};
+    throw last;
+  }
+  """
+
+AI_MSG_EXTRA = ("overloaded:'השרת של Google עמוס כרגע. ניסיתי שוב כמה פעמים ולא הצליח - נסי שוב בעוד דקה.', "
+                "network:'אין חיבור ל-Google (אינטרנט או חסימה בדפדפן). בדקי את החיבור ונסי שוב.', "
+                "upstream_error:'Google החזיר שגיאה.', ")
+
+
+def ensure_ai_v2(page):
+    """Smart search: retries and a backup model when Google is busy, and an exact error message."""
+    if 'async function askApi(' not in page or 'hub-ai-v2' in page:
+        return page
+    a = page.index('async function askApi(')
+    b = page.index('const MSG=', a)
+    page = page[:a] + AI_ASK_V2 + page[b:]
+    page = page.replace('const MSG={', 'const MSG={' + AI_MSG_EXTRA, 1)
+    old = "else setStatus((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.', true);"
+    new_ = "else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (' + e.detail + ')' : ''), true);"
+    page = page.replace(old, new_)
+    return page
+
+
 def ensure_sub_extras(page):
     """Bottom space (so a host badge never hides content) + swipe right-to-left to go back."""
     add = ''
@@ -287,6 +353,7 @@ def main():
         page, old = share_key(open(path, encoding='utf-8').read())
         page = ensure_sub_extras(page)
         page = ensure_topbar_and_key(page)
+        page = ensure_ai_v2(page)
         old_keys += old
         if write_if_changed(path, page):
             print(f"  עודכן: {s['slug']}/index.html")
