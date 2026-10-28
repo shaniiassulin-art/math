@@ -2980,13 +2980,55 @@ try {
       try { sessionStorage.setItem(KEY, String(window.scrollY)); } catch(e){}
       location.replace(location.pathname + '?r=' + Date.now());
     });
-    var y = null;
-    try { y = sessionStorage.getItem(KEY); sessionStorage.removeItem(KEY); } catch(e){}
+    try { sessionStorage.removeItem(KEY); } catch(e){}
     if(/[?&]r=\d+/.test(location.search)){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
-    if(y !== null){
-      var go = function(){ window.scrollTo({top: parseFloat(y) || 0, behavior: 'instant'}); };
-      requestAnimationFrame(function(){ requestAnimationFrame(go); });
-      window.addEventListener('load', function(){ setTimeout(go, 120); setTimeout(go, 500); });
+  } catch(err){}
+  /* שמירת המקום: כשיוצאים מהאתר וחוזרים - חוזרים בדיוק לאותו מקום, עם אותם פתרונות ותזכורות פתוחים */
+  try {
+    var PK = 'mathPlace_v1:' + location.pathname, BAR = 52 + 10;
+    if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    var anchorsSel = '[id]:not(script):not(style):not(svg *):not(math *)';
+    var snap = function(){
+      var best = null, bestTop = -1e9, list = document.querySelectorAll(anchorsSel);
+      for(var i = 0; i < list.length; i++){
+        var el = list[i]; if(el.offsetParent === null || el.closest('[hidden], .sidebar, header, nav, .hub-topbar, button')) continue;
+        var r = el.getBoundingClientRect(); if(!r.width && !r.height) continue;
+        if(r.top <= BAR && r.top > bestTop && getComputedStyle(el).position !== 'sticky'){ best = el; bestTop = r.top; }
+      }
+      var open = [];
+      document.querySelectorAll('.sample-sol:not([hidden]), .tip-panel:not([hidden])').forEach(function(x){ if(x.id) open.push(x.id); });
+      var det = [];
+      document.querySelectorAll('details[open][id]').forEach(function(x){ det.push(x.id); });
+      return { y: window.scrollY, a: best ? best.id : null, d: best ? BAR - bestTop : 0, open: open, det: det };
+    };
+    var save = function(){ try { localStorage.setItem(PK, JSON.stringify(snap())); } catch(e){} };
+    var timer = null;
+    window.addEventListener('scroll', function(){ clearTimeout(timer); timer = setTimeout(save, 350); }, {passive: true});
+    document.addEventListener('click', function(){ setTimeout(save, 50); }, true);
+    window.addEventListener('pagehide', save);
+    document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'hidden') save(); });
+
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(PK) || 'null'); } catch(e){}
+    if(saved && !location.hash){
+      var stop = false, cancel = function(){ stop = true; };
+      ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function(ev){ window.addEventListener(ev, cancel, {passive: true, once: true}); });
+      var go = function(){
+        if(stop) return;
+        var el = saved.a && document.getElementById(saved.a);
+        var top = el ? el.getBoundingClientRect().top + window.scrollY - BAR + saved.d : saved.y;
+        window.scrollTo({top: Math.max(0, top), behavior: 'instant'});
+      };
+      var reopen = function(){
+        (saved.open || []).forEach(function(id){
+          var b = document.querySelector('[aria-controls="' + id + '"][aria-expanded="false"]');
+          if(b) b.click();
+        });
+        (saved.det || []).forEach(function(id){ var d = document.getElementById(id); if(d) d.open = true; });
+      };
+      var start = function(){ reopen(); requestAnimationFrame(function(){ requestAnimationFrame(go); }); };
+      if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else setTimeout(start, 0);
+      window.addEventListener('load', function(){ setTimeout(go, 150); setTimeout(go, 700); setTimeout(go, 1600); });
     }
   } catch(err){}
   try {
