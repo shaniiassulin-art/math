@@ -65,8 +65,13 @@ def tip_line(x):
 
 def tip_html(pid, label, lines):
     body = ''.join(f'<div class="tip-h">{mathify(x[1:])}</div>' if x.startswith('§') else tip_line(x) for x in lines)
-    btn = (f'<button type="button" class="tip-btn" aria-expanded="false" aria-controls="{pid}">'
-           f'{mathify(label)}</button>')
+    if isinstance(label, tuple):          # (title, [concept names])
+        title, names = label
+        inner = (f'<span class="tb-title">{mathify(title)}</span><span class="tb-list">'
+                 + ''.join(f'<span class="tb-item">{mathify(n)}</span>' for n in names) + '</span>')
+    else:
+        inner = mathify(label)
+    btn = f'<button type="button" class="tip-btn" aria-expanded="false" aria-controls="{pid}">{inner}</button>'
     panel = f'<div class="tip-panel" id="{pid}" hidden>{body}</div>'
     return btn, panel
 
@@ -332,6 +337,19 @@ ASSETS = '''<!-- samples-assets:start -->
   .mfrag{ display:inline-block; margin:1px .12em; vertical-align:middle; }
   .mfrag.mgap{ margin-inline-start:1.2em; }
 
+  /* כל נוסחה שהיא ביטוי - בשורה משלה, משמאל לימין; העברית מימין לשמאל */
+  .mline{ display:block; direction:ltr; text-align:center; margin:6px 0; padding:2px 0; overflow-x:auto; overflow-y:hidden; }
+  .mline math{ max-width:none !important; white-space:nowrap; }
+  .mjoin{ display:block; text-align:center; color:#5B5F6B; font-size:.92rem; }
+  .steps li .mline{ text-align:center; }
+  .tip-btn{ flex-direction:column; align-items:flex-start; gap:6px; padding:8px 14px; border-radius:14px; }
+  .tip-btn::before{ display:none; }
+  .tb-title{ font-weight:800; }
+  .tb-title::before{ content:"💡 "; }
+  .tb-list{ display:flex; flex-wrap:wrap; gap:6px; }
+  .tb-item{ display:inline-block; unicode-bidi:isolate; background:#EEF1F8; color:#2C3A5E; border-radius:100px; padding:1px 10px; font-weight:600; font-size:.85rem; }
+  .tip-btn[aria-expanded="true"] .tb-item{ background:rgba(255,255,255,.2); color:#fff; }
+  .tip-t, .sol-line, .steps li{ line-height:1.9; }
   /* "למשל" - דוגמה קצרה בתוך ההסבר */
   .eg{ margin:12px 0 18px; padding:6px 14px; border-inline-start:3px solid #CFC6B2; max-width:80ch; overflow-x:auto; }
   .eg > p{ margin:4px 0; }
@@ -388,8 +406,7 @@ def concept_tip(keys, seen, stepno):
         else:
             lines += C[k]['full']
             seen[k] = stepno
-    label = 'מה צריך לדעת לשלב הזה: ' + ' · '.join(C[k]['name'] for k in keys)
-    return label, lines
+    return ('מה צריך לדעת לשלב הזה', [C[k]['name'] for k in keys]), lines
 
 
 def step_tips_html(prefix, keys, seen, stepno):
@@ -437,6 +454,55 @@ def apply_steps(page, stm):
     out.append(page[last:])
     return ''.join(out)
 
+
+REL_CHARS = set('=<>≤≥⇒⇔≠≈∈')
+
+
+def _mtext(mhtml):
+    t = re.sub(r'<annotation[^>]*>.*?</annotation>', '', mhtml, flags=re.S)
+    t = html.unescape(re.sub(r'<[^>]+>', '', t))
+    return re.sub(r'\s+', '', t)
+
+
+def separate_math(frag):
+    """Hebrew right-to-left, formulas left-to-right: an expression is moved to a line of its own
+    (it is never broken), so a line never mixes a long formula with Hebrew text."""
+    keep = {}
+    def protect(mm):
+        keep[len(keep)] = mm.group(0)
+        return f'\x02{len(keep) - 1}\x03'
+    frag = re.sub(r'<button\b.*?</button>|<div class="tip-h">.*?</div>|<span class="mline"[^>]*>.*?</span>|'
+                  r'<div class="formula[^"]*">.*?</div>', protect, frag, flags=re.S)
+    def conv(mm):
+        t = _mtext(mm.group(0))
+        if len(t) > 6 or (len(t) >= 4 and REL_CHARS & set(t)):
+            return '<span class="mline">' + mm.group(0) + '</span>'
+        return mm.group(0)
+    frag = re.sub(r'<math\b[^>]*display="inline"[^>]*>.*?</math>', conv, frag, flags=re.S)
+    # punctuation that was attached to the moved formula
+    frag = re.sub(r'(<span class="mline"><math\b.*?</math></span>)\s*[.,;:]', r'\1', frag, flags=re.S)
+    frag = re.sub(r'([:,])\s*(<span class="mline">)', r'\2', frag)
+    # a lonely connector between two formula lines
+    frag = re.sub(r'(</math></span>)\s*(?:ו-?|וגם)\s*(<span class="mline">)', r'\1<span class="mjoin">וגם</span>\2', frag)
+    frag = re.sub(r'(</math></span>)\s*[-–]\s+', r'\1', frag)
+    frag = re.sub(r'(</math></span>)\s*(?:או)\s*(<span class="mline">)', r'\1<span class="mjoin">או</span>\2', frag)
+    for k in sorted(keep, reverse=True):
+        frag = frag.replace(f'\x02{k}\x03', keep[k])
+    return frag
+
+
+def separate_regions(page):
+    out, pos = [], 0
+    pat = re.compile(r'<div class="callout callout-steps">|<div class="box box-q sample"')
+    while True:
+        mm = pat.search(page, pos)
+        if not mm:
+            break
+        e = div_end(page, mm.start())
+        out.append(page[pos:mm.start()]); out.append(separate_math(page[mm.start():e])); pos = e
+    out.append(page[pos:])
+    return ''.join(out)
+
 SAMPLE_RE = re.compile(r'\n?\s*<!-- sample:start -->.*?<!-- sample:end -->', re.S)
 
 
@@ -473,6 +539,7 @@ def apply(site, page):
         out.append(page[last:ins]); out.append(render(hid, data[hid], tips.get(hid, ()))); last = ins
     out.append(page[last:])
     page = ''.join(out)
+    page = separate_regions(page)
     a = page.find('<!-- samples-assets:start -->')
     if a != -1:
         page = page[:a] + page[page.index('<!-- samples-assets:end -->') + len('<!-- samples-assets:end -->\n'):]
