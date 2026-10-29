@@ -3109,7 +3109,6 @@ try {
   .tip-h{ font-weight:800; color:#2C3A5E; margin:14px 0 4px; padding-top:10px; border-top:1px solid #DCE2EF; font-size:1rem; }
   .tip-panel > .tip-h:first-child{ margin-top:0; padding-top:0; border-top:none; }
   .tip-ref{ color:#6A6E78; font-size:.88rem; }
-  @media (max-width:560px){ .steps li .tip-panel{ margin-inline-start:-30px; } }
   .tip-btn{ text-align:start; }
 
   .tip-t{ line-height:1.9; margin:4px 0; overflow-x:auto; }
@@ -3128,7 +3127,6 @@ try {
   .tip-wrap > .tip-btn .tb-list{ justify-content:center; }
   .tip-wrap > .tip-btn[aria-expanded="true"]{ border-bottom:1px solid #DCE2EF; }
   .tip-wrap > .tip-panel{ margin:0 !important; border:0; border-radius:0; padding:12px 16px 14px; }
-  @media (max-width:560px){ .steps li .tip-wrap{ margin-inline-start:-30px; } .steps li .tip-panel{ margin-inline-start:0 !important; } }
   .mcont{ color:#A8791E; font-weight:700; }
   .mpar{ white-space:nowrap; }
   .tline{ display:block; white-space:nowrap; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; }
@@ -3138,6 +3136,16 @@ try {
   .mline math{ max-width:none !important; white-space:nowrap; }
   .mjoin{ display:block; text-align:center; color:#5B5F6B; font-size:.92rem; }
   .steps li .mline{ text-align:center; }
+  /* ריבועים בתוך שלב - על כל רוחב השלב (גם מתחת לעיגול), כך שהם במרכז המסגרת הירוקה */
+  .steps > li .formula, .steps > li .sol-formula, .steps > li .tip-wrap, .steps > li .mline, .steps > li .mjoin{
+    margin-right:-38px !important; margin-left:0 !important; width:auto; max-width:none; box-sizing:border-box; }
+  .steps > li .tip-wrap .formula, .steps > li .tip-wrap .mline, .steps > li .tip-wrap .mjoin,
+  .steps > li .tip-wrap .sol-formula{ margin-right:0 !important; }
+  /* העיגול של מספר השלב - שלם */
+  .steps > li{ padding-inline-start:38px; min-height:30px; }
+  .steps > li::before{ inline-size:28px !important; block-size:28px !important; min-width:28px; box-sizing:border-box;
+    top:1px !important; inset-inline-start:1px !important; line-height:1; border-radius:50% !important; z-index:1; }
+  .callout-steps{ overflow:visible !important; }
   .tip-btn{ flex-direction:column; align-items:flex-start; gap:6px; padding:8px 14px; border-radius:14px; }
   .tip-btn::before{ display:none; }
   .tb-title{ font-weight:800; }
