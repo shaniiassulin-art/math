@@ -78,7 +78,7 @@ c('modrules', r'תכונות הערך המוחלט', r'$|z_1z_2|=|z_1||z_2|$, $\
   r'דוגמה: $\left|\frac{3-4i}{2i}\right|=\frac{|3-4i|}{|2i|}=\frac52$.',
   r'זהירות: בחיבור זה <b>לא</b> עובד - $|3+(-3)|=0$, אבל $|3|+|-3|=6$.')
 
-c('zzbar', r'$z\overline z=|z|^2$', r'מספר כפול הצמוד שלו שווה לערך המוחלט בריבוע: $z\overline z=|z|^2$.',
+c('zzbar', r'הקשר $z\overline z=|z|^2$', r'מספר כפול הצמוד שלו שווה לערך המוחלט בריבוע: $z\overline z=|z|^2$.',
   r'נכתוב $z=a+bi$. אז $\overline z=a-bi$, ולפי כפל מקוצר:',
   r'$$z\overline z=(a+bi)(a-bi)=a^2-b^2i^2=a^2+b^2$$',
   r'ו-$a^2+b^2$ זה בדיוק $|z|^2$ (כי $|z|=\sqrt{a^2+b^2}$). לכן $z\overline z=|z|^2$.',
@@ -102,7 +102,7 @@ c('radians', r'זוויות ברדיאנים', r'$\pi$ רדיאנים = חצי �
   r'זוויות נפוצות: $\frac\pi2=90^\circ$, $\ \frac\pi3=60^\circ$, $\ \frac\pi4=45^\circ$, $\ \frac\pi6=30^\circ$.',
   r'הזווית נמדדת מהכיוון החיובי של הציר האופקי (ימינה), נגד כיוון השעון. זווית שלילית - עם כיוון השעון.')
 
-c('trig', r'$\sin$, $\cos$ ו-$\tan$', r'על מעגל היחידה הנקודה בזווית $\theta$ היא $(\cos\theta,\sin\theta)$; $\tan\theta=\frac{\sin\theta}{\cos\theta}$.',
+c('trig', r'הפונקציות $\sin$, $\cos$ ו-$\tan$', r'על מעגל היחידה הנקודה בזווית $\theta$ היא $(\cos\theta,\sin\theta)$; $\tan\theta=\frac{\sin\theta}{\cos\theta}$.',
   r'מעגל היחידה: מעגל ברדיוס 1 סביב הראשית. מסובבים קרן מהכיוון החיובי של הציר האופקי בזווית $\theta$.',
   r'הנקודה שבה הקרן פוגשת את המעגל היא $(\cos\theta,\sin\theta)$: $\cos\theta$ הוא המרחק האופקי (ימינה/שמאלה), $\sin\theta$ הוא הגובה.',
   r'$\tan\theta=\frac{\sin\theta}{\cos\theta}$ - "גובה חלקי מרחק אופקי".',
@@ -111,7 +111,7 @@ c('trig', r'$\sin$, $\cos$ ו-$\tan$', r'על מעגל היחידה הנקודה
   r'$$\cos\tfrac\pi3=\tfrac12,\ \sin\tfrac\pi3=\tfrac{\sqrt3}2\qquad\cos\tfrac\pi2=0,\ \sin\tfrac\pi2=1\qquad\cos\pi=-1,\ \sin\pi=0$$',
   r'ומהן: $\tan\frac\pi6=\frac1{\sqrt3}$, $\ \tan\frac\pi4=1$, $\ \tan\frac\pi3=\sqrt3$.')
 
-c('pyth', r'$\sin^2\theta+\cos^2\theta=1$', r'$\sin^2\theta+\cos^2\theta=1$ לכל זווית (פיתגורס על מעגל היחידה).',
+c('pyth', r'הזהות $\sin^2\theta+\cos^2\theta=1$', r'$\sin^2\theta+\cos^2\theta=1$ לכל זווית (פיתגורס על מעגל היחידה).',
   r'הנקודה $(\cos\theta,\sin\theta)$ נמצאת על מעגל ברדיוס 1. לפי פיתגורס, ריבוע המרחק מהראשית הוא סכום ריבועי הקואורדינטות, והמרחק הוא 1:',
   r'$$\cos^2\theta+\sin^2\theta=1$$',
   r'($\sin^2\theta$ פירושו $(\sin\theta)^2$.) שימוש נפוץ: $\sin^2\theta=1-\cos^2\theta$.')
@@ -133,11 +133,11 @@ c('polar', r'הצגה קוטבית', r'$z=r(\cos\theta+i\sin\theta)$: $r=|z|$ ה
   r'במקום לתאר נקודה לפי "כמה ימינה וכמה למעלה" ($a$ ו-$b$), אפשר לתאר אותה לפי <b>מרחק</b> מהראשית ($r$) ו<b>זווית</b> ($\theta$).',
   r'מהמשולש: $a=r\cos\theta$ ו-$b=r\sin\theta$. לכן:',
   r'$$z=a+bi=r(\cos\theta+i\sin\theta)$$',
-  r'$r=|z|=\sqrt{a^2+b^2}$, ו-$\theta$ נקראת הארגומנט ($\operatorname{arg} z$).',
+  r'$r=|z|=\sqrt{a^2+b^2}$, והזווית $\theta$ נקראת הארגומנט של $z$.',
   r'דוגמה: $1+i\sqrt3$: $r=\sqrt{1+3}=2$, $\tan\theta=\sqrt3$, רביע ראשון, $\theta=\frac\pi3$. לכן $1+i\sqrt3=2(\cos\frac\pi3+i\sin\frac\pi3)$.')
 
-c('euler', r'$e^{i\theta}$', r'$e^{i\theta}=\cos\theta+i\sin\theta$ - קיצור; $re^{i\theta}$ הוא המספר במרחק $r$ בזווית $\theta$.',
-  r'$e^{i\theta}$ הוא <b>קיצור</b> לביטוי $\cos\theta+i\sin\theta$:',
+c('euler', r'הסימון $e^{i\theta}$', r'$e^{i\theta}=\cos\theta+i\sin\theta$ - קיצור; $re^{i\theta}$ הוא המספר במרחק $r$ בזווית $\theta$.',
+  r'$e^{i\theta}$ הוא <b>קיצור</b> - דרך קצרה לכתוב:',
   r'$$e^{i\theta}=\cos\theta+i\sin\theta$$',
   r'זו נקודה על מעגל היחידה בזווית $\theta$, ולכן $|e^{i\theta}|=1$. וההצגה הקוטבית נכתבת בקיצור $z=re^{i\theta}$.',
   r'למה דווקא $e$ בחזקה? כי הביטוי מתנהג בדיוק כמו חזקה: $e^{i\alpha}\cdot e^{i\beta}=e^{i(\alpha+\beta)}$ - בכפל מחברים את הזוויות.',
@@ -320,7 +320,7 @@ c('signtable', r'טבלת סימנים', r'מסמנים את האפסים על �
   r'2. בתוך קטע הסימן לא משתנה, אז מציבים נקודה אחת מכל קטע: ב-$x=0$: $\frac{(-1)(-4)}{-2}=-2$, שלילי. ב-$x=1.5$: חיובי. ב-$x=3$: שלילי. ב-$x=5$: חיובי.',
   r'3. בוחרים את הקטעים שמתאימים לשאלה. אפסי המונה נותנים 0 (נכללים ב-$\geq$), אפסי המכנה - לעולם לא.')
 
-c('tancot', r'$\tan$ ו-$\cot$', r'$\tan u=\frac{\sin u}{\cos u}$ (לא מוגדר כש-$\cos u=0$); $\cot u=\frac{\cos u}{\sin u}$ (לא מוגדר כש-$\sin u=0$).',
+c('tancot', r'הפונקציות $\tan$ ו-$\cot$', r'$\tan u=\frac{\sin u}{\cos u}$ (לא מוגדר כש-$\cos u=0$); $\cot u=\frac{\cos u}{\sin u}$ (לא מוגדר כש-$\sin u=0$).',
   r'$\tan u=\frac{\sin u}{\cos u}$ ו-$\cot u=\frac{\cos u}{\sin u}$ - שברים, ולכן לא מוגדרים כשהמכנה 0.',
   r'$\cos u=0$ בזוויות $\frac\pi2,\frac{3\pi}2,-\frac\pi2,\dots$ - כלומר $u=\frac\pi2+k\pi$. שם $\tan$ לא מוגדר.',
   r'$\sin u=0$ בזוויות $0,\pi,2\pi,-\pi,\dots$ - כלומר $u=k\pi$. שם $\cot$ לא מוגדר.',
@@ -365,7 +365,7 @@ c('minusx', r'הצבת $-x$', r'מחליפים כל $x$ ב-$(-x)$ עם סוגר�
   r'חזקה זוגית מעלימה את המינוס: $(-x)^2=x^2$. חזקה אי-זוגית משאירה אותו: $(-x)^3=-x^3$.',
   r'דוגמה: $f(x)=5x^3+9$: $f(-x)=5(-x)^3+9=-5x^3+9$.')
 
-c('sincosparity', r'$\sin(-u)$ ו-$\cos(-u)$', r'$\cos(-u)=\cos u$ (זוגית), $\sin(-u)=-\sin u$ (אי-זוגית), $\tan$ אי-זוגית.',
+c('sincosparity', r'זוגיות של $\sin$ ו-$\cos$', r'$\cos(-u)=\cos u$ (זוגית), $\sin(-u)=-\sin u$ (אי-זוגית), $\tan$ אי-זוגית.',
   r'על מעגל היחידה, הזווית $-u$ היא השיקוף של $u$ ביחס לציר האופקי.',
   r'בשיקוף כזה המרחק האופקי לא משתנה, והגובה מחליף סימן. לכן $\cos(-u)=\cos u$ ו-$\sin(-u)=-\sin u$.',
   r'ו-$\tan(-u)=\frac{\sin(-u)}{\cos(-u)}=-\tan u$.')

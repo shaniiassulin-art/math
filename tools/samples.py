@@ -337,6 +337,16 @@ ASSETS = '''<!-- samples-assets:start -->
   .mfrag{ display:inline-block; margin:1px .12em; vertical-align:middle; }
   .mfrag.mgap{ margin-inline-start:1.2em; }
 
+  /* כפתור "מה צריך לדעת" וההסבר - באותה מסגרת */
+  .tip-wrap{ margin:10px auto 6px; max-width:100%; border:1.5px solid #8A9BC4; border-radius:14px; background:#fff; overflow:hidden; }
+  .tip-wrap > .tip-btn{ width:100%; border:0; border-radius:0; align-items:center; justify-content:center; text-align:center; min-height:48px; }
+  .tip-wrap > .tip-btn .tb-list{ justify-content:center; }
+  .tip-wrap > .tip-btn[aria-expanded="true"]{ border-bottom:1px solid #DCE2EF; }
+  .tip-wrap > .tip-panel{ margin:0 !important; border:0; border-radius:0; padding:12px 16px 14px; }
+  @media (max-width:560px){ .steps li .tip-wrap{ margin-inline-start:-30px; } .steps li .tip-panel{ margin-inline-start:0 !important; } }
+  .mcont{ color:#A8791E; font-weight:700; }
+  .mpar{ white-space:nowrap; }
+  .mparline{ display:block; white-space:nowrap; }
   /* כל נוסחה שהיא ביטוי - בשורה משלה, משמאל לימין; העברית מימין לשמאל */
   .mline{ display:block; direction:ltr; text-align:center; margin:6px 0; padding:2px 0; overflow-x:auto; overflow-y:hidden; }
   .mline math{ max-width:none !important; white-space:nowrap; }
@@ -396,25 +406,25 @@ NEWSTEPS_RE = re.compile(r'\n?\s*<!-- newsteps:start -->.*?<!-- newsteps:end -->
 
 
 def concept_tip(keys, seen, stepno):
-    """one panel per step: every concept the step needs - in full the first time it appears in the section"""
+    """every concept the step needs, explained in full - only the first time it appears in this solution"""
     C = CONCEPTS
+    new = [k for k in keys if k not in seen]
     lines = []
-    for k in keys:
+    for k in new:
         lines.append('§' + C[k]['name'])
-        if k in seen:
-            lines.append(C[k]['short'] + f' <span class="tip-ref">(הסבר מלא בשלב {seen[k]})</span>')
-        else:
-            lines += C[k]['full']
-            seen[k] = stepno
-    return ('מה צריך לדעת לשלב הזה', [C[k]['name'] for k in keys]), lines
+        lines += C[k]['full']
+        seen[k] = stepno
+    return ('מה צריך לדעת לשלב הזה', [C[k]['name'] for k in new]), lines, new
 
 
 def step_tips_html(prefix, keys, seen, stepno):
     if not keys:
         return ''
-    label, lines = concept_tip(keys, seen, stepno)
+    label, lines, new = concept_tip(keys, seen, stepno)
+    if not new:
+        return ''
     btn, panel = tip_html(prefix, label, lines)
-    return '<!-- tip:start --><div class="tip-row">' + btn + '</div>' + panel + '<!-- tip:end -->'
+    return '<!-- tip:start --><div class="tip-wrap">' + btn + panel + '</div><!-- tip:end -->'
 
 
 def apply_steps(page, stm):
@@ -464,31 +474,125 @@ def _mtext(mhtml):
     return re.sub(r'\s+', '', t)
 
 
+
+def _paren_lines(frag, fn):
+    """find '( ... )' in text (skipping over formulas) without regex backtracking"""
+    out, i, n = [], 0, len(frag)
+    while i < n:
+        j = frag.find('(', i)
+        if j == -1:
+            out.append(frag[i:]); break
+        # is '(' inside a tag or a formula? then skip
+        if frag.rfind('<math', 0, j) > frag.rfind('</math>', 0, j) or frag.rfind('<', 0, j) > frag.rfind('>', 0, j):
+            out.append(frag[i:j + 1]); i = j + 1; continue
+        k, ok = j + 1, False
+        while k < n and k - j < 2000:
+            ch = frag[k]
+            if frag.startswith('<math', k):
+                e = frag.find('</math>', k)
+                if e == -1: break
+                k = e + 7; continue
+            if frag.startswith('<b>', k) or frag.startswith('</b>', k):
+                k += 3 if frag[k + 1] == 'b' else 4; continue
+            if ch in '(<':
+                break
+            if ch == ')':
+                ok = True; break
+            k += 1
+        if ok:
+            e = k + 1 + (1 if frag[k + 1:k + 2] == '.' else 0)
+            out.append(frag[i:j]); out.append(fn_match(frag[j:e], fn)); i = e
+        else:
+            out.append(frag[i:j + 1]); i = j + 1
+    return ''.join(out)
+
+
+class _M:
+    def __init__(self, t): self.t = t
+    def group(self, k=0): return self.t
+
+
+def fn_match(t, fn):
+    return fn(_M(t))
+
+
+HEB = re.compile(r'[֐-׿]')
+
+
 def separate_math(frag):
-    """Hebrew right-to-left, formulas left-to-right: an expression is moved to a line of its own
-    (it is never broken), so a line never mixes a long formula with Hebrew text."""
+    """Hebrew right-to-left, formulas left-to-right: an expression goes to a line of its own (never broken).
+    The Hebrew line before it ends with ':' and a sentence that continues after it starts with '←',
+    so it is clear that the lines belong together."""
     keep = {}
     def protect(mm):
         keep[len(keep)] = mm.group(0)
         return f'\x02{len(keep) - 1}\x03'
-    frag = re.sub(r'<button\b.*?</button>|<div class="tip-h">.*?</div>|<span class="mline"[^>]*>.*?</span>|'
-                  r'<div class="formula[^"]*">.*?</div>', protect, frag, flags=re.S)
+    frag = re.sub(r'<button\b.*?</button>|<div class="tip-h">.*?</div>|<div class="formula[^"]*">.*?</div>|'
+                  r'<span class="(?:mline|mpar|mjoin|mcont)">.*?</span>|<span class="mparline">.*?</math>[^<]*\)\.?</span>', protect, frag, flags=re.S)
+    moved = []
     def conv(mm):
         t = _mtext(mm.group(0))
         if len(t) > 6 or (len(t) >= 4 and REL_CHARS & set(t)):
-            return '<span class="mline">' + mm.group(0) + '</span>'
+            moved.append(mm.group(0))
+            return f'\x04{len(moved) - 1}\x05'
         return mm.group(0)
     frag = re.sub(r'<math\b[^>]*display="inline"[^>]*>.*?</math>', conv, frag, flags=re.S)
-    # punctuation that was attached to the moved formula
-    frag = re.sub(r'(<span class="mline"><math\b.*?</math></span>)\s*[.,;:]', r'\1', frag, flags=re.S)
-    frag = re.sub(r'([:,])\s*(<span class="mline">)', r'\2', frag)
-    # a lonely connector between two formula lines
-    frag = re.sub(r'(</math></span>)\s*(?:ו-?|וגם)\s*(<span class="mline">)', r'\1<span class="mjoin">וגם</span>\2', frag)
-    frag = re.sub(r'(</math></span>)\s*[-–]\s+', r'\1', frag)
-    frag = re.sub(r'(</math></span>)\s*(?:או)\s*(<span class="mline">)', r'\1<span class="mjoin">או</span>\2', frag)
+    # a moved formula that was inside parentheses takes them along
+    frag = re.sub(r'\(\s*(\x04\d+\x05)\s*\)', lambda m: '\x06' + m.group(1), frag)
+    # connectors between two formulas
+    frag = re.sub(r'(\x05)\s*(?:,\s*)?(?:ו-?|וגם)\s*(\x06?\x04)', r'\1<span class="mjoin">וגם</span>\2', frag)
+    frag = re.sub(r'(\x05)\s*(?:,\s*)?או\s*(\x06?\x04)', r'\1<span class="mjoin">או</span>\2', frag)
+    frag = re.sub(r'(\x05)\s*[,;]?\s*(\x06?\x04)', r'\1\2', frag)
+    # text before a formula line: ends with ':'
+    def before(m):
+        txt = m.group(1)
+        core = txt.rstrip()
+        if not HEB.search(core) and not core.endswith(('</b>', ')')):
+            return m.group(0)
+        if core.endswith((':', '?', '!')):
+            return core + m.group(2)
+        if core.endswith((',', ';', '.')):
+            core = core[:-1]
+        return core + ':' + m.group(2)
+    frag = re.sub(r'((?:[^<>\x04\x05]|</b>|<b>)*?[^\s<>\x04\x05\x06](?:</b>)?)\s*(\x06?\x04)', before, frag)
+    # text after a formula line
+    def after(m):
+        rest = m.group(2)
+        if rest.startswith('.'):
+            rest = rest[1:].lstrip()
+            return m.group(1) + (' ' + rest if rest else '')
+        rest = rest.lstrip(',;:').lstrip()
+        if rest.startswith('-'):
+            rest = rest[1:].lstrip()
+        if HEB.search(rest[:3]) or rest[:1] in '(<':
+            return m.group(1) + '<span class="mcont">← </span>' + rest
+        return m.group(1) + rest
+    frag = re.sub(r'(\x05)\s*([^<\x02\x04]+)', after, frag)
+    def put(m):
+        f = moved[int(m.group(2))]
+        return '<span class="mline">' + ('(' + f + ')' if m.group(1) else f) + '</span>'
+    frag = re.sub(r'(\x06)?\x04(\d+)\x05', put, frag)
+    # a parenthetical remark with a formula inside is never split between lines: it gets a line of its own
+    def paren_line(m):
+        vis = re.sub(r'<math\b.*?</math>', 'xxxx', m.group(0), flags=re.S)
+        vis = re.sub(r'<[^>]+>', '', vis)
+        if '<math' in m.group(0) and len(vis) <= 46:
+            return '<span class="mparline">' + m.group(0) + '</span>'
+        return m.group(0)
+    frag = _paren_lines(frag, paren_line)
+    # short formulas in parentheses stay glued to their parentheses
+    frag = re.sub(r'\((\s*<math\b[^>]*display="inline"[^>]*>.*?</math>\s*)\)', r'<span class="mpar">(\1)</span>', frag, flags=re.S)
     for k in sorted(keep, reverse=True):
         frag = frag.replace(f'\x02{k}\x03', keep[k])
     return frag
+
+
+FENCE = re.compile(r'<mo(?![^>]*lspace)([^>]*)>(&#x00028;|&#x00029;|&#x0005B;|&#x0005D;|&#x0007C;|\(|\)|\[|\]|\|)</mo>')
+
+
+def tight_fences(page):
+    """no extra space inside parentheses and absolute-value bars"""
+    return FENCE.sub(r'<mo lspace="0" rspace="0"\1>\2</mo>', page)
 
 
 def separate_regions(page):
@@ -540,6 +644,7 @@ def apply(site, page):
     out.append(page[last:])
     page = ''.join(out)
     page = separate_regions(page)
+    page = tight_fences(page)
     a = page.find('<!-- samples-assets:start -->')
     if a != -1:
         page = page[:a] + page[page.index('<!-- samples-assets:end -->') + len('<!-- samples-assets:end -->\n'):]
