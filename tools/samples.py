@@ -467,6 +467,7 @@ def apply_steps(page, stm):
 
 
 REL_CHARS = set('=<>≤≥⇒⇔≠≈∈')
+OP_CHARS = set('+−-·×/√±')
 
 
 def _mtext(mhtml):
@@ -622,7 +623,11 @@ def separate_math(frag):
     moved = []
     def conv(mm):
         t = _mtext(mm.group(0))
-        if len(t) > 6 or (len(t) >= 4 and REL_CHARS & set(t)):
+        lead = re.sub(r'<[^>]+>', '', mm.string[max(0, mm.start() - 40):mm.start()]).rstrip()
+        is_example = lead.endswith(('דוגמה:', 'דוגמה', 'למשל:', 'למשל', 'דוגמאות:'))
+        has_op = bool(OP_CHARS & set(t)) or '<mfrac' in mm.group(0) or '<msqrt' in mm.group(0) or '<mroot' in mm.group(0)
+        if (len(t) > 6 or (len(t) >= 4 and REL_CHARS & set(t)) or (len(t) >= 3 and has_op)
+                or (is_example and len(t) >= 2)):
             moved.append(mm.group(0))
             return f'\x04{len(moved) - 1}\x05'
         return mm.group(0)
