@@ -346,6 +346,7 @@ ASSETS = '''<!-- samples-assets:start -->
   @media (max-width:560px){ .steps li .tip-wrap{ margin-inline-start:-30px; } .steps li .tip-panel{ margin-inline-start:0 !important; } }
   .mcont{ color:#A8791E; font-weight:700; }
   .mpar{ white-space:nowrap; }
+  .tline{ display:block; white-space:nowrap; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; }
   .mparline{ display:block; white-space:nowrap; }
   /* כל נוסחה שהיא ביטוי - בשורה משלה, משמאל לימין; העברית מימין לשמאל */
   .mline{ display:block; direction:ltr; text-align:center; margin:6px 0; padding:2px 0; overflow-x:auto; overflow-y:hidden; }
@@ -516,6 +517,95 @@ def fn_match(t, fn):
     return fn(_M(t))
 
 
+def _glue_parens(frag):
+    """short parentheses that belong to the sentence - never split from what is inside them"""
+    def g(m):
+        inner = m.group(0)
+        vis = re.sub(r'<math\b.*?</math>', lambda q: _mtext(q.group(0)), inner, flags=re.S)
+        vis = re.sub(r'<[^>]+>', '', vis)
+        return '<span class="mpar">' + inner + '</span>' if len(vis) <= 18 else inner
+    return _paren_lines(frag, g)
+
+
+BOUND = re.compile(r'(\x02\d+\x03|\x07\d+\x08|<!--.*?-->|</?(?:li|ol|ul|div|p|br|button|h\d)\b[^>]*>)', re.S)
+LINE_MAX = 32      # about one line on a phone
+SCROLL_MAX = 46    # a clause up to this length scrolls sideways instead of being split
+
+
+def _vis_len(t):
+    t = re.sub(r'<math\b.*?</math>', lambda q: _mtext(q.group(0)), t, flags=re.S)
+    return len(html.unescape(re.sub(r'<[^>]+>', '', t)).strip())
+
+
+def _split_points(t):
+    """positions after '. ' ', ' '; ' outside tags, formulas, glued parentheses and bold"""
+    pts, i, depth, n = [], 0, 0, len(t)
+    while i < n:
+        if t.startswith('<span class="mpar">', i):
+            e = t.find('</math>', i)
+            j = t.find('</span>', e if e != -1 else i)
+            i = j + 7 if j != -1 else n; continue
+        if t.startswith('<math', i):
+            i = t.find('</math>', i) + 7; continue
+        if t.startswith('<b>', i): depth += 1; i += 3; continue
+        if t.startswith('</b>', i): depth -= 1; i += 4; continue
+        if t[i] == '<':
+            i = t.find('>', i) + 1; continue
+        if depth == 0 and t[i] in '.,;' and t[i + 1:i + 2] == ' ':
+            pts.append(i + 1)
+        i += 1
+    return pts
+
+
+def _space_points(t):
+    pts, i, depth, n = [], 0, 0, len(t)
+    while i < n:
+        if t.startswith('<span class="mpar">', i):
+            e = t.find('</math>', i); j = t.find('</span>', e if e != -1 else i)
+            i = j + 7 if j != -1 else n; continue
+        if t.startswith('<math', i):
+            i = t.find('</math>', i) + 7; continue
+        if t.startswith('<b>', i): depth += 1; i += 3; continue
+        if t.startswith('</b>', i): depth -= 1; i += 4; continue
+        if t[i] == '<':
+            i = t.find('>', i) + 1; continue
+        if depth == 0 and t[i] == ' ':
+            pts.append(i + 1)
+        i += 1
+    return pts
+
+
+def _text_lines(frag):
+    parts = BOUND.split(frag)
+    out = []
+    for k, p in enumerate(parts):
+        if k % 2 == 1 or not p.strip() or not (HEB.search(p) or '<math' in p):
+            out.append(p); continue
+        lead = p[:len(p) - len(p.lstrip())]; trail = p[len(p.rstrip()):]
+        body = p.strip()
+        pieces = [body]
+        if _vis_len(body) > LINE_MAX:
+            pieces, start, last = [], 0, 0
+            for q in _split_points(body) + [len(body)]:
+                if _vis_len(body[start:q]) > LINE_MAX and last > start:
+                    pieces.append(body[start:last]); start = last
+                last = q
+            pieces.append(body[start:])
+            # a clause that is still very long: split at a space near its middle (outside formulas)
+            fine = []
+            for x in pieces:
+                while _vis_len(x) > SCROLL_MAX:
+                    sp = [i for i in _space_points(x) if 0.35 < _vis_len(x[:i]) / _vis_len(x) < 0.65]
+                    if not sp:
+                        break
+                    i = min(sp, key=lambda i: abs(_vis_len(x[:i]) - _vis_len(x) / 2))
+                    fine.append(x[:i]); x = x[i:]
+                fine.append(x)
+            pieces = fine
+        out.append(lead + ''.join(f'<span class="tline">{x.strip()}</span><!--/t-->' for x in pieces if x.strip()) + trail)
+    return ''.join(out)
+
+
 HEB = re.compile(r'[֐-׿]')
 
 
@@ -528,7 +618,7 @@ def separate_math(frag):
         keep[len(keep)] = mm.group(0)
         return f'\x02{len(keep) - 1}\x03'
     frag = re.sub(r'<button\b.*?</button>|<div class="tip-h">.*?</div>|<div class="formula[^"]*">.*?</div>|'
-                  r'<span class="(?:mline|mpar|mjoin|mcont)">.*?</span>|<span class="mparline">.*?</math>[^<]*\)\.?</span>', protect, frag, flags=re.S)
+                  r'<span class="tline">.*?</span><!--/t-->|<span class="(?:mline|mjoin)">.*?</span>|<span class="mparline">.*?</math>[^<]*\)\.?</span>', protect, frag, flags=re.S)
     moved = []
     def conv(mm):
         t = _mtext(mm.group(0))
@@ -543,45 +633,47 @@ def separate_math(frag):
     frag = re.sub(r'(\x05)\s*(?:,\s*)?(?:ו-?|וגם)\s*(\x06?\x04)', r'\1<span class="mjoin">וגם</span>\2', frag)
     frag = re.sub(r'(\x05)\s*(?:,\s*)?או\s*(\x06?\x04)', r'\1<span class="mjoin">או</span>\2', frag)
     frag = re.sub(r'(\x05)\s*[,;]?\s*(\x06?\x04)', r'\1\2', frag)
-    # text before a formula line: ends with ':'
+    # Hebrew sentence before a formula: ends with an arrow; the formula is on the next line
     def before(m):
-        txt = m.group(1)
-        core = txt.rstrip()
+        core = m.group(1).rstrip()
         if not HEB.search(core) and not core.endswith(('</b>', ')')):
             return m.group(0)
-        if core.endswith((':', '?', '!')):
-            return core + m.group(2)
-        if core.endswith((',', ';', '.')):
-            core = core[:-1]
-        return core + ':' + m.group(2)
-    frag = re.sub(r'((?:[^<>\x04\x05]|</b>|<b>)*?[^\s<>\x04\x05\x06](?:</b>)?)\s*(\x06?\x04)', before, frag)
-    # text after a formula line
+        core = core.rstrip(':,;').rstrip()
+        return core + ' ←' + m.group(2)
+    frag = re.sub(r'((?:[^<>\x04\x05]|</b>|<b>|<math\b[^>]*>[^\x04]*?</math>)*?(?:[^\s<>\x04\x05\x06]|</math>)(?:</b>)?)\s*(\x06?\x04)', before, frag)
+    formula_keys = {k for k, v in keep.items() if v.startswith('<div class="formula')}
+    def colon_arrow(m):
+        return (m.group(1) + ' ←' + m.group(2)) if int(m.group(3)) in formula_keys else m.group(0)
+    frag = re.sub(r'([\u0590-\u05FF)"\w])\s*:\s*((?:</div>|</p>|</span>)?\s*(?:<div class="(?:tip-t|sol-line)">)?\s*\x02(\d+)\x03)', colon_arrow, frag)
+    # text right after a formula: drop the punctuation that belonged to it
     def after(m):
-        rest = m.group(2)
-        if rest.startswith('.'):
-            rest = rest[1:].lstrip()
-            return m.group(1) + (' ' + rest if rest else '')
-        rest = rest.lstrip(',;:').lstrip()
+        rest = m.group(2).lstrip('.,;:').lstrip()
         if rest.startswith('-'):
             rest = rest[1:].lstrip()
-        if HEB.search(rest[:3]) or rest[:1] in '(<':
-            return m.group(1) + '<span class="mcont">← </span>' + rest
         return m.group(1) + rest
     frag = re.sub(r'(\x05)\s*([^<\x02\x04]+)', after, frag)
     def put(m):
         f = moved[int(m.group(2))]
         return '<span class="mline">' + ('(' + f + ')' if m.group(1) else f) + '</span>'
     frag = re.sub(r'(\x06)?\x04(\d+)\x05', put, frag)
-    # a parenthetical remark with a formula inside is never split between lines: it gets a line of its own
+    # a longer parenthetical remark with a formula: a line of its own; a short one stays in the sentence
     def paren_line(m):
-        vis = re.sub(r'<math\b.*?</math>', 'xxxx', m.group(0), flags=re.S)
+        vis = re.sub(r'<math\b.*?</math>', lambda q: _mtext(q.group(0)), m.group(0), flags=re.S)
         vis = re.sub(r'<[^>]+>', '', vis)
-        if '<math' in m.group(0) and len(vis) <= 46:
+        if '<math' in m.group(0) and len(vis) > 18:
             return '<span class="mparline">' + m.group(0) + '</span>'
         return m.group(0)
     frag = _paren_lines(frag, paren_line)
-    # short formulas in parentheses stay glued to their parentheses
-    frag = re.sub(r'\((\s*<math\b[^>]*display="inline"[^>]*>.*?</math>\s*)\)', r'<span class="mpar">(\1)</span>', frag, flags=re.S)
+    # hide finished lines, glue short parentheses, then make every Hebrew run a line that does not wrap
+    hold = {}
+    def hide(mm):
+        hold[len(hold)] = mm.group(0)
+        return f'\x07{len(hold) - 1}\x08'
+    frag = re.sub(r'<span class="(?:mline|mjoin|mparline)">.*?</span>', hide, frag, flags=re.S)
+    frag = _glue_parens(frag)
+    frag = _text_lines(frag)
+    for k in sorted(hold, reverse=True):
+        frag = frag.replace(f'\x07{k}\x08', hold[k])
     for k in sorted(keep, reverse=True):
         frag = frag.replace(f'\x02{k}\x03', keep[k])
     return frag
