@@ -168,6 +168,7 @@ SAMPLES = {
     ans=r'$\frac{iz}{1-i}=-a\in\mathbb{R}$. מ.ש.ל.'),
 
 'ex1-s12': dict(
+    dia=[(3, 'polar:-3:-3:−3−3i:r = 3√2:θ = −3π/4:a = −3:b = −3')],
     src='תרגיל כיתה 1, שאלה 14ד',
     q=r'רשמו הצגה קוטבית $re^{i\theta}$ למספר $-3-3i$.',
     steps=[
@@ -186,6 +187,7 @@ SAMPLES = {
     ans=r'$-3-3i=3\sqrt2e^{-i\frac{3\pi}{4}}$'),
 
 'ex1-s13': dict(
+    dia=[(0, 'polar:sqrt(3):1:√3+i:r = 2:θ = π/6:a = √3:b = 1')],
     src='תרגיל בית 1, שאלה 10א',
     q=r'רשמו בהצגה קרטזית: $(\sqrt{3}+i)^7$.',
     steps=[
@@ -215,6 +217,7 @@ SAMPLES = {
     ans=r'$\cos3\alpha=4\cos^3\alpha-3\cos\alpha$. מ.ש.ל. (מהחלק המדומה מקבלים באותה דרך $\sin3\alpha=3\sin\alpha-4\sin^3\alpha$.)'),
 
 'ex2-s1': dict(
+    dia=[(3, 'roots:4:2:4*pi/7')],
     src='תרגיל בית 2, שאלה 2',
     q=r'מצאו את כל הפתרונות של המשוואה $z^4=16ie^{i\frac{\pi}{14}}$.',
     steps=[
@@ -230,6 +233,7 @@ SAMPLES = {
     ans=r'4 פתרונות על מעגל ברדיוס 2, כל אחד מסובב ב-$\frac{\pi}{2}$ מהקודם.'),
 
 'ex2-s2': dict(
+    dia=[(3, 'roots:4:1.86:-pi/3')],
     src='תרגיל בית 2, שאלה 1א',
     q=r'מצאו את כל הפתרונות של המשוואה $z^5-(\sqrt{3}-3i)z=0$.',
     steps=[
@@ -249,6 +253,7 @@ SAMPLES = {
     ans=r'5 פתרונות: $z=0$, ועוד ארבעת הפתרונות $z_k=\sqrt[4]{2\sqrt3}\,e^{i\left(-\frac{\pi}{12}+\frac{\pi k}{2}\right)}$.'),
 
 'ex2-s3': dict(
+    dia=[(3, 'roots:6:0.94:-7*pi/12')],
     src='תרגיל בית 2, שאלה 1ב',
     q=r'מצאו את כל הפתרונות של המשוואה $z^6=\frac{1-i}{1+\sqrt{3}i}$.',
     steps=[
@@ -265,6 +270,7 @@ SAMPLES = {
     ans=r'6 פתרונות: $z_k=2^{-\frac{1}{12}}e^{i\left(-\frac{7\pi}{72}+\frac{\pi k}{3}\right)}$, $\ k=0,\dots,5$.'),
 
 'ex2-s4': dict(
+    dia=[(0, 'roots:3:1:pi')],
     src='תרגיל בית 2, שאלה 3',
     q=r'מצאו את כל הפתרונות של המשוואה $\left(\frac{z+2i}{z-i}\right)^3=-1$.',
     steps=[

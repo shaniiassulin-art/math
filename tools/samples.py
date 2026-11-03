@@ -23,6 +23,8 @@ import reminders as R
 _cs = importlib.util.spec_from_file_location('concepts', os.path.join(HERE, 'samples', 'concepts.py'))
 _cm = importlib.util.module_from_spec(_cs); _cs.loader.exec_module(_cm)
 CONCEPTS = _cm.C
+_dspec = importlib.util.spec_from_file_location('diagrams_mod', os.path.join(HERE, 'samples', 'diagrams.py'))
+DIA = importlib.util.module_from_spec(_dspec); _dspec.loader.exec_module(DIA)
 
 SITES = {'algebra-solutions': 'algebra_solutions', 'algebra-theory': 'algebra_theory', 'calculus-1': 'calculus_1'}
 
@@ -34,6 +36,9 @@ def mathify(s):
 
 def line(s):
     s = s.strip()
+    sp = special_line(s)
+    if sp is not None:
+        return sp
     if s.startswith('$$') and s.endswith('$$') and s.count('$$') == 2:
         # separate formulas written side by side (\qquad) go on separate lines; a single formula is never broken
         return ''.join('<div class="formula sol-formula">' + R.mwrap(f, True) + '</div>'
@@ -63,8 +68,83 @@ def tip_line(x):
     return ''.join(out)
 
 
+def _has_heb(t):
+    return bool(re.search(r'[\u0590-\u05FF]', re.sub(r'\$[^$]*\$', '', t)))
+
+
+def _split(x):
+    x = x[1:].strip()
+    if x.startswith('| '):
+        return '', x[2:]
+    a, sep, b = x.partition(' | ')
+    return (a, b) if sep else (a, '')
+
+
+def _kv(x):
+    k, v = _split(x)
+    cls = 'kv-v heb' if _has_heb(v) else 'kv-v'
+    vis = sum(R._visible(m) for m in re.findall(r'\$([^$]+)\$', v)) + len(re.sub(r'\$[^$]*\$', '', v))
+    kvis = len(re.sub(r'\$[^$]*\$', 'xx', k))
+    if not k.strip():
+        return f'<div class="{cls} wide solo">{mathify(v.strip())}</div>'
+    if vis + kvis > 16:          # long: the label above, the formula on its own line below
+        return f'<div class="kv-k wide">{mathify(k.strip())}</div><div class="{cls} wide">{mathify(v.strip())}</div>'
+    return f'<div class="kv-k">{mathify(k.strip())}</div><div class="{cls}">{mathify(v.strip())}</div>'
+
+
+def _fl(x):
+    f, n = _split(x)
+    cls = 'fl-f heb' if _has_heb(f) else 'fl-f'
+    return (f'<div class="fl-step"><div class="{cls}">' + mathify(f.strip()) + '</div>'
+            + (f'<div class="fl-n">{mathify(n.strip())}</div>' if n.strip() else '') + '</div>')
+
+
+def special_line(x):
+    """one line of the visual formats, or None:
+    '= label | $formula$'  - a row: a short Hebrew label and a formula next to it
+    '↓ $formula$ | note'   - a step in a calculation, with an arrow to the next step
+    'svg:name'             - a drawing with axes
+    '@ text'               - a small tag (e.g. 'דוגמה')"""
+    x = x.strip()
+    if x.startswith('svg:'):
+        return DIA.diagram(x[4:].strip())
+    if x.startswith('@'):
+        return f'<div class="ex-tag-row"><span class="ex-tag">{mathify(x[1:].strip())}</span></div>'
+    if x.startswith('= '):
+        return '<div class="kv">' + _kv(x) + '</div><!--/kv-->'
+    if x.startswith('↓ '):
+        return '<div class="flow">' + _fl(x) + '</div><!--/flow-->'
+    return None
+
+
+def render_lines(lines):
+    """explanation lines: consecutive rows make one table, consecutive steps make one flow with arrows"""
+    out, i = [], 0
+    while i < len(lines):
+        x = lines[i].strip()
+        if x.startswith('= ') or x.startswith('↓ '):
+            mark = x[:2]
+            grp = []
+            while i < len(lines) and lines[i].strip().startswith(mark):
+                grp.append(lines[i].strip()); i += 1
+            if mark == '= ':
+                out.append('<div class="kv">' + ''.join(_kv(g) for g in grp) + '</div><!--/kv-->')
+            else:
+                out.append('<div class="flow">' + '<div class="fl-arr">↓</div>'.join(_fl(g) for g in grp) + '</div><!--/flow-->')
+            continue
+        sp = special_line(x)
+        if sp is not None:
+            out.append(sp)
+        elif x.startswith('§'):
+            out.append(f'<div class="tip-h">{mathify(x[1:])}</div>')
+        else:
+            out.append(tip_line(x))
+        i += 1
+    return ''.join(out)
+
+
 def tip_html(pid, label, lines):
-    body = ''.join(f'<div class="tip-h">{mathify(x[1:])}</div>' if x.startswith('§') else tip_line(x) for x in lines)
+    body = render_lines(lines)
     if isinstance(label, tuple):          # (title, [concept names])
         title, names = label
         inner = (f'<span class="tb-title">{mathify(title)}</span><span class="tb-list">'
@@ -107,7 +187,10 @@ def render(sid, d, tips=()):
         where.setdefault((si, li), []).append(tip_html(f'{sid}-tip{k + 1}', label, lines))
     used = set()
     steps = ''
-    for n, (title, lines) in enumerate(d['steps'], 1):
+    allsteps = [(t, list(ls)) for t, ls in d['steps']]
+    for si, dname in d.get('dia', []):          # drawings with axes, added at the end of a step
+        allsteps[si][1].append('svg:' + dname)
+    for n, (title, lines) in enumerate(allsteps, 1):
         title = re.sub(r'^שלב \d+( במצגת)?\s*[:\-]\s*', '', title)   # the step number is already on the green chip
         body = f'<div class="sol-title">{mathify(title)}</div>' + tips_block(where.get((n - 1, -1)))
         used.add((n - 1, -1))
@@ -364,6 +447,33 @@ ASSETS = '''<!-- samples-assets:start -->
   .tip-wrap > .tip-btn[aria-expanded="true"]{ border-bottom:1px solid #DCE2EF; }
   .tip-wrap > .tip-panel{ margin:0 !important; border:0; border-radius:0; padding:12px 16px 14px; }
   .mcont{ color:#A8791E; font-weight:700; }
+  /* שורות "תווית | נוסחה", שרשרת חישוב עם חיצים, ושרטוטים */
+  .kv{ display:grid; grid-template-columns:max-content minmax(0,1fr); gap:6px 14px; align-items:center; background:#F4F6FB; border-radius:10px; padding:9px 14px; margin:8px 0; }
+  .kv-k{ font-weight:700; color:#2C3A5E; font-size:.95rem; }
+  .kv-v{ direction:ltr; text-align:left; overflow-x:auto; overflow-y:hidden; white-space:nowrap; }
+  .kv-v math{ max-width:none !important; }
+  .flow{ display:flex; flex-direction:column; align-items:center; margin:10px 0; }
+  .fl-step{ background:#F4F6FB; border:1px solid #DCE2EF; border-radius:10px; padding:6px 14px; text-align:center; max-width:100%; overflow-x:auto; box-sizing:border-box; }
+  .fl-f{ direction:ltr; white-space:nowrap; }
+  .fl-f math{ max-width:none !important; }
+  .kv-v.heb, .fl-f.heb{ direction:rtl; }
+  .kv-k.wide, .kv-v.wide{ grid-column:1 / -1; }
+  .kv-k.wide{ margin-bottom:-4px; }
+  .kv-v.wide{ text-align:center; padding-bottom:4px; border-bottom:1px solid #E3E7F1; }
+  .kv-v.wide:last-child{ border-bottom:0; }
+  .kv-v.solo{ border-bottom:0; padding-bottom:0; }
+  .fl-f.heb{ white-space:normal; }
+  .kv-v.heb{ text-align:left; }
+  .fl-n{ font-size:.88rem; color:#5B5F6B; margin-top:2px; }
+  .fl-arr{ color:#6B7FB0; font-size:1.15rem; line-height:1.3; font-weight:700; }
+  .ex-tag-row{ margin:12px 0 2px; }
+  .ex-tag{ display:inline-block; background:#EEE8F7; color:#6B3FA0; font-weight:700; font-size:.82rem; border-radius:100px; padding:1px 12px; }
+  .dia{ margin:12px auto; max-width:330px; background:#fff; border:1px solid #DCE2EF; border-radius:12px; padding:8px 8px 6px; }
+  .dia svg{ display:block; width:100%; height:auto; }
+  .dia-cap{ font-size:.86rem; color:#5B5F6B; text-align:center; margin-top:4px; line-height:1.5; }
+  .dia-legend{ display:flex; flex-wrap:wrap; justify-content:center; gap:3px 12px; font-size:.84rem; color:#3B3F4A; margin-top:4px; }
+  .dia-legend i{ display:inline-block; width:14px; height:4px; border-radius:2px; margin-inline-end:5px; vertical-align:middle; }
+  .dia bdi, .kv-k bdi{ unicode-bidi:isolate; white-space:nowrap; }
   .mpar{ white-space:nowrap; }
   .tline{ display:block; white-space:normal; }
   .tline math, .tip-t math, .sol-line math{ unicode-bidi:isolate; white-space:nowrap; }
@@ -681,7 +791,7 @@ def separate_math(frag, solution=False):
     def protect(mm):
         keep[len(keep)] = mm.group(0)
         return f'\x02{len(keep) - 1}\x03'
-    frag = re.sub(r'<button\b.*?</button>|<div class="box-title">.*?</div>|<div class="tip-h">.*?</div>|<div class="formula[^"]*">.*?</div>|'
+    frag = re.sub(r'<div class="(?:kv|flow|dia)">.*?<!--/(?:kv|flow|dia)-->|<div class="ex-tag-row">.*?</div>|<button\b.*?</button>|<div class="box-title">.*?</div>|<div class="tip-h">.*?</div>|<div class="formula[^"]*">.*?</div>|'
                   r'<span class="tline">.*?</span><!--/t-->|<span class="(?:mline|mjoin)">.*?</span>|<span class="mparline">.*?</math>[^<]*\)\.?</span>', protect, frag, flags=re.S)
     moved = []
     def conv(mm):

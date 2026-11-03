@@ -294,6 +294,110 @@ AI_ASK_V2 = """async function askApi(prompt, signal){
   }
   """
 
+AI_ASK_V3 = """async function askApi(prompt, signal, progress){
+    // hub-ai-v3: תשובה מהירה (בלי "חשיבה" ארוכה), זמן מוגבל לכל ניסיון, ודיווח מה קורה עכשיו
+    const key=getKey();
+    if(!key){ refreshKeyBox(); throw {code:'no_key'}; }
+    const say=t=>{ try{ if(progress) progress(t); }catch(e){} };
+    const parts=[];
+    if(images.length) say('מכינה את התמונה לשליחה');
+    for(const f of images){
+      let data;
+      try { data=await toJpegBase64(f); } catch(e){ throw {code:'image_rejected'}; }
+      parts.push({inline_data:{mime_type:'image/jpeg', data}});
+    }
+    parts.push({text:prompt});
+    const mkBody=fast=>JSON.stringify({contents:[{role:'user',parts}], generationConfig:Object.assign({responseMimeType:'application/json', temperature:0.2}, fast? {thinkingConfig:{thinkingBudget:0}} : {})});
+    const MODELS=['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest'];
+    const PER_TRY=40000;   // ניסיון אחד לא מחכה יותר מ-40 שניות
+    const wait=ms=>new Promise((res,rej)=>{ const t=setTimeout(res,ms); if(signal) signal.addEventListener('abort',()=>{ clearTimeout(t); rej({code:'cancelled'}); },{once:true}); });
+    let last={code:'upstream_error'}, sawLimit=false, n=0;
+    for(const model of MODELS){
+      let fast=true;
+      for(let attempt=0; attempt<2; attempt++){
+        n++;
+        say(n===1 ? 'Google קורא את התרגיל' : 'מנסה שוב (ניסיון '+n+')');
+        if(signal && signal.aborted) throw {code:'cancelled'};
+        const one=new AbortController(); let timedOut=false;
+        const tm=setTimeout(()=>{ timedOut=true; one.abort(); }, PER_TRY);
+        const fw=()=>one.abort(); if(signal) signal.addEventListener('abort',fw,{once:true});
+        let r;
+        try {
+          r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',signal:one.signal,
+            headers:{'content-type':'application/json','x-goog-api-key':key}, body:mkBody(fast)});
+        } catch(e){
+          clearTimeout(tm); if(signal) signal.removeEventListener('abort',fw);
+          if(signal && signal.aborted) throw {code:'cancelled'};
+          if(timedOut){ last={code:'slow'}; say('Google לא ענה בזמן - מנסה שוב'); continue; }
+          last={code:'network'}; await wait(1200); continue;
+        }
+        clearTimeout(tm); if(signal) signal.removeEventListener('abort',fw);
+        if(r.ok){
+          say('התקבלה תשובה, מסדרת את התוצאות');
+          const data=await r.json();
+          const cand=(data.candidates||[])[0];
+          if(!cand){ last={code:'refused'}; break; }
+          const text=((cand.content&&cand.content.parts)||[]).map(p=>p.text||'').join('');
+          try { return parseJsonLoose(text); } catch(e){ last={code:'invalid_json'}; continue; }
+        }
+        let msg='', gmsg='';
+        try { const j=await r.json(); msg=JSON.stringify(j); gmsg=(j.error&&j.error.message)||''; } catch(e){}
+        if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
+        if(r.status===400 && fast && /thinking/i.test(msg)){ fast=false; attempt--; n--; continue; }   // מודל שלא מכיר את ההגדרה - בלעדיה
+        if(r.status===401 || r.status===403) throw {code:'bad_key'};
+        if(r.status===429){ sawLimit=true; last={code:'rate_limited'}; say('המכסה במודל הזה נגמרה - עוברת למודל אחר'); break; }
+        if(r.status===404){ last={code:'upstream_error', detail:'404'}; break; }
+        if(r.status>=500){ last={code:'overloaded', detail:String(r.status)}; say('השרת של Google עמוס - מחכה רגע ומנסה שוב'); await wait(1500*(attempt+1)); continue; }
+        last={code:'upstream_error', detail:(r.status+' '+gmsg).trim().slice(0,140)}; break;
+      }
+    }
+    if(sawLimit && last.code!=='invalid_json') throw {code:'rate_limited'};
+    throw last;
+  }
+  """
+
+AI_RUN_V3 = """goBtn.onclick=async ()=>{
+    // hub-ai-run-v3: מראה כל הזמן מה קורה וכמה זמן עבר; עוצר אחרי 2 דקות עם הסבר
+    const userText=textEl.value.trim();
+    const focus=($('aiFocus').value||'').trim();
+    if(!userText && !images.length){ setStatus('כתבי את התרגיל או העלי תמונה.', true); return; }
+    if(mode==='pending'){ setStatus('מתחבר, נסי שוב בעוד רגע.'); return; }
+    if(mode==='none'){ setStatus('החיפוש החכם לא זמין בתצוגה הזאת.', true); return; }
+    results.textContent=''; undBox.hidden=true; savedNote(false);
+    goBtn.disabled=true; stopBtn.hidden=false;
+    ctl=new AbortController();
+    const t0=Date.now(); let phase=focus? 'מחפשת את '+focus : 'קוראת את התרגילים';
+    const tick=()=>{ const sec=Math.round((Date.now()-t0)/1000);
+      let extra=''; if(sec>=20) extra=' - לוקח יותר זמן מהרגיל, אפשר לחכות או ללחוץ "עצירה"';
+      setStatus('⏳ '+phase+'… ('+sec+' שניות)'+extra); };
+    tick(); const timer=setInterval(tick, 1000);
+    let overall=false; const cap=setTimeout(()=>{ overall=true; ctl.abort(); }, 120000);
+    try {
+      const prompt=buildPrompt(userText, images.length, focus);
+      let ans;
+      if(mode==='claude'){
+        const opts={signal:ctl.signal};
+        if(images.length) opts.images=images.slice();
+        ans=await sample.json(prompt, opts);
+      } else {
+        ans=await askApi(prompt, ctl.signal, t=>{ phase=t; tick(); });
+      }
+      clearInterval(timer);
+      const found=show(ans);
+      const sec=Math.round((Date.now()-t0)/1000);
+      if(found) setStatus('✅ נמצא תוך '+sec+' שניות.');
+      else setStatus('🔍 חיפשתי באתר ולא מצאתי סעיף שמתאים לתרגיל הזה. אפשר לנסות צילום ברור יותר, לכתוב את התרגיל במילים, או לחפש בתוכן העניינים.', true);
+      await saveLast(userText, ans, focus);
+    } catch(e){
+      clearInterval(timer);
+      if(overall) setStatus('⌛ עברו 2 דקות ולא התקבלה תשובה מ-Google. כנראה שהשרת עמוס - נסי שוב בעוד דקה, או כתבי את התרגיל במילים (זה מהיר יותר מתמונה).', true);
+      else if(e && (e.code==='cancelled' || e.name==='AbortError')) setStatus('נעצר.');
+      else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (' + e.detail + ')' : ''), true);
+    } finally { clearInterval(timer); clearTimeout(cap); goBtn.disabled=false; stopBtn.hidden=true; }
+  };
+  """
+
+AI_SLOW = "slow:'Google לא ענה בזמן גם אחרי כמה ניסיונות. נסי שוב בעוד דקה, או כתבי את התרגיל במילים.', "
 AI_MSG_EXTRA = ("overloaded:'השרת של Google עמוס כרגע. ניסיתי שוב כמה פעמים ולא הצליח - נסי שוב בעוד דקה.', "
                 "network:'אין חיבור ל-Google (אינטרנט או חסימה בדפדפן). בדקי את החיבור ונסי שוב.', "
                 "upstream_error:'Google החזיר שגיאה.', ")
@@ -310,6 +414,28 @@ def ensure_ai_v2(page):
     old = "else setStatus((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.', true);"
     new_ = "else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (' + e.detail + ')' : ''), true);"
     page = page.replace(old, new_)
+    return page
+
+
+def ensure_ai_v3(page):
+    """Smart search v3: progress with elapsed time, a time limit, faster answers and a clear 'not found'."""
+    if 'async function askApi(' not in page:
+        return page
+    a = page.index('async function askApi(')
+    b = page.index('const MSG=', a)
+    page = page[:a] + AI_ASK_V3 + page[b:]
+    if "slow:'" not in page:
+        page = page.replace('const MSG={', 'const MSG={' + AI_SLOW, 1)
+    a = page.index('goBtn.onclick=async ()=>{')
+    b = page.index('stopBtn.onclick=', a)
+    page = page[:a] + AI_RUN_V3 + page[b:]
+    # show() tells whether anything was found
+    page = page.replace("if(p.textContent) results.append(p); return; }", "if(p.textContent) results.append(p); return false; }", 1)
+    if 'let anyFound=false;' not in page:
+        page = page.replace("    const many = exs.length>1;\n", "    const many = exs.length>1; let anyFound=false;\n", 1)
+        page = page.replace("      if(!ms.length){ const p=document.createElement('p'); p.className='ai-status'; p.textContent='לא נמצא סעיף מתאים באתר לתרגיל הזה.'; list.append(p); }",
+                            "      if(ms.length) anyFound=true;\n      if(!ms.length){ const p=document.createElement('p'); p.className='ai-status'; p.textContent='לא נמצא סעיף מתאים באתר לתרגיל הזה.'; list.append(p); }", 1)
+        page = page.replace("      results.append(box);\n    });\n  }", "      results.append(box);\n    });\n    return anyFound;\n  }", 1)
     return page
 
 
@@ -404,6 +530,7 @@ def main():
         page = ensure_sub_extras(page)
         page = ensure_topbar_and_key(page)
         page = ensure_ai_v2(page)
+        page = ensure_ai_v3(page)
         old_keys += old
         if write_if_changed(path, page):
             print(f"  עודכן: {s['slug']}/index.html")
