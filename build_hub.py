@@ -312,8 +312,9 @@ AI_ASK_V3 = """async function askApi(prompt, signal, progress){
     const PER_TRY=40000;   // ניסיון אחד לא מחכה יותר מ-40 שניות
     const wait=ms=>new Promise((res,rej)=>{ const t=setTimeout(res,ms); if(signal) signal.addEventListener('abort',()=>{ clearTimeout(t); rej({code:'cancelled'}); },{once:true}); });
     let last={code:'upstream_error'}, sawLimit=false, n=0;
+    let noFast={}; try{ noFast=JSON.parse(localStorage.getItem('mathAiNoFast')||'{}')||{}; }catch(e){ noFast={}; }
     for(const model of MODELS){
-      let fast=true;
+      let fast=!noFast[model];
       for(let attempt=0; attempt<2; attempt++){
         n++;
         say(n===1 ? 'Google קורא את התרגיל' : 'מנסה שוב (ניסיון '+n+')');
@@ -343,7 +344,7 @@ AI_ASK_V3 = """async function askApi(prompt, signal, progress){
         let msg='', gmsg='';
         try { const j=await r.json(); msg=JSON.stringify(j); gmsg=(j.error&&j.error.message)||''; } catch(e){}
         if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
-        if(r.status===400 && fast && /thinking/i.test(msg)){ fast=false; attempt--; n--; continue; }   // מודל שלא מכיר את ההגדרה - בלעדיה
+        if(r.status===400 && fast){ fast=false; noFast[model]=1; try{ localStorage.setItem('mathAiNoFast', JSON.stringify(noFast)); }catch(e){} attempt--; n--; continue; }   // Google לא קיבל את הגדרת המהירות - שוב בלעדיה
         if(r.status===401 || r.status===403) throw {code:'bad_key'};
         if(r.status===429){ sawLimit=true; last={code:'rate_limited'}; say('המכסה במודל הזה נגמרה - עוברת למודל אחר'); break; }
         if(r.status===404){ last={code:'upstream_error', detail:'404'}; break; }
@@ -392,7 +393,7 @@ AI_RUN_V3 = """goBtn.onclick=async ()=>{
       clearInterval(timer);
       if(overall) setStatus('⌛ עברו 2 דקות ולא התקבלה תשובה מ-Google. כנראה שהשרת עמוס - נסי שוב בעוד דקה, או כתבי את התרגיל במילים (זה מהיר יותר מתמונה).', true);
       else if(e && (e.code==='cancelled' || e.name==='AbortError')) setStatus('נעצר.');
-      else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (' + e.detail + ')' : ''), true);
+      else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (\u2066' + e.detail + '\u2069)' : ''), true);
     } finally { clearInterval(timer); clearTimeout(cap); goBtn.disabled=false; stopBtn.hidden=true; }
   };
   """

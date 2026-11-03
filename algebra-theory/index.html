@@ -2925,8 +2925,9 @@ try {
     const PER_TRY=40000;   // ניסיון אחד לא מחכה יותר מ-40 שניות
     const wait=ms=>new Promise((res,rej)=>{ const t=setTimeout(res,ms); if(signal) signal.addEventListener('abort',()=>{ clearTimeout(t); rej({code:'cancelled'}); },{once:true}); });
     let last={code:'upstream_error'}, sawLimit=false, n=0;
+    let noFast={}; try{ noFast=JSON.parse(localStorage.getItem('mathAiNoFast')||'{}')||{}; }catch(e){ noFast={}; }
     for(const model of MODELS){
-      let fast=true;
+      let fast=!noFast[model];
       for(let attempt=0; attempt<2; attempt++){
         n++;
         say(n===1 ? 'Google קורא את התרגיל' : 'מנסה שוב (ניסיון '+n+')');
@@ -2956,7 +2957,7 @@ try {
         let msg='', gmsg='';
         try { const j=await r.json(); msg=JSON.stringify(j); gmsg=(j.error&&j.error.message)||''; } catch(e){}
         if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
-        if(r.status===400 && fast && /thinking/i.test(msg)){ fast=false; attempt--; n--; continue; }   // מודל שלא מכיר את ההגדרה - בלעדיה
+        if(r.status===400 && fast){ fast=false; noFast[model]=1; try{ localStorage.setItem('mathAiNoFast', JSON.stringify(noFast)); }catch(e){} attempt--; n--; continue; }   // Google לא קיבל את הגדרת המהירות - שוב בלעדיה
         if(r.status===401 || r.status===403) throw {code:'bad_key'};
         if(r.status===429){ sawLimit=true; last={code:'rate_limited'}; say('המכסה במודל הזה נגמרה - עוברת למודל אחר'); break; }
         if(r.status===404){ last={code:'upstream_error', detail:'404'}; break; }
@@ -2967,7 +2968,7 @@ try {
     if(sawLimit && last.code!=='invalid_json') throw {code:'rate_limited'};
     throw last;
   }
-  const MSG={slow:'Google לא ענה בזמן גם אחרי כמה ניסיונות. נסי שוב בעוד דקה, או כתבי את התרגיל במילים.', overloaded:'השרת של Google עמוס כרגע. ניסיתי שוב כמה פעמים ולא הצליח - נסי שוב בעוד דקה.', network:'אין חיבור ל-Google (אינטרנט או חסימה בדפדפן). בדקי את החיבור ונסי שוב.', upstream_error:'Google החזיר שגיאה.', not_granted:'לא אושר שימוש ב-Claude בדף הזה.', sampling_disabled:'Claude לא זמין בחשבון הזה.', rate_limited:'הגעת למגבלת השימוש החינמי לרגע זה. חכי דקה ונסי שוב.',
+  const MSG={overloaded:'השרת של Google עמוס כרגע. ניסיתי שוב כמה פעמים ולא הצליח - נסי שוב בעוד דקה.', network:'אין חיבור ל-Google (אינטרנט או חסימה בדפדפן). בדקי את החיבור ונסי שוב.', upstream_error:'Google החזיר שגיאה.', slow:'Google לא ענה בזמן גם אחרי כמה ניסיונות. נסי שוב בעוד דקה, או כתבי את התרגיל במילים.', overloaded:'השרת של Google עמוס כרגע. ניסיתי שוב כמה פעמים ולא הצליח - נסי שוב בעוד דקה.', network:'אין חיבור ל-Google (אינטרנט או חסימה בדפדפן). בדקי את החיבור ונסי שוב.', upstream_error:'Google החזיר שגיאה.', not_granted:'לא אושר שימוש ב-Claude בדף הזה.', sampling_disabled:'Claude לא זמין בחשבון הזה.', rate_limited:'הגעת למגבלת השימוש החינמי לרגע זה. חכי דקה ונסי שוב.',
     session_expired:'צריך להתחבר מחדש ל-Claude.', image_rejected:'התמונה לא התקבלה. נסי תמונה אחרת (JPG או PNG).', images_unavailable:'אי אפשר לשלוח תמונות בתצוגה הזאת - כתבי את התרגיל במילים.',
     refused:'הבקשה לא עובדה. נסי לנסח את התרגיל אחרת.', invalid_json:'התשובה לא הגיעה בפורמט הנכון. נסי שוב.', no_key:'קודם צריך להדביק מפתח פעם אחת בדף הבית של אתר המתמטיקה.',
     bad_key:'המפתח לא תקין. אפשר להחליף אותו בדף הבית של אתר המתמטיקה.', prompt_too_large:'הטקסט ארוך מדי. קצרי אותו.'};
@@ -3009,7 +3010,7 @@ try {
       clearInterval(timer);
       if(overall) setStatus('⌛ עברו 2 דקות ולא התקבלה תשובה מ-Google. כנראה שהשרת עמוס - נסי שוב בעוד דקה, או כתבי את התרגיל במילים (זה מהיר יותר מתמונה).', true);
       else if(e && (e.code==='cancelled' || e.name==='AbortError')) setStatus('נעצר.');
-      else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (' + e.detail + ')' : ''), true);
+      else setStatus(((e && MSG[e.code]) || 'משהו השתבש בחיבור. נסי שוב.') + (e && e.detail ? ' (⁦' + e.detail + '⁩)' : ''), true);
     } finally { clearInterval(timer); clearTimeout(cap); goBtn.disabled=false; stopBtn.hidden=true; }
   };
   stopBtn.onclick=()=>{ if(ctl) ctl.abort(); };
