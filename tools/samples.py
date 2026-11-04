@@ -34,11 +34,62 @@ def mathify(s):
     return re.sub(r'\$(.+?)\$', lambda g: R.mwrap(g.group(1)), s)
 
 
+REL_SPLIT = ('=', '\\Rightarrow', '\\iff', '\\Leftrightarrow')
+
+
+def split_chain(latex):
+    """a long chain 'A = B = C' (top level only) -> ['A', '= B', '= C']"""
+    if 'begin' in latex:
+        return [latex]
+    parts, depth, i, start = [], 0, 0, 0
+    while i < len(latex):
+        ch = latex[i]
+        if ch == '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+        elif depth == 0:
+            for rel in REL_SPLIT:
+                if latex.startswith(rel, i) and not (rel.startswith('\\') and latex[i + len(rel):i + len(rel) + 1].isalpha()):
+                    if latex[start:i].strip():
+                        parts.append(latex[start:i])
+                    start = i
+                    i += len(rel) - 1
+                    break
+        i += 1
+    parts.append(latex[start:])
+    return [x.strip() for x in parts if x.strip()]
+
+
+def chain_flow(latex):
+    """a long display formula that would scroll: one step per line, linked with arrows"""
+    if R._visible(latex) <= 26:
+        return None
+    parts = split_chain(latex)
+    if len(parts) < 2:
+        return None
+    # glue short pieces to the previous one, so each line is still meaningful
+    lines = []
+    for x in parts:
+        if lines and R._visible(lines[-1]) + R._visible(x) <= 22:
+            lines[-1] += ' ' + x
+        else:
+            lines.append(x)
+    if len(lines) < 2:
+        return None
+    steps = ''.join('<div class="fl-step"><div class="fl-f">' + R.mwrap(x, True) + '</div></div>' for x in lines)
+    return '<div class="flow">' + steps.replace('</div></div><div class="fl-step">', '</div></div><div class="fl-arr">↓</div><div class="fl-step">') + '</div><!--/flow-->'
+
+
 def line(s):
     s = s.strip()
     sp = special_line(s)
     if sp is not None:
         return sp
+    if s.startswith('$$') and s.endswith('$$') and s.count('$$') == 2 and '\\qquad' not in s:
+        fl = chain_flow(s[2:-2])
+        if fl:
+            return fl
     if s.startswith('$$') and s.endswith('$$') and s.count('$$') == 2:
         # separate formulas written side by side (\qquad) go on separate lines; a single formula is never broken
         return ''.join('<div class="formula sol-formula">' + R.mwrap(f, True) + '</div>'
