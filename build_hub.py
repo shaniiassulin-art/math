@@ -307,14 +307,16 @@ AI_ASK_V3 = """async function askApi(prompt, signal, progress){
       parts.push({inline_data:{mime_type:'image/jpeg', data}});
     }
     parts.push({text:prompt});
-    const mkBody=fast=>JSON.stringify({contents:[{role:'user',parts}], generationConfig:Object.assign({responseMimeType:'application/json', temperature:0.2}, fast? {thinkingConfig:{thinkingBudget:0}} : {})});
+    // הגדרות "לחשוב פחות" - כל דור של מודל מקבל הגדרה אחרת; מנסים לפי הסדר וזוכרים מה עבד
+    const SPEED=[{thinkingLevel:'minimal'},{thinkingLevel:'low'},{thinkingBudget:0},null];
+    const mkBody=lvl=>JSON.stringify({contents:[{role:'user',parts}], generationConfig:Object.assign({responseMimeType:'application/json', temperature:0.2}, SPEED[lvl]? {thinkingConfig:SPEED[lvl]} : {})});
     const MODELS=['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest'];
     const PER_TRY=40000;   // ניסיון אחד לא מחכה יותר מ-40 שניות
     const wait=ms=>new Promise((res,rej)=>{ const t=setTimeout(res,ms); if(signal) signal.addEventListener('abort',()=>{ clearTimeout(t); rej({code:'cancelled'}); },{once:true}); });
     let last={code:'upstream_error'}, sawLimit=false, n=0;
-    let noFast={}; try{ noFast=JSON.parse(localStorage.getItem('mathAiNoFast')||'{}')||{}; }catch(e){ noFast={}; }
+    let speedOk={}; try{ speedOk=JSON.parse(localStorage.getItem('mathAiSpeed_v2')||'{}')||{}; }catch(e){ speedOk={}; }
     for(const model of MODELS){
-      let fast=!noFast[model];
+      let lvl=speedOk[model]||0;
       for(let attempt=0; attempt<2; attempt++){
         n++;
         say(n===1 ? 'Google קורא את התרגיל' : 'מנסה שוב (ניסיון '+n+')');
@@ -325,7 +327,7 @@ AI_ASK_V3 = """async function askApi(prompt, signal, progress){
         let r;
         try {
           r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',signal:one.signal,
-            headers:{'content-type':'application/json','x-goog-api-key':key}, body:mkBody(fast)});
+            headers:{'content-type':'application/json','x-goog-api-key':key}, body:mkBody(lvl)});
         } catch(e){
           clearTimeout(tm); if(signal) signal.removeEventListener('abort',fw);
           if(signal && signal.aborted) throw {code:'cancelled'};
@@ -344,7 +346,7 @@ AI_ASK_V3 = """async function askApi(prompt, signal, progress){
         let msg='', gmsg='';
         try { const j=await r.json(); msg=JSON.stringify(j); gmsg=(j.error&&j.error.message)||''; } catch(e){}
         if(r.status===400 && /API_KEY|api key/i.test(msg)) throw {code:'bad_key'};
-        if(r.status===400 && fast){ fast=false; noFast[model]=1; try{ localStorage.setItem('mathAiNoFast', JSON.stringify(noFast)); }catch(e){} attempt--; n--; continue; }   // Google לא קיבל את הגדרת המהירות - שוב בלעדיה
+        if(r.status===400 && SPEED[lvl] && !/API_KEY|api key/i.test(msg)){ lvl++; speedOk[model]=lvl; try{ localStorage.setItem('mathAiSpeed_v2', JSON.stringify(speedOk)); }catch(e){} attempt--; n--; continue; }   // Google לא קיבל את ההגדרה - מנסים את הבאה
         if(r.status===401 || r.status===403) throw {code:'bad_key'};
         if(r.status===429){ sawLimit=true; last={code:'rate_limited'}; say('המכסה במודל הזה נגמרה - עוברת למודל אחר'); break; }
         if(r.status===404){ last={code:'upstream_error', detail:'404'}; break; }
@@ -430,6 +432,8 @@ def ensure_ai_v3(page):
     a = page.index('goBtn.onclick=async ()=>{')
     b = page.index('stopBtn.onclick=', a)
     page = page[:a] + AI_RUN_V3 + page[b:]
+    # a smaller image is processed faster (still sharp enough to read an exercise)
+    page = page.replace("img.onload=()=>{ const M=1568;", "img.onload=()=>{ const M=1280;", 1)
     # show() tells whether anything was found
     page = page.replace("if(p.textContent) results.append(p); return; }", "if(p.textContent) results.append(p); return false; }", 1)
     if 'let anyFound=false;' not in page:
