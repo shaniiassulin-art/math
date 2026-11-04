@@ -14,7 +14,7 @@ DIA = importlib.util.module_from_spec(_d); _d.loader.exec_module(DIA)
 _s = importlib.util.spec_from_file_location('samples_u', os.path.join(HERE, 'samples.py'))
 S = importlib.util.module_from_spec(_s); _s.loader.exec_module(S)
 
-SITES = {'calculus-1': ['calculus_12', 'calculus_34']}
+SITES = {'calculus-1': ['calculus_12', 'calculus_34'], 'algebra-solutions': ['algebra_solutions_u']}
 
 
 def step_li(st):
@@ -82,7 +82,8 @@ def section(n, num, d):
 
 def unit(u):
     n = u['n']
-    h = (f'\n    <section class="exercise" id="ex{n}">\n      <div class="ex-header">\n        <div class="ex-badge">{n}</div>\n'
+    dt = f' data-toc="{html.escape(u["toc"])}"' if u.get('toc') else ''
+    h = (f'\n    <section class="exercise" id="ex{n}"{dt}>\n      <div class="ex-header">\n        <div class="ex-badge">{n}</div>\n'
          f'        <h2 class="ex-title">{html.escape(u["title"])}</h2>\n      </div>\n'
          f'      <p class="ex-intro">{html.escape(u["intro"])}</p>\n')
     toc = (f'<li class="toc-group"><details class="toc-details" id="details-{n}"><summary><a href="#ex{n}" class="top-link" data-ex="{n}">'
@@ -97,7 +98,7 @@ def unit(u):
             h += section(n, num, d)
             toc += f'<li><a href="#ex{n}-{d["id"]}" data-ex="{n}">{num}. {html.escape(d["title"])}</a></li>\n'
     h += f'\n      <div class="summary-sheet">\n        <div class="summary-sheet-title">✅ סיכום תרגיל {n} - דף נוסחאות מחשבתי</div>\n'
-    h += ''.join(f'        <p><b>{a}:</b> {mathify(b)}</p>\n' for a, b in u['summary'])
+    h += ''.join(f'        <p><b>{mathify(a)}:</b> {mathify(b)}</p>\n' for a, b in u['summary'])
     h += '      </div>\n'
     h += (f'\n      <div class="key-idea">\n        <h4>💡 הדבר שהכי חשוב להבין מכל תרגיל {n}</h4>\n        <p>{mathify(u["key"])}</p>\n      </div>\n'
           '      <div class="end-of-exercise"></div>\n    </section>\n')
@@ -116,13 +117,13 @@ def put(page, start, end, block, anchor):
 def _drop_old(page, n):
     """remove a unit that is written directly in the page (outside the markers) - it is rebuilt from the data"""
     a0 = page.find('<!-- units:start -->')
-    m = re.search(rf'\n?\s*<section class="exercise" id="ex{n}">', page)
+    m = re.search(rf'\n?\s*<section class="exercise" id="ex{n}"[^>]*>', page)
     if m and (a0 == -1 or m.start() < a0):
         end = page.index('</section>', m.start()) + len('</section>')
         # the section may contain nested <section>? (no) - but make sure we stop at its own end
         page = page[:m.start()] + page[end:]
     t0 = page.find('<!-- units-toc:start -->')
-    m = re.search(rf'<li class="toc-group"><details class="toc-details" id="details-{n}">.*?</details></li>\n?', page, re.S)
+    m = re.search(rf'<li class="toc-group">\s*<details class="toc-details" id="details-{n}">.*?</details>\s*</li>\n?', page, re.S)
     if m and (t0 == -1 or m.start() < t0):
         page = page[:m.start()] + page[m.end():]
     return page

@@ -1,14 +1,30 @@
 # -*- coding: utf-8 -*-
 # לכל שלב ב"שלבי הפתרון": המושגים שצריך להבין כדי לבצע אותו (ההסברים עצמם ב-concepts.py).
-# STEP_CONCEPTS[סעיף][מספר השלב, מ-0] = [מושגים]. NEW_STEPS[סעיף] = [(טקסט השלב, [מושגים])] לסעיף שאין בו רשימת שלבים.
+# STEP_CONCEPTS[סעיף][מספר השלב, מ-0] = [מושגים]. השלבים עצמם ב-tools/units/algebra_solutions_u.py.
 
-STEP_CONCEPTS = {'ex1-s2': {0: ['i', 'complex', 'expand'], 1: ['i'], 2: ['complex']}, 'ex1-s3': {0: ['i', 'complex', 'expand'], 1: ['conj', 'division'], 2: ['expand', 'i'], 3: ['complex']}, 'ex1-s4': {0: ['i', 'ipow'], 1: ['ipow', 'powers'], 2: ['ipow', 'division']}, 'ex1-s5': {0: ['i', 'complex', 'division'], 1: ['expand', 'i'], 2: ['equal'], 3: ['system']}, 'ex1-s6': {0: ['i', 'complex', 'conj'], 1: ['expand', 'i'], 2: ['equal', 'system']}, 'ex1-s7': {0: ['i', 'complex', 'modulus'], 1: ['modrules'], 2: ['modulus', 'conj']}, 'ex1-s8': {0: ['i', 'complex', 'conj', 'realimag'], 1: ['conjrules'], 2: ['expand'], 3: ['modulus', 'zzbar'], 4: ['realimag']}, 'ex1-s9': {0: ['i', 'complex', 'modulus'], 1: ['conj', 'zzbar', 'conjrules'], 2: ['expand'], 3: ['realimag']}, 'ex1-s10': {0: ['i', 'complex', 'modulus', 'modrules', 'radians', 'trig', 'euler'], 1: ['zzbar', 'polar'], 2: ['realimag', 'conjrules']}, 'ex1-s11': {0: ['i', 'complex', 'plane'], 1: ['arith', 'division', 'realimag']}, 'ex1-s12': {0: ['complex', 'plane', 'quadrant'], 1: ['modulus', 'polar'], 2: ['radians', 'trig', 'argument'], 3: ['argument'], 4: ['polar', 'euler']}, 'ex1-s13': {0: ['i', 'complex', 'division', 'radians', 'trig', 'polar', 'euler'], 1: ['demoivre'], 2: ['fullturn'], 3: ['trig', 'quadrant']}, 'ex1-s14': {0: ['radians', 'trig', 'euler', 'demoivre'], 1: ['binom3', 'i'], 2: ['equal'], 3: ['pyth']}, 'ex2-s1': {0: ['i', 'complex', 'radians', 'trig', 'polar', 'argument', 'euler'], 1: ['demoivre'], 2: ['polareq'], 3: ['roots', 'fullturn']}, 'ex2-s2': {0: ['zeroprod'], 1: ['zeroprod'], 2: ['roots']}, 'ex2-s3': {0: ['i', 'division'], 1: ['radians', 'trig', 'polar', 'argument', 'euler'], 2: ['polarmult', 'demoivre'], 3: ['roots']}, 'ex2-s4': {0: ['substitution', 'roots'], 1: ['i', 'arith'], 2: ['division', 'euler']}, 'ex2-s5': {0: ['i', 'complex', 'radians', 'trig', 'polar', 'euler', 'demoivre'], 1: ['conj', 'polarmult'], 2: ['polarmult']}, 'ex2-s6': {0: ['quadform'], 1: ['i', 'negdelta'], 2: ['negdelta', 'conj']}, 'ex2-s7': {0: ['i', 'complex', 'polyroot', 'expand'], 1: ['conj', 'conjroot'], 2: ['conjroot', 'modulus'], 3: ['longdiv'], 4: ['quadform']}, 'ex2-s8': {0: ['i', 'complex', 'roots', 'modulus', 'zzbar'], 1: ['conj', 'realimag', 'conjrules']}}
-
-NEW_STEPS = {
-'ex1-s1': [
-    ('<b>כתבי את המספר בצורה $a+bi$</b> וזהי את $a$ (ממשי) ואת $b$ (המקדם של $i$).', ['i', 'complex', 'plane']),
-    ('<b>הצמוד:</b> $\\overline z=a-bi$ - הופכים רק את הסימן של $b$.', ['conj']),
-    ('<b>הערך המוחלט:</b> $|z|=\\sqrt{a^2+b^2}$.', ['modulus']),
-    ('<b>בדיקה:</b> $z\\overline z$ צריך לצאת $|z|^2$.', ['expand', 'zzbar']),
-],
+STEP_CONCEPTS = {
+'ex1-s1': {0: ['i', 'complex', 'plane'], 1: ['conj'], 2: ['modulus'], 3: ['zzbar', 'expand'], 4: ['equal']},
+'ex1-s2': {0: ['expand', 'i'], 1: ['i'], 2: ['expand'], 3: ['complex']},
+'ex1-s3': {0: ['expand', 'i'], 1: ['conj', 'division'], 2: ['zzbar'], 3: ['expand', 'complex'], 4: ['division', 'conjrules']},
+'ex1-s4': {0: ['i', 'ipow'], 1: ['ipow', 'powers'], 2: ['division'], 3: ['ipow']},
+'ex1-s5': {0: ['division'], 1: ['expand', 'i'], 2: ['equal'], 3: ['system']},
+'ex1-s6': {0: ['complex', 'conj'], 1: ['expand'], 2: ['equal', 'system'], 3: ['equal']},
+'ex1-s7': {0: ['modulus'], 1: ['modrules'], 2: ['modulus'], 4: ['modrules']},
+'ex1-s8': {0: ['realimag'], 1: ['conjrules'], 2: ['expand'], 3: ['zzbar'], 4: ['realimag']},
+'ex1-s9': {0: ['modulus', 'plane'], 2: ['zzbar'], 3: ['expand'], 4: ['realimag']},
+'ex1-s10': {0: ['modrules'], 1: ['zzbar', 'euler'], 2: ['euler', 'trig'], 3: ['realimag', 'conjrules']},
+'ex1-s11': {0: ['complex', 'plane'], 1: ['modulus'], 2: ['powers', 'i']},
+'ex1-s12': {0: ['quadrant'], 1: ['modulus'], 2: ['radians', 'trig'], 3: ['argument'], 4: ['polar', 'euler']},
+'ex1-s13': {0: ['polar'], 1: ['demoivre'], 2: ['fullturn'], 3: ['trig']},
+'ex1-s14': {0: ['euler', 'demoivre'], 1: ['binom3', 'ipow'], 2: ['equal'], 3: ['pyth']},
+'ex2-s1': {0: ['polar', 'argument'], 1: ['demoivre'], 2: ['polareq', 'fullturn'], 3: ['roots'], 4: ['roots']},
+'ex2-s2': {0: ['factor'], 1: ['zeroprod'], 2: ['division', 'polar'], 3: ['roots']},
+'ex2-s3': {0: ['division'], 1: ['polar', 'euler'], 2: ['polarmult'], 3: ['roots']},
+'ex2-s4': {0: ['substitution'], 1: ['roots'], 2: ['arith'], 3: ['division']},
+'ex2-s5': {0: ['polar', 'demoivre'], 1: ['conj', 'polarmult'], 2: ['polarmult'], 3: ['roots']},
+'ex2-s6': {0: ['quadform'], 1: ['negdelta', 'i'], 2: ['conj']},
+'ex2-s7': {0: ['polyroot', 'powers'], 1: ['polyroot'], 2: ['conjroot'], 3: ['conjroot', 'modulus'], 4: ['longdiv', 'quadform']},
+'ex2-s8': {0: ['roots', 'zzbar'], 1: ['realimag', 'conjrules'], 2: ['expand'], 3: ['zzbar']},
 }
+
+NEW_STEPS = {}

@@ -155,7 +155,7 @@ def d_plane():
 def d_polar(a=1.0, b=math.sqrt(3), za='1+i√3', ra='r = 2', ta='θ = π/3', aa='a = 1', ba='b = √3'):
     R = math.hypot(a, b)
     m = max(abs(a), abs(b), R) + 0.8
-    p = Plot(-0.6 if a >= 0 else -m, m if a >= 0 else 1.2, -0.6 if b >= 0 else -m, m, w=280)
+    p = Plot(-0.6 if a >= 0 else -m, m if a >= 0 else 1.2, -0.6 if b >= 0 else -m, m if b >= 0 else 1.2, w=280)
     p.grid(); p.axes('Re', 'Im')
     p.seg((a, 0), (a, b), GREEN, 2, dash=True); p.seg((0, 0), (a, 0), BLUE, 3)
     p.seg((0, 0), (a, b), PURPLE, 2.6)
@@ -164,8 +164,8 @@ def d_polar(a=1.0, b=math.sqrt(3), za='1+i√3', ra='r = 2', ta='θ = π/3', aa=
     p.dot(a, b)
     p.txt(a, b, za, dx=8 if a >= 0 else -8, dy=-8, anchor='start' if a >= 0 else 'end', it=True, color=PURPLE, bold=True)
     p.txt(a / 2, b / 2, ra, dx=-8 if a >= 0 else 8, dy=-6, anchor='end' if a >= 0 else 'start', it=True, color=PURPLE)
-    p.txt(0.75 * math.cos(t / 2), 0.75 * math.sin(t / 2), ta, dx=6, dy=2, anchor='start', it=True, color=ORANGE)
-    p.txt(a / 2, 0, aa, dy=17, it=True, color=BLUE)
+    p.txt(0.75 * math.cos(t / 2), 0.75 * math.sin(t / 2), ta, dx=6, dy=2 if b >= 0 else 14, anchor='start' if a >= 0 else 'end', it=True, color=ORANGE)
+    p.txt(a / 2, 0, aa, dy=17 if b >= 0 else -8, it=True, color=BLUE)
     p.txt(a, b / 2, ba, dx=7 if a >= 0 else -7, anchor='start' if a >= 0 else 'end', it=True, color=GREEN)
     return box(p.svg('הצגה קוטבית'), leg=[(PURPLE, L('r')+' - המרחק מהראשית'), (ORANGE, L('θ')+' - הזווית'),
                                           (BLUE, L('a = r·cosθ')), (GREEN, L('b = r·sinθ'))])
