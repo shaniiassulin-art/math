@@ -14,7 +14,7 @@ DIA = importlib.util.module_from_spec(_d); _d.loader.exec_module(DIA)
 _s = importlib.util.spec_from_file_location('samples_u', os.path.join(HERE, 'samples.py'))
 S = importlib.util.module_from_spec(_s); _s.loader.exec_module(S)
 
-SITES = {'calculus-1': 'calculus_34'}
+SITES = {'calculus-1': ['calculus_12', 'calculus_34']}
 
 
 def step_li(st):
@@ -113,11 +113,32 @@ def put(page, start, end, block, anchor):
     return page[:i] + start + block + end + '\n' + page[i:]
 
 
+def _drop_old(page, n):
+    """remove a unit that is written directly in the page (outside the markers) - it is rebuilt from the data"""
+    a0 = page.find('<!-- units:start -->')
+    m = re.search(rf'\n?\s*<section class="exercise" id="ex{n}">', page)
+    if m and (a0 == -1 or m.start() < a0):
+        end = page.index('</section>', m.start()) + len('</section>')
+        # the section may contain nested <section>? (no) - but make sure we stop at its own end
+        page = page[:m.start()] + page[end:]
+    t0 = page.find('<!-- units-toc:start -->')
+    m = re.search(rf'<li class="toc-group"><details class="toc-details" id="details-{n}">.*?</details></li>\n?', page, re.S)
+    if m and (t0 == -1 or m.start() < t0):
+        page = page[:m.start()] + page[m.end():]
+    return page
+
+
 def apply(site, page):
-    spec = importlib.util.spec_from_file_location(SITES[site], os.path.join(HERE, 'units', SITES[site] + '.py'))
-    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    units = []
+    for name in SITES[site]:
+        spec = importlib.util.spec_from_file_location(name, os.path.join(HERE, 'units', name + '.py'))
+        mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+        units += mod.UNITS
+    units.sort(key=lambda u: u['n'])
+    for u in units:
+        page = _drop_old(page, u['n'])
     body, toc = '', ''
-    for u in mod.UNITS:
+    for u in units:
         h, t = unit(u)
         body += h; toc += t
     page = put(page, '<!-- units:start -->', '<!-- units:end -->', body + '\n    ', '<!-- files-section:start -->')
