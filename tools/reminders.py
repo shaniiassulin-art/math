@@ -191,6 +191,9 @@ def m(latex, display=False):
     x = convert(html.unescape(latex))
     x = x.replace('<mi>&#x000B1;</mi>', '<mo>&#x000B1;</mo>')
     x = x.replace('<math ', '<math dir="ltr" ' + ('displaystyle="true" ' if display else ''), 1)
+    # lim with its condition underneath (like in the course files), not as a subscript beside it
+    x = re.sub(r'<msub><mo>lim</mo>(<mrow>.*?</mrow>|<m[ion]>[^<]*</m[ion]>)</msub>',
+               r'<munder><mo movablelimits="false">lim</mo>\1</munder>', x, flags=re.S)
     return x
 
 

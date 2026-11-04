@@ -201,6 +201,7 @@ def render(sid, d, tips=()):
     lost = set(where) - used
     if lost:
         raise ValueError(f'{sid}: tips point to missing lines {sorted(lost)}')
+    steps = steps.replace('</div><!--/flow--><div class="flow">', '<div class="fl-arr">↓</div>')   # consecutive calculation steps: one chain with arrows
     return (f'\n      <!-- sample:start --><div class="box box-q sample" id="{sid}-sample">'
             f'<div class="box-title"><span class="sample-src">📍 {norm_src(d["src"])}</span></div>'
             f'<p class="sample-q">{mathify(d["q"])}</p>'
@@ -463,7 +464,8 @@ ASSETS = '''<!-- samples-assets:start -->
   .kv-v.wide:last-child{ border-bottom:0; }
   .kv-v.solo{ border-bottom:0; padding-bottom:0; }
   .fl-f.heb{ white-space:normal; }
-  .kv-v.heb{ text-align:left; }
+  .kv-v.heb{ text-align:left; white-space:normal; }
+  .kv-v.wide math{ font-size:.94em; }
   .fl-n{ font-size:.88rem; color:#5B5F6B; margin-top:2px; }
   .fl-arr{ color:#6B7FB0; font-size:1.15rem; line-height:1.3; font-weight:700; }
   .ex-tag-row{ margin:12px 0 2px; }
