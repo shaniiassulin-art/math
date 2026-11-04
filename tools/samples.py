@@ -80,22 +80,30 @@ def _split(x):
     return (a, b) if sep else (a, '')
 
 
+def _big(h, src=''):
+    """formulas in rows and calculation steps: full display size (fractions not squeezed) - when it fits on a phone"""
+    vis = sum(R._visible(m) for m in re.findall(r'\$([^$]+)\$', src))
+    if src and vis > 20:
+        return h
+    return h.replace('<math dir="ltr" ', '<math dir="ltr" displaystyle="true" ')
+
+
 def _kv(x):
     k, v = _split(x)
     cls = 'kv-v heb' if _has_heb(v) else 'kv-v'
     vis = sum(R._visible(m) for m in re.findall(r'\$([^$]+)\$', v)) + len(re.sub(r'\$[^$]*\$', '', v))
     kvis = len(re.sub(r'\$[^$]*\$', 'xx', k))
     if not k.strip():
-        return f'<div class="{cls} wide solo">{mathify(v.strip())}</div>'
+        return f'<div class="{cls} wide solo">{_big(mathify(v.strip()), v)}</div>'
     if vis + kvis > 16:          # long: the label above, the formula on its own line below
-        return f'<div class="kv-k wide">{mathify(k.strip())}</div><div class="{cls} wide">{mathify(v.strip())}</div>'
-    return f'<div class="kv-k">{mathify(k.strip())}</div><div class="{cls}">{mathify(v.strip())}</div>'
+        return f'<div class="kv-k wide">{mathify(k.strip())}</div><div class="{cls} wide">{_big(mathify(v.strip()), v)}</div>'
+    return f'<div class="kv-k">{mathify(k.strip())}</div><div class="{cls}">{_big(mathify(v.strip()), v)}</div>'
 
 
 def _fl(x):
     f, n = _split(x)
     cls = 'fl-f heb' if _has_heb(f) else 'fl-f'
-    return (f'<div class="fl-step"><div class="{cls}">' + mathify(f.strip()) + '</div>'
+    return (f'<div class="fl-step"><div class="{cls}">' + _big(mathify(f.strip()), f) + '</div>'
             + (f'<div class="fl-n">{mathify(n.strip())}</div>' if n.strip() else '') + '</div>')
 
 
@@ -182,6 +190,15 @@ def norm_src(src):
 
 
 def render(sid, d, tips=()):
+    """one sample question, or a list of them (all the questions on the topic from the course files)"""
+    if isinstance(d, list):
+        n = len(d)
+        return ''.join(render_one(sid if k == 0 else f'{sid}-q{k + 1}', q, tips if k == 0 else (), (k + 1, n))
+                       for k, q in enumerate(d))
+    return render_one(sid, d, tips)
+
+
+def render_one(sid, d, tips=(), num=None):
     where = {}
     for k, (si, li, label, lines) in enumerate(tips):
         where.setdefault((si, li), []).append(tip_html(f'{sid}-tip{k + 1}', label, lines))
@@ -203,7 +220,8 @@ def render(sid, d, tips=()):
         raise ValueError(f'{sid}: tips point to missing lines {sorted(lost)}')
     steps = steps.replace('</div><!--/flow--><div class="flow">', '<div class="fl-arr">↓</div>')   # consecutive calculation steps: one chain with arrows
     return (f'\n      <!-- sample:start --><div class="box box-q sample" id="{sid}-sample">'
-            f'<div class="box-title"><span class="sample-src">📍 {norm_src(d["src"])}</span></div>'
+            f'<div class="box-title"><span class="sample-src">📍 {norm_src(d["src"])}'
+            + (f'<span class="sample-num">{num[0]} מתוך {num[1]}</span>' if num and num[1] > 1 else '') + '</span></div>'
             f'<p class="sample-q">{mathify(d["q"])}</p>'
             f'<button type="button" class="sample-btn" aria-expanded="false" aria-controls="{sid}-sol">'
             f'<span class="sb-show">הצגת הפתרון</span><span class="sb-hide">הסתרת הפתרון</span></button>'
@@ -379,6 +397,13 @@ ASSETS = '''<!-- samples-assets:start -->
   .sample > .box-title::after{ content:none !important; }
   .sample > .box-title{ flex-direction:column; align-items:flex-start; gap:2px; }
   .sample > .box-title::before{ border:none !important; padding:0 !important; }
+  .sample-num{ margin-inline-start:10px; font-size:.78rem; background:rgba(255,255,255,.22); border-radius:100px; padding:1px 9px; font-weight:700; }
+  .sample + .sample, .sample + * + .sample{ margin-top:14px; }
+  /* פירוט בתוך שלב בפתרון: הסבר, דוגמה ותרשים */
+  .step-more{ margin:8px 0 4px; }
+  .step-more > .tip-t{ margin:6px 0; }
+  .steps > li .step-more .kv, .steps > li .step-more .flow, .steps > li .step-more .dia, .steps > li .step-more .ex-tag-row{ margin-right:-38px !important; }
+  .box-thm .kv{ background:rgba(255,255,255,.7); }
   .sample-src{ display:block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .sample-src{ font-weight:600; font-size:.86rem; opacity:.95; }
   .sample-q{ font-size:1.06rem; font-weight:600; color:#2E1F4A; line-height:1.9; margin:4px 0 12px; overflow-x:auto; }

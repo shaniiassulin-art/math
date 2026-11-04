@@ -11,7 +11,24 @@ import reminders as R
 _d = importlib.util.spec_from_file_location('diagrams_u', os.path.join(HERE, 'samples', 'diagrams.py'))
 DIA = importlib.util.module_from_spec(_d); _d.loader.exec_module(DIA)
 
+_s = importlib.util.spec_from_file_location('samples_u', os.path.join(HERE, 'samples.py'))
+S = importlib.util.module_from_spec(_s); _s.loader.exec_module(S)
+
 SITES = {'calculus-1': 'calculus_34'}
+
+
+def step_li(st):
+    """a step: text, or dict(t=text, more=[explanation lines in the visual formats])"""
+    if isinstance(st, str):
+        return f'        <li>{mathify(st)}</li>\n'
+    more = S.render_lines(st.get('more', []))
+    more = more.replace('</div><!--/flow--><div class="flow">', '<div class="fl-arr">↓</div>')
+    return f'        <li>{mathify(st["t"])}<div class="step-more">{more}</div></li>\n'
+
+
+def thm_box(title, ls):
+    return (f'      <div class="box box-thm"><div class="box-title">{mathify(title)}</div>'
+            + S.render_lines(ls) + '</div>\n')
 
 
 def mathify(s):
@@ -39,8 +56,10 @@ def section(n, num, d):
     h += f'      <div class="src-tag">📍 {html.escape(d["src"])}</div>\n'
     h += f'      <div class="callout callout-id"><div class="callout-title"></div><p>{mathify(d["ident"])}</p></div>\n'
     h += '      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">\n'
-    h += ''.join(f'        <li>{mathify(s)}</li>\n' for s in d['steps'])
+    h += ''.join(step_li(st) for st in d['steps'])
     h += '      </ol></div>\n'
+    for title, ls in d.get('thm', []):
+        h += thm_box(title, ls)
     for f in d.get('formula', []):
         for part in f.split('\\qquad'):
             if part.strip():
