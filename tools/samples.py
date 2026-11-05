@@ -141,6 +141,8 @@ def _big(h, src=''):
 
 def _kv(x):
     k, v = _split(x)
+    if k.strip() and not _has_heb(k) and _has_heb(v):     # Hebrew always on the right, the formula on the left
+        k, v = v, k
     cls = 'kv-v heb' if _has_heb(v) else 'kv-v'
     vis = sum(R._visible(m) for m in re.findall(r'\$([^$]+)\$', v)) + len(re.sub(r'\$[^$]*\$', '', v))
     kvis = len(re.sub(r'\$[^$]*\$', 'xx', k))
