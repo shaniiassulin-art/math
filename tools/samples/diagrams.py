@@ -547,6 +547,71 @@ def d_matdiag():
     return box(_svg(el, 290, 110, 'סימטרית ואנטי-סימטרית'), 'משבצות באותו צבע - מקומות "משוקפים" ביחס לאלכסון. בסימטרית הם שווים, באנטי-סימטרית הם נגדיים, והאלכסון 0.')
 
 
+
+# ---------------------------------------------------------------- generic versions (letters, not numbers) for the explanations
+def g_plane():
+    p = Plot(-1, 4.5, -1, 4.2, w=250)
+    p.grid(); p.axes('Re', 'Im', ticks=[(3, 'a')], yticks=[(3, 'b')])
+    p.seg((3, 0), (3, 3), GREY, 1.5, dash=True); p.seg((0, 3), (3, 3), GREY, 1.5, dash=True)
+    p.dot(3, 3); p.txt(3, 3, 'z = a+bi', dx=6, dy=-8, anchor='start', it=True, color=PURPLE, bold=True)
+    return box(p.svg('המישור המרוכב'), 'כל מספר '+L('<i>a+bi</i>')+' הוא נקודה: '+L('<i>a</i>')+' ימינה, '+L('<i>b</i>')+' למעלה')
+
+
+def g_modulus():
+    p = Plot(-0.8, 4.6, -0.8, 4.4, w=250)
+    p.grid(); p.axes('Re', 'Im', ticks=[(3, 'a')], yticks=[(3, 'b')])
+    p.seg((0, 0), (3, 0), BLUE, 3); p.seg((3, 0), (3, 3), GREEN, 3); p.seg((0, 0), (3, 3), PURPLE, 2.6)
+    p.dot(3, 3); p.txt(3, 3, 'a+bi', dx=8, dy=-6, anchor='start', it=True, color=PURPLE, bold=True)
+    p.txt(1.3, 2.0, '|z|', anchor='end', it=True, color=PURPLE, bold=True)
+    return box(p.svg('ערך מוחלט'), 'המרחק מהראשית - היתר במשולש: '+L('|z| = √(a² + b²)'),
+               [(BLUE, L('a')+' - ניצב אופקי'), (GREEN, L('b')+' - ניצב אנכי')])
+
+
+def g_conj():
+    p = Plot(-1, 4.5, -3.5, 3.5, w=230)
+    p.grid(); p.axes('Re', 'Im', ticks=[(3, 'a')], yticks=[(2, 'b'), (-2, '−b')])
+    p.seg((3, 2), (3, -2), GREY, 1.5, dash=True)
+    p.dot(3, 2); p.txt(3, 2, 'z = a+bi', dx=-8, dy=-8, anchor='end', it=True, color=PURPLE, bold=True)
+    p.dot(3, -2, GREEN); p.txt(3, -2, 'z̄ = a−bi', dx=-8, dy=16, anchor='end', it=True, color=GREEN, bold=True)
+    return box(p.svg('צמוד'), 'הצמוד = שיקוף בציר האופקי (הממשי)')
+
+
+def g_polar():
+    return d_polar(2.2, 1.6, 'z = a+bi', 'r', 'θ', 'a = r·cosθ', 'b = r·sinθ')
+
+
+def g_argument():
+    p = Plot(-3.4, 3.4, -3, 3.4, w=260)
+    p.grid(); p.axes('Re', 'Im')
+    p.seg((0, 0), (-2.2, 1.6), PURPLE, 2.6); p.dot(-2.2, 1.6)
+    p.txt(-2.2, 1.6, 'a+bi  (a<0)', dx=-4, dy=-10, anchor='middle', it=True, color=PURPLE, bold=True)
+    p.seg((0, 0), (2.2, -1.6), RED, 1.6, dash=True)
+    p.txt(2.2, -1.6, 'θ₀ ✗', dx=4, dy=16, anchor='middle', it=True, color=RED)
+    p.arc(0.8, 0, math.atan2(1.6, -2.2))
+    p.txt(0.2, 1.05, 'θ₀+π ✓', anchor='start', it=True, color=ORANGE, bold=True)
+    return box(p.svg('מציאת הזווית'), 'ל-'+L('tan')+' יש אותו ערך בשני כיוונים הפוכים - בוחרים את הכיוון שבו הנקודה באמת נמצאת')
+
+
+def g_signtable():
+    p = Plot(-0.5, 6, -0.9, 0.9, w=310)
+    p.add(f'<line x1="{p.X(-0.5)}" y1="{p.Y(0)}" x2="{p.X(6)}" y2="{p.Y(0)}" stroke="{INK}" stroke-width="1.4"/>')
+    for x, lab, hol in [(1, 'x₁', False), (2, 'x₃', True), (4, 'x₂', False)]:
+        p.dot(x, 0, PURPLE, 4.5, hollow=hol); p.txt(x, 0, lab, dy=22, it=True)
+    for x, s, c in [(0.25, '−', RED), (1.5, '+', GREEN), (3, '−', RED), (5, '+', GREEN)]:
+        p.txt(x, 0, s, dy=-10, size=20, color=c, bold=True)
+    return box(p.svg('טבלת סימנים'), 'הסימן של '+L('(x−x₁)(x−x₂)/(x−x₃)')+' בכל קטע. '+L('x₃')+' - עיגול ריק (מתאפס במכנה)')
+
+
+def g_interval():
+    p = Plot(-1, 7, -0.8, 0.8, w=300)
+    p.add(f'<line x1="{p.X(-1)}" y1="{p.Y(0)}" x2="{p.X(7)}" y2="{p.Y(0)}" stroke="{INK}" stroke-width="1.4"/>')
+    p.seg((2, 0), (5, 0), BLUE, 5)
+    p.dot(2, 0, BLUE, 5, hollow=True); p.dot(5, 0, BLUE, 5)
+    p.txt(2, 0, 'a', dy=22, it=True); p.txt(5, 0, 'b', dy=22, it=True)
+    p.txt(2, 0, 'לא כלול', dy=-12, size=12, color=BLUE, heb=True); p.txt(5, 0, 'כלול', dy=-12, size=12, color=BLUE, heb=True)
+    return box(p.svg('קטע'), 'הקטע '+L('(a,b]')+' - עיגול ריק: לא כלול, מלא: כלול')
+
+
 DIAGRAMS = {
     'plane': d_plane, 'polar': d_polar, 'polar_m5': d_polar_m5, 'modulus': d_modulus, 'conj': d_conj,
     'quadrants': d_quadrants, 'argument': d_argument, 'unit': d_unit, 'euler': d_euler, 'polarmult': d_polarmult,
@@ -554,6 +619,8 @@ DIAGRAMS = {
     'sincos': d_sincos, 'logexp': d_logexp, 'transform': d_transform, 'parity': d_parity, 'absgraph': d_absgraph,
     'period': d_period, 'floor': d_floor, 'injective': d_injective, 'interval': d_numline_interval,
     'signtable': d_signtable, 'dots': d_dots,
+    'g_plane': g_plane, 'g_modulus': g_modulus, 'g_conj': g_conj, 'g_polar': g_polar, 'g_argument': g_argument,
+    'g_signtable': g_signtable, 'g_interval': g_interval,
     'matindex': d_matindex, 'matmul': d_matmul, 'mattypes': d_mattypes, 'transpose': d_transpose,
     'matcols': d_matcols, 'trace': d_trace, 'matsym': d_matdiag,
 }

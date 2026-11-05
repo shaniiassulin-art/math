@@ -25,7 +25,7 @@ STEP_CONCEPTS.update({
  'ex3-s15': {0: ['indet'], 1: ['limlaws'], 2: ['indet'], 3: ['conjmul', 'highpow']},
  'ex4-s1': {0: ['tancot'], 1: ['sinlim'], 2: ['sinlim'], 3: ['directsub']},
  'ex4-s2': {0: ['tancot'], 1: ['onecos', 'pyth'], 2: ['sinlim'], 3: ['directsub']},
- 'ex4-s3': {0: ['factor'], 1: ['limit'], 2: ['sinlim'], 3: ['directsub']},
+ 'ex4-s3': {1: ['limit'], 2: ['sinlim'], 3: ['directsub']},
  'ex4-s4': {0: ['varsub'], 1: ['varsub'], 2: ['varsub'], 3: ['sinlim']},
  'ex4-s5': {0: ['continuity', 'piecewise'], 1: ['continuity'], 2: ['onesided', 'cubes'], 3: ['continuity']},
  'ex4-s6': {0: ['contops'], 1: ['contops'], 2: ['counter'], 3: ['contops']},

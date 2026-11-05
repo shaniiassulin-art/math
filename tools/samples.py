@@ -459,6 +459,13 @@ ASSETS = '''<!-- samples-assets:start -->
   .sample + .sample, .sample + * + .sample{ margin-top:14px; }
   /* פירוט בתוך שלב בפתרון: הסבר, דוגמה ותרשים */
   .step-more{ margin:8px 0 4px; }
+  .step-learn{ margin:10px 0 6px; font-weight:400; }
+  .step-learn{ border-inline-start:3px solid #C9D3EA; padding-inline-start:10px; }
+  .step-learn .sl-h{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; font-weight:800; color:#2C3A5E; margin:0 0 4px; }
+  .step-learn .sl-h::before{ content:"📘"; }
+  .steps > li .step-learn .kv, .steps > li .step-learn .flow, .steps > li .step-learn .dia, .steps > li .step-learn .ex-tag-row{ margin-right:-38px !important; }
+  .tip-from{ font-size:.86rem; margin:0 0 8px; color:#5D6F9E; }
+  .tip-from a{ color:#3F51B5; font-weight:700; }
   .step-more > .tip-t{ margin:6px 0; }
   .steps > li .step-more .kv, .steps > li .step-more .flow, .steps > li .step-more .dia, .steps > li .step-more .ex-tag-row{ margin-right:-38px !important; }
   .box-thm .kv{ background:rgba(255,255,255,.7); }
@@ -631,37 +638,53 @@ TIP_RE = re.compile(r'<!-- tip:start -->.*?<!-- tip:end -->', re.S)
 NEWSTEPS_RE = re.compile(r'\n?\s*<!-- newsteps:start -->.*?<!-- newsteps:end -->', re.S)
 
 
-def concept_tip(keys, seen, stepno):
-    """every concept the step needs, explained in full - only the first time it appears in this solution"""
-    C = CONCEPTS
-    new = [k for k in keys if k not in seen]
-    lines = []
-    for k in new:
-        lines.append('§' + C[k]['name'])
-        lines += C[k]['full']
-        seen[k] = stepno
-    return ('מה צריך לדעת לשלב הזה', [C[k]['name'] for k in new]), lines, new
+LEARN_RE = re.compile(r'<!-- learn:start -->.*?<!-- learn:end -->', re.S)
 
 
-def step_tips_html(prefix, keys, seen, stepno):
+def learn_html(keys):
+    """first time a concept is needed on the site: its explanation is part of the step itself"""
+    out = ''
+    for k in keys:
+        c = CONCEPTS[k]
+        out += (f'<div class="step-learn" id="learn-{k}"><div class="sl-h">{mathify(c["name"])}</div>'
+                + render_lines(c['full']) + '</div>')
+    return '<!-- learn:start -->' + out + '<!-- learn:end -->' if out else ''
+
+
+def recall_html(pid, keys, where):
+    """a concept already explained earlier on the site: a reminder button, with a link back to the explanation"""
     if not keys:
         return ''
-    label, lines, new = concept_tip(keys, seen, stepno)
-    if not new:
-        return ''
-    btn, panel = tip_html(prefix, label, lines)
+    lines_html = ''
+    for k in keys:
+        c = CONCEPTS[k]
+        hid, title = where[k]
+        lines_html += (f'<div class="tip-h">{mathify(c["name"])}</div>'
+                       f'<div class="tip-from">↩ הוסבר בסעיף <a href="#{hid}">{title}</a></div>'
+                       + render_lines(c['full']))
+    label = ('מה צריך לדעת לשלב הזה', [CONCEPTS[k]['name'] for k in keys])
+    btn, _ = tip_html(pid, label, [])
+    panel = f'<div class="tip-panel" id="{pid}" hidden>{lines_html}</div>'
     return '<!-- tip:start --><div class="tip-wrap">' + btn + panel + '</div><!-- tip:end -->'
 
 
 def apply_steps(page, stm):
     page = TIP_RE.sub('', page)
+    page = LEARN_RE.sub('', page)
     page = NEWSTEPS_RE.sub('', page)
     secs = R.sections(page)
+    explained = {}                     # concept -> (section id, section title): the first place on the site that explains it
     out, last = [], 0
     for hid, a, b, stop in secs:
         seg = page[b:stop]
-        seen = {}
-        tips = getattr(stm, 'STEP_CONCEPTS', {}).get(hid, {})
+        title = re.sub(r'<[^>]+>', '', re.sub(r'<annotation[^>]*>.*?</annotation>', '', page[a:b], flags=re.S))
+        title = re.sub(r'<math.*?</math>', '', title, flags=re.S).strip()
+        h3 = re.search(r'<h3[^>]*>(.*?)</h3>', page[a:b], re.S).group(1)
+        here = set()
+        tips = dict(getattr(stm, 'STEP_CONCEPTS', {}).get(hid, {}))
+        for k in tips.pop(-1, []):           # concepts this section itself defines (its 📘 definition box)
+            here.add(k)
+            explained.setdefault(k, (hid, h3))
         mm = re.search(r'<ol class="steps">(.*?)</ol>', seg, re.S)
         if tips:
             if not mm:
@@ -670,22 +693,24 @@ def apply_steps(page, stm):
             bad = [i for i in tips if i >= len(lis)]
             if bad:
                 raise ValueError(f'{hid}: concepts for missing steps {bad}')
-            htmls = {i: step_tips_html(f'{hid}-st{i + 1}', tips[i], seen, i + 1) for i in sorted(tips)}
             body = mm.group(1)
-            for i in sorted(tips, reverse=True):
-                e = lis[i].end() - len('</li>')
-                body = body[:e] + htmls[i] + body[e:]
+            edits = []
+            for i in sorted(tips):
+                keys = [k for k in tips[i] if k not in here]
+                here.update(keys)
+                first = [k for k in keys if k not in explained]
+                again = [k for k in keys if k in explained]
+                for k in first:
+                    explained[k] = ('learn-' + k, h3)
+                li = lis[i]
+                txt = li.group(1)
+                j = txt.find('<div class="step-more">')
+                pos = li.start(1) + (j if j != -1 else len(txt))
+                edits.append((pos, learn_html(first)))
+                edits.append((li.end(1), recall_html(f'{hid}-st{i + 1}', again, explained)))
+            for pos, h in sorted(edits, key=lambda e: e[0], reverse=True):
+                body = body[:pos] + h + body[pos:]
             seg = seg[:mm.start(1)] + body + seg[mm.end(1):]
-        new = getattr(stm, 'NEW_STEPS', {}).get(hid)
-        if new:
-            if mm:
-                raise ValueError(f'{hid}: already has steps')
-            lis = ''.join(f'<li>{mathify(t)}{step_tips_html(f"{hid}-st{i + 1}", keys, seen, i + 1)}</li>'
-                          for i, (t, keys) in enumerate(new))
-            block = ('\n      <!-- newsteps:start --><div class="callout callout-steps"><div class="callout-title"></div>'
-                     f'<ol class="steps">{lis}</ol></div><!-- newsteps:end -->')
-            j = section_end(seg, len(seg))
-            seg = seg[:j] + block + seg[j:]
         out.append(page[last:b]); out.append(seg); last = stop
     out.append(page[last:])
     return ''.join(out)
