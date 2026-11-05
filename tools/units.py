@@ -14,7 +14,8 @@ DIA = importlib.util.module_from_spec(_d); _d.loader.exec_module(DIA)
 _s = importlib.util.spec_from_file_location('samples_u', os.path.join(HERE, 'samples.py'))
 S = importlib.util.module_from_spec(_s); _s.loader.exec_module(S)
 
-SITES = {'calculus-1': ['calculus_12', 'calculus_34'], 'algebra-solutions': ['algebra_solutions_u']}
+SITES = {'calculus-1': ['calculus_12', 'calculus_34'], 'algebra-solutions': ['algebra_solutions_u'],
+         'algebra-theory': ['algebra_theory_u']}
 
 
 def step_li(st):
@@ -52,14 +53,20 @@ def lines(ls):
 
 def section(n, num, d):
     sid = f'ex{n}-{d["id"]}'
-    h = f'\n      <h3 class="q" id="{sid}">{num}. {html.escape(d["title"])}</h3>\n'
+    h = f'\n      <h3 class="q" id="{sid}">{num}. {mathify(d["title"])}</h3>\n'
     h += f'      <div class="src-tag">📍 {html.escape(d["src"])}</div>\n'
     h += f'      <div class="callout callout-id"><div class="callout-title"></div><p>{mathify(d["ident"])}</p></div>\n'
+    for title, ls in d.get('defs', []):        # 📘 the definition itself (theory site)
+        h += (f'      <div class="box box-def"><div class="box-title">{mathify(title)}</div>'
+              + S.render_lines(ls) + '</div>\n')
     h += '      <div class="callout callout-steps"><div class="callout-title"></div><ol class="steps">\n'
     h += ''.join(step_li(st) for st in d['steps'])
     h += '      </ol></div>\n'
     for title, ls in d.get('thm', []):
         h += thm_box(title, ls)
+    for title, ls in d.get('proofs', []):      # 🔍 why it is true - opens on click
+        h += (f'      <details class="proof"><summary><span class="proof-name">{mathify(title)}</span></summary>'
+              + S.render_lines(ls) + '</details>\n')
     for f in d.get('formula', []):
         for part in f.split('\\qquad'):
             if part.strip():
@@ -83,11 +90,11 @@ def section(n, num, d):
 def unit(u):
     n = u['n']
     dt = f' data-toc="{html.escape(u["toc"])}"' if u.get('toc') else ''
-    h = (f'\n    <section class="exercise" id="ex{n}"{dt}>\n      <div class="ex-header">\n        <div class="ex-badge">{n}</div>\n'
+    h = (f'\n    <section class="exercise" id="ex{n}"{dt}>\n      <div class="ex-header">\n        <div class="ex-badge">{u.get("badge", n)}</div>\n'
          f'        <h2 class="ex-title">{html.escape(u["title"])}</h2>\n      </div>\n'
          f'      <p class="ex-intro">{html.escape(u["intro"])}</p>\n')
     toc = (f'<li class="toc-group"><details class="toc-details" id="details-{n}"><summary><a href="#ex{n}" class="top-link" data-ex="{n}">'
-           f'<span class="num">{n}</span><span>{html.escape(u["short"])}</span></a></summary><ul class="sub-toc">\n')
+           f'<span class="num">{u.get("badge", n)}</span><span>{html.escape(u["short"])}</span></a></summary><ul class="sub-toc">\n')
     num = 0
     for pi, (ptitle, secs) in enumerate(u['parts'], 1):
         style = 'margin-top:0;font-size:1.4rem;' if pi == 1 else 'font-size:1.4rem;margin-top:56px;'
@@ -96,11 +103,11 @@ def unit(u):
         for d in secs:
             num += 1
             h += section(n, num, d)
-            toc += f'<li><a href="#ex{n}-{d["id"]}" data-ex="{n}">{num}. {html.escape(d["title"])}</a></li>\n'
-    h += f'\n      <div class="summary-sheet">\n        <div class="summary-sheet-title">✅ סיכום תרגיל {n} - דף נוסחאות מחשבתי</div>\n'
+            toc += f'<li><a href="#ex{n}-{d["id"]}" data-ex="{n}">{num}. {mathify(d["title"])}</a></li>\n'
+    h += f'\n      <div class="summary-sheet">\n        <div class="summary-sheet-title">{u.get("sum_title", f"✅ סיכום תרגיל {n} - דף נוסחאות מחשבתי")}</div>\n'
     h += ''.join(f'        <p><b>{mathify(a)}:</b> {mathify(b)}</p>\n' for a, b in u['summary'])
     h += '      </div>\n'
-    h += (f'\n      <div class="key-idea">\n        <h4>💡 הדבר שהכי חשוב להבין מכל תרגיל {n}</h4>\n        <p>{mathify(u["key"])}</p>\n      </div>\n'
+    h += (f'\n      <div class="key-idea">\n        <h4>{u.get("key_title", f"💡 הדבר שהכי חשוב להבין מכל תרגיל {n}")}</h4>\n        <p>{mathify(u["key"])}</p>\n      </div>\n'
           '      <div class="end-of-exercise"></div>\n    </section>\n')
     toc += '</ul></details></li>\n'
     return h, toc

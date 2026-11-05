@@ -1,74 +1,26 @@
 # -*- coding: utf-8 -*-
 # לכל שלב ב"שלבי הפתרון": המושגים שצריך להבין כדי לבצע אותו (ההסברים עצמם ב-concepts.py).
-# STEP_CONCEPTS[סעיף][מספר השלב, מ-0] = [מושגים]. NEW_STEPS[סעיף] = [(טקסט השלב, [מושגים])] לסעיף שאין בו רשימת שלבים.
+# STEP_CONCEPTS[סעיף][מספר השלב, מ-0] = [מושגים]. השלבים עצמם - ב-tools/units/algebra_theory_u.py.
 
-STEP_CONCEPTS = {'ex1-s6': {0: ['complex', 'plane', 'modulus', 'polar'], 1: ['radians', 'trig', 'argument'], 2: ['quadrant', 'argument'], 3: ['euler']}, 'ex1-s9': {0: ['polar', 'euler', 'demoivre'], 1: ['polar', 'argument'], 2: ['polareq'], 3: ['roots', 'fullturn']}, 'ex1-s11': {0: ['quadform'], 1: ['i', 'delta', 'equal'], 2: ['modulus', 'modrules'], 3: ['system'], 4: ['quadform']}, 'ex2-s5': {0: ['matrix', 'matadd', 'lincomb'], 1: ['mateq', 'system'], 2: ['system']}}
-
-NEW_STEPS = {
-'ex1-s1': [
-    ('כותבים את המספר בצורה $z=a+ib$ - כל מינוס נכנס לתוך $a$ או $b$.', ['i', 'complex']),
-    ('קוראים את החלקים: $\\operatorname{Re}(z)=a$, $\\ \\operatorname{Im}(z)=b$ - בלי ה-$i$.', ['complex']),
-    ('מסווגים: $b=0$ - ממשי; $a=0$ - מדומה טהור.', ['complex']),
-],
-'ex1-s2': [
-    ('חיבור: ממשי עם ממשי ומדומה עם מדומה: $z_1+z_2=(a_1+a_2)+i(b_1+b_2)$.', ['arith']),
-    ('כפל: פותחים סוגריים ומחליפים $i^2=-1$, או ישר לפי $z_1z_2=(a_1a_2-b_1b_2)+i(a_1b_2+a_2b_1)$.', ['i', 'arith']),
-    ('חילוק: מכפילים מונה ומכנה ב-$\\overline{z_2}$, ומפצלים לחלק ממשי ולחלק מדומה.', ['conj', 'division']),
-],
-'ex1-s3': [
-    ('לחישוב צמוד של ביטוי - מפעילים את תכונות הצמוד: הוא "עובר" על חיבור, כפל וחילוק.', ['conj', 'conjrules']),
-    ('כדי להוכיח שמספר ממשי - מראים $\\omega-\\overline\\omega=0$; מדומה טהור - $\\omega+\\overline\\omega=0$.', ['realimag']),
-    ('במכנה משותף, אחרי פתיחת סוגריים, מציבים את הנתון (למשל $z\\overline z=|z|^2=1$) - והמונה מתאפס.', ['zzbar']),
-],
-'ex1-s4': [
-    ('מחשבים מודול לפי $|a+ib|=\\sqrt{a^2+b^2}$.', ['modulus']),
-    ('למודול של מכפלה או מנה - לא מחשבים את הביטוי: מפרקים לפי התכונות ומחשבים כל גורם.', ['modrules']),
-    ('אם צריך קודם למצוא את $z$ (שלב 1 בתרגיל במצגת) - משווים חלק ממשי ומדומה.', ['equal']),
-],
-'ex1-s5': [
-    ('מסמנים את הזווית על מעגל היחידה: הנקודה היא $(\\cos\\alpha,\\sin\\alpha)$.', ['radians', 'trig']),
-    ('קוראים את ההיטלים (או מהטבלה), ומשלימים בעזרת $\\cos^2\\alpha+\\sin^2\\alpha=1$.', ['trig', 'pyth']),
-    ('$\\tan\\alpha=\\frac{\\sin\\alpha}{\\cos\\alpha}$; ברביעים אחרים - אותם ערכים, רק הסימנים משתנים.', ['trig', 'quadrant']),
-],
-'ex1-s7': [
-    ('מעבירים כל מספר להצגה קוטבית (סעיף 6).', ['polar', 'argument']),
-    ('כפל: מכפילים את המודולים ומחברים את הזוויות.', ['euler', 'polarmult']),
-    ('חילוק: מחלקים את המודולים ומחסירים את הזוויות.', ['polarmult']),
-],
-'ex1-s8': [
-    ('מעבירים את הבסיס להצגה קוטבית $re^{i\\theta}$.', ['polar', 'euler']),
-    ('מפעילים דה מואבר: $(re^{i\\theta})^n=r^ne^{in\\theta}$.', ['demoivre']),
-    ('מורידים סיבובים שלמים ($2\\pi$), וחוזרים לצורה קרטזית עם $\\cos$ ו-$\\sin$.', ['fullturn', 'trig']),
-],
-'ex1-s10': [
-    ('מחשבים $\\Delta=b^2-4ac$. אם $\\Delta<0$: $\\ z_{1,2}=\\frac{-b\\pm i\\sqrt{|\\Delta|}}{2a}$ - שני פתרונות צמודים.', ['quadform', 'negdelta']),
-    ('בפולינום עם מקדמים ממשיים ושורש $z_0$ ידוע: גם $\\overline{z_0}$ שורש, ו-$P$ מתחלק ב-$(z-z_0)(z-\\overline{z_0})$.', ['conjroot']),
-    ('חילוק ארוך של $P$ בגורם הריבועי, ופתרון המנה.', ['longdiv']),
-],
-'ex2-s1': [
-    ('סופרים שורות ($n$) ועמודות ($m$): $A\\in M_{n,m}$.', ['matrix']),
-    ('$a_{i,j}$ - האיבר בשורה $i$ ובעמודה $j$.', ['aij']),
-    ('שוויון: אותו סדר, ושוויון איבר-איבר.', ['mateq']),
-],
-'ex2-s2': [
-    ('קודם הסדר: ריבועית ($n\\times n$), וקטור שורה ($1\\times n$) או וקטור עמודה ($n\\times1$).', ['special']),
-    ('במטריצה ריבועית בודקים איפה האפסים ביחס לאלכסון הראשי.', ['special']),
-],
-'ex2-s3': [
-    ('בודקים שהסדרים שווים (בחיבור).', ['matadd']),
-    ('מחברים איבר-איבר; בכפל בסקלר - כופלים כל איבר.', ['matadd']),
-],
-'ex2-s4': [
-    ('בודקים שהמכפלה קיימת: מספר העמודות של הראשונה = מספר השורות של השנייה.', ['matmul']),
-    ('הסדר של התוצאה: שורות הראשונה × עמודות השנייה.', ['matmul']),
-    ('מחשבים כל איבר: $c_{i,j}$ = שורה $i$ כפול עמודה $j$.', ['matmul']),
-],
-'ex2-s6': [
-    ('בהוכחת סימטריה - מחשבים $M^t$ ומראים שהוא שווה ל-$M$.', ['symmetric', 'transpose']),
-    ('משחלפים לפי התכונות: $(A+B)^t=A^t+B^t$, $\\ (\\lambda A)^t=\\lambda A^t$, $\\ (AB)^t=B^tA^t$ (הסדר מתהפך), $\\ (A^t)^t=A$.', ['transpose']),
-],
-'ex2-s7': [
-    ('עקבה - סכום איברי האלכסון הראשי: $\\operatorname{tr}(A)=a_{1,1}+\\dots+a_{n,n}$ (רק למטריצה ריבועית).', ['trace']),
-    ('משתמשים בתכונות: $\\operatorname{tr}(A+B)=\\operatorname{tr}A+\\operatorname{tr}B$, $\\ \\operatorname{tr}(\\lambda A)=\\lambda\\operatorname{tr}A$, $\\ \\operatorname{tr}(A^t)=\\operatorname{tr}A$, $\\ \\operatorname{tr}(AB)=\\operatorname{tr}(BA)$.', ['trace', 'matmul']),
-],
+STEP_CONCEPTS = {
+ 'ex1-s1': {0: ['i', 'complex'], 1: ['plane'], 3: ['ipow']},
+ 'ex1-s2': {0: ['arith'], 1: ['expand'], 2: ['conj', 'division'], 3: ['zzbar']},
+ 'ex1-s3': {0: ['conj'], 1: ['conjrules'], 3: ['realimag'], 4: ['zzbar', 'modulus']},
+ 'ex1-s4': {0: ['modulus'], 1: ['pyth'], 2: ['modrules'], 3: ['zzbar'], 4: ['equal']},
+ 'ex1-s5': {0: ['radians', 'trig'], 2: ['pyth'], 3: ['quadrant']},
+ 'ex1-s6': {0: ['modulus'], 1: ['trig', 'argument'], 2: ['quadrant'], 3: ['polar', 'euler']},
+ 'ex1-s7': {0: ['polar'], 1: ['polarmult'], 3: ['trig']},
+ 'ex1-s8': {0: ['polar', 'euler'], 1: ['demoivre'], 2: ['fullturn'], 3: ['trig']},
+ 'ex1-s9': {0: ['polar'], 1: ['demoivre'], 2: ['polareq'], 3: ['roots', 'fullturn']},
+ 'ex1-s10': {0: ['quadform', 'delta'], 1: ['negdelta'], 2: ['conjroot'], 3: ['polyroot'], 4: ['longdiv']},
+ 'ex1-s11': {0: ['quadform'], 1: ['equal'], 2: ['modulus', 'modrules'], 3: ['system']},
+ 'ex2-s1': {0: ['matrix'], 1: ['aij'], 3: ['mateq']},
+ 'ex2-s2': {0: ['special']},
+ 'ex2-s3': {0: ['matadd']},
+ 'ex2-s4': {0: ['matmul']},
+ 'ex2-s5': {0: ['lincomb'], 1: ['matadd'], 2: ['mateq'], 3: ['system']},
+ 'ex2-s6': {0: ['transpose'], 1: ['symmetric']},
+ 'ex2-s7': {0: ['trace']},
 }
+
+NEW_STEPS = {}

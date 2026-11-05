@@ -428,6 +428,125 @@ def d_dots():
     return box(p.svg('נקודה מלאה וריקה'), 'ב-'+L('x = 0')+' הנקודה המלאה שייכת לגרף, הריקה לא')
 
 
+
+# ---------------------------------------------------------------- מטריצות
+SOFT = {PURPLE: '#EFE7F8', GREEN: '#E3F2EE', BLUE: '#E6ECF7', ORANGE: '#FBF0DC', RED: '#F8E4E1', GREY: '#F1F2F5'}
+
+
+def _mat(el, x, y, rows, fill=None, cw=30, ch=26, label='', strike=None):
+    """a matrix with square brackets at (x,y) = top-left; fill = {(i,j): color}. returns width"""
+    n, m = len(rows), len(rows[0])
+    fill = fill or {}
+    w, h = m * cw, n * ch
+    for (i, j), c in fill.items():
+        el.append(f'<rect x="{x + j * cw + 1}" y="{y + i * ch + 1}" width="{cw - 2}" height="{ch - 2}" rx="4" fill="{SOFT.get(c, c)}" stroke="{c}" stroke-width="1.4"/>')
+    for i, r in enumerate(rows):
+        for j, v in enumerate(r):
+            col = GREY if str(v) in ('0', '0.') and (i, j) not in fill else INK
+            el.append(f'<text x="{x + j * cw + cw / 2}" y="{y + i * ch + ch / 2 + 5}" font-size="14" text-anchor="middle" fill="{col}" '
+                      f'direction="ltr" unicode-bidi="embed" font-family="\'Times New Roman\',serif">{str(v).replace("-", "−")}</text>')
+    b = 6
+    el.append(f'<path d="M{x + b},{y - 2} L{x - 1},{y - 2} L{x - 1},{y + h + 2} L{x + b},{y + h + 2}" fill="none" stroke="{INK}" stroke-width="1.5"/>')
+    el.append(f'<path d="M{x + w - b},{y - 2} L{x + w + 1},{y - 2} L{x + w + 1},{y + h + 2} L{x + w - b},{y + h + 2}" fill="none" stroke="{INK}" stroke-width="1.5"/>')
+    if label:
+        el.append(f'<text x="{x + w / 2}" y="{y + h + 20}" font-size="13" text-anchor="middle" fill="{GREY}" direction="ltr" unicode-bidi="embed" font-family="\'Times New Roman\',serif" font-style="italic">{label}</text>')
+    return w
+
+
+def _t(el, x, y, s, size=15, color=INK, heb=False, anchor='middle', bold=False):
+    fam = "'Assistant',sans-serif" if heb else "'Times New Roman',serif"
+    d = 'rtl' if heb else 'ltr'
+    bw = ' font-weight="700"' if bold else ''
+    el.append(f'<text x="{x}" y="{y}" font-size="{size}" text-anchor="{anchor}" fill="{color}"{bw} direction="{d}" unicode-bidi="embed" font-family="{fam}">{s}</text>')
+
+
+def _svg(el, w, h, label):
+    return (f'<svg viewBox="0 0 {w} {h}" role="img" aria-label="{label}" direction="ltr" xmlns="http://www.w3.org/2000/svg">'
+            + ''.join(el) + '</svg>')
+
+
+def d_matindex():
+    el = []
+    _t(el, 30, 72, 'A =', 16)
+    _mat(el, 60, 46, [[2, 3, 4], [6, 7, 8]], {(0, 1): ORANGE, (0, 0): PURPLE, (0, 2): PURPLE, (1, 1): GREEN})
+    el.append(f'<path d="M150,59 L215,59" stroke="{PURPLE}" stroke-width="1.6" marker-end="url(#mi1)"/>')
+    el.append(f'<defs><marker id="mi1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="{PURPLE}"/></marker>'
+              f'<marker id="mi2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="{GREEN}"/></marker></defs>')
+    _t(el, 222, 63, 'שורה 1', 13, PURPLE, True, 'start')
+    el.append(f'<path d="M105,128 L105,104" stroke="{GREEN}" stroke-width="1.6" marker-end="url(#mi2)"/>')
+    _t(el, 105, 145, 'עמודה 2', 13, GREEN, True)
+    _t(el, 222, 112, 'a₁,₂ = 3', 15, ORANGE, False, 'start', True)
+    return box(_svg(el, 320, 160, 'איבר במטריצה'), 'האיבר '+L('a₁,₂')+' נמצא בשורה הראשונה ובעמודה השנייה', [(PURPLE, 'השורה'), (GREEN, 'העמודה'), (ORANGE, 'האיבר')])
+
+
+def d_matmul():
+    el = []
+    w1 = _mat(el, 20, 70, [[2, 3], [1, -2]], {(0, 0): PURPLE, (0, 1): PURPLE})
+    _mat(el, 90, 14, [[2, 3, 4], [3, 4, 5]], {(0, 2): GREEN, (1, 2): GREEN})
+    _mat(el, 90, 70, [[13, 18, 23], [-4, -5, -6]], {(0, 2): ORANGE})
+    _t(el, 160, 150, '2·4 + 3·5 = 23', 15, ORANGE, False, 'middle', True)
+    _t(el, 45, 130, '2×2', 12, GREY); _t(el, 135, 8, '2×3', 12, GREY)
+    return box(_svg(el, 300, 165, 'כפל מטריצות'), 'האיבר בשורה 1 ובעמודה 3 של '+L('AB')+': שורה 1 של '+L('A')+' "כפול" עמודה 3 של '+L('B'),
+               [(PURPLE, 'שורה של '+L('A')), (GREEN, 'עמודה של '+L('B')), (ORANGE, 'האיבר בתוצאה')])
+
+
+def d_mattypes():
+    el = []
+    D = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    kinds = [('אלכסונית', [['a', 0, 0], [0, 'b', 0], [0, 0, 'c']], {(0, 0), (1, 1), (2, 2)}),
+             ('משולשת עליונה', [['a', 'b', 'c'], [0, 'd', 'e'], [0, 0, 'f']], {(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)}),
+             ('משולשת תחתונה', [['a', 0, 0], ['b', 'c', 0], ['d', 'e', 'f']], {(0, 0), (1, 0), (1, 1), (2, 0), (2, 1), (2, 2)}),
+             ('יחידה', [[1, 0, 0], [0, 1, 0], [0, 0, 1]], {(0, 0), (1, 1), (2, 2)})]
+    x = 14
+    for name, rows, nz in kinds:
+        _mat(el, x, 14, rows, {c: BLUE for c in nz}, cw=22, ch=22)
+        _t(el, x + 33, 108, name, 12, BLUE, True)
+        x += 86
+    return box(_svg(el, 350, 120, 'סוגי מטריצות ריבועיות'), 'המשבצות הצבועות - איפה מותר שיהיו מספרים שונים מ-0. כל השאר אפסים.')
+
+
+def d_transpose():
+    el = []
+    _mat(el, 20, 30, [[1, 2, 3], [4, 5, 6]], {(0, 0): PURPLE, (0, 1): PURPLE, (0, 2): PURPLE, (1, 0): GREEN, (1, 1): GREEN, (1, 2): GREEN}, label='A (2×3)')
+    el.append(f'<defs><marker id="mt1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="{INK}"/></marker></defs>')
+    el.append(f'<path d="M126,56 L176,56" stroke="{INK}" stroke-width="1.6" marker-end="url(#mt1)"/>')
+    _mat(el, 196, 16, [[1, 4], [2, 5], [3, 6]], {(0, 0): PURPLE, (1, 0): PURPLE, (2, 0): PURPLE, (0, 1): GREEN, (1, 1): GREEN, (2, 1): GREEN}, label='Aᵗ (3×2)')
+    return box(_svg(el, 280, 120, 'שחלוף'), 'השורה הראשונה של '+L('A')+' הופכת לעמודה הראשונה של '+L('Aᵗ'),
+               [(PURPLE, 'שורה 1 ← עמודה 1'), (GREEN, 'שורה 2 ← עמודה 2')])
+
+
+def d_matcols():
+    el = []
+    cols = [BLUE, GREEN, ORANGE, PURPLE]
+    A = [[2, 3, 3, 1], [3, 2, 1, 2], [4, 5, 2, 3]]
+    _mat(el, 16, 20, A, {(i, j): cols[j] for i in range(3) for j in range(4)}, cw=26)
+    _mat(el, 130, 8, [[5], [7], [8], [3]], {(k, 0): cols[k] for k in range(4)}, cw=26, ch=22)
+    _t(el, 176, 62, '=', 16)
+    x = 192
+    for k, c in enumerate([5, 7, 8, 3]):
+        _t(el, x + 4, 62, f'{c}·', 14, cols[k])
+        _mat(el, x + 14, 20, [[A[0][k]], [A[1][k]], [A[2][k]]], {(i, 0): cols[k] for i in range(3)}, cw=20)
+        if k < 3:
+            _t(el, x + 42, 62, '+', 14)
+        x += 50
+    return box(_svg(el, 400, 110, 'מכפלה בווקטור'), 'מטריצה כפול וקטור = צירוף לינארי של העמודות, עם המקדמים מהווקטור')
+
+
+def d_trace():
+    el = []
+    _t(el, 26, 52, 'A =', 16)
+    _mat(el, 56, 14, [[1, 3, -5], [7, 8, 3], [0, 1, 3]], {(0, 0): ORANGE, (1, 1): ORANGE, (2, 2): ORANGE})
+    _t(el, 170, 52, 'tr(A) = 1 + 8 + 3 = 12', 15, ORANGE, False, 'start', True)
+    return box(_svg(el, 360, 100, 'עקבה'), 'העקבה - סכום האיברים על האלכסון הראשי (משמאל למעלה לימין למטה)')
+
+
+def d_matdiag():
+    el = []
+    _mat(el, 20, 14, [[1, 3, 5], [3, 8, 4], [5, 4, 0]], {(0, 1): PURPLE, (1, 0): PURPLE, (0, 2): GREEN, (2, 0): GREEN, (1, 2): ORANGE, (2, 1): ORANGE}, label='סימטרית')
+    _mat(el, 170, 14, [[0, 3, 5], [-3, 0, -4], [-5, 4, 0]], {(0, 0): GREY, (1, 1): GREY, (2, 2): GREY, (0, 1): PURPLE, (1, 0): PURPLE, (0, 2): GREEN, (2, 0): GREEN, (1, 2): ORANGE, (2, 1): ORANGE}, label='אנטי-סימטרית')
+    return box(_svg(el, 290, 110, 'סימטרית ואנטי-סימטרית'), 'משבצות באותו צבע - מקומות "משוקפים" ביחס לאלכסון. בסימטרית הם שווים, באנטי-סימטרית הם נגדיים, והאלכסון 0.')
+
+
 DIAGRAMS = {
     'plane': d_plane, 'polar': d_polar, 'polar_m5': d_polar_m5, 'modulus': d_modulus, 'conj': d_conj,
     'quadrants': d_quadrants, 'argument': d_argument, 'unit': d_unit, 'euler': d_euler, 'polarmult': d_polarmult,
@@ -435,6 +554,8 @@ DIAGRAMS = {
     'sincos': d_sincos, 'logexp': d_logexp, 'transform': d_transform, 'parity': d_parity, 'absgraph': d_absgraph,
     'period': d_period, 'floor': d_floor, 'injective': d_injective, 'interval': d_numline_interval,
     'signtable': d_signtable, 'dots': d_dots,
+    'matindex': d_matindex, 'matmul': d_matmul, 'mattypes': d_mattypes, 'transpose': d_transpose,
+    'matcols': d_matcols, 'trace': d_trace, 'matsym': d_matdiag,
 }
 
 

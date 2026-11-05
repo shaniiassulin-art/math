@@ -226,6 +226,9 @@ def norm_src(src):
     """one uniform, short source line: '<file> · <where>'"""
     t = re.sub(r'^הנתונים של ', '', src.strip())
     t = re.sub(r'\$[^$]*\$', '', t)
+    sl = re.search(r'\((שקפים? [\d\-,\s]+)\)', t)          # slides: '<file> · פרק N · שקפים a-b'
+    if sl:
+        t = t[:sl.start()].strip()
     m = re.match(r'(.+?)(?:, | - )(.*)$', t)
     head, rest = (m.group(1), m.group(2)) if m else (t, '')
     rest = rest.strip()
@@ -237,6 +240,9 @@ def norm_src(src):
     elif rest.startswith('התרגיל בסוף'):
         rest = 'סוף המצגת'
     rest = re.sub(r'(שאלה \d+)\s*\(([א-ת]),\s*([א-ת])\)', r'\1\2-\3', rest)
+    if sl:
+        ch = re.search(r'פרק \d+', t)
+        rest = (ch.group(0) + ' · ' if ch else '') + sl.group(1).strip()
     return head.strip() + (' · ' + rest if rest else '')
 
 
@@ -271,8 +277,9 @@ def render_one(sid, d, tips=(), num=None):
         raise ValueError(f'{sid}: tips point to missing lines {sorted(lost)}')
     steps = steps.replace('</div><!--/flow--><div class="flow">', '<div class="fl-arr">↓</div>')   # consecutive calculation steps: one chain with arrows
     return (f'\n      <!-- sample:start --><div class="box box-q sample" id="{sid}-sample">'
-            f'<div class="box-title"><span class="sample-src">📍 {norm_src(d["src"])}'
-            + (f'<span class="sample-num">{num[0]} מתוך {num[1]}</span>' if num and num[1] > 1 else '') + '</span></div>'
+            f'<div class="box-title"><span class="sample-src">'
+            + (f'<span class="sample-num">{num[0]} מתוך {num[1]}</span>' if num and num[1] > 1 else '')
+            + f'📍 {norm_src(d["src"])}</span></div>'
             f'<p class="sample-q">{mathify(d["q"])}</p>'
             f'<button type="button" class="sample-btn" aria-expanded="false" aria-controls="{sid}-sol">'
             f'<span class="sb-show">הצגת הפתרון</span><span class="sb-hide">הסתרת הפתרון</span></button>'
@@ -448,7 +455,7 @@ ASSETS = '''<!-- samples-assets:start -->
   .sample > .box-title::after{ content:none !important; }
   .sample > .box-title{ flex-direction:column; align-items:flex-start; gap:2px; }
   .sample > .box-title::before{ border:none !important; padding:0 !important; }
-  .sample-num{ margin-inline-start:10px; font-size:.78rem; background:rgba(255,255,255,.22); border-radius:100px; padding:1px 9px; font-weight:700; }
+  .sample-num{ unicode-bidi:isolate; display:inline-block; margin-inline-end:8px; font-size:.78rem; background:rgba(255,255,255,.22); border-radius:100px; padding:1px 9px; font-weight:700; }
   .sample + .sample, .sample + * + .sample{ margin-top:14px; }
   /* פירוט בתוך שלב בפתרון: הסבר, דוגמה ותרשים */
   .step-more{ margin:8px 0 4px; }
