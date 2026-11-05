@@ -462,7 +462,9 @@ ASSETS = '''<!-- samples-assets:start -->
   /* פירוט בתוך שלב בפתרון: הסבר, דוגמה ותרשים */
   .step-more{ margin:8px 0 4px; }
   .step-learn{ margin:10px 0 6px; font-weight:400; }
-  .step-learn{ border-inline-start:3px solid #C9D3EA; padding-inline-start:10px; }
+  .warn-list{ margin:6px 0 0; padding-inline-start:22px; }
+  .warn-list li{ margin:6px 0; line-height:1.7; }
+  .warn-list li::marker{ color:#B5452F; }
   .step-learn .sl-h{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px; font-weight:800; color:#2C3A5E; margin:0 0 4px; }
   .step-learn .sl-h::before{ content:"📘"; }
   .steps > li .step-learn .kv, .steps > li .step-learn .flow, .steps > li .step-learn .dia, .steps > li .step-learn .ex-tag-row{ margin-right:-38px !important; }

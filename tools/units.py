@@ -51,6 +51,30 @@ def lines(ls):
     return out
 
 
+def warn_items(w):
+    """the common mistakes as separate bullets: split on ';' (outside formulas), and on a sentence that starts a new mistake ('ול...', 'וב...', 'וגם:')"""
+    if isinstance(w, (list, tuple)):
+        return list(w)
+    parts, buf, inm = [], '', False
+    for ch in w:
+        if ch == '$':
+            inm = not inm
+        if ch == ';' and not inm:
+            parts.append(buf); buf = ''
+        else:
+            buf += ch
+    parts.append(buf)
+    out = []
+    for p in parts:
+        for q in re.split(r'(?<=\.) (?=ול|וב|וגם: )', p.strip()):
+            q = q.strip()
+            q = re.sub(r'^וגם:\s*', '', q)
+            q = re.sub(r'^ו(?=ל|ב)', '', q)
+            if q:
+                out.append(q[:-1] if q.endswith('.') and q.count('.') == 1 and not q.endswith('..') else q)
+    return out
+
+
 def section(n, num, d):
     sid = f'ex{n}-{d["id"]}'
     h = f'\n      <h3 class="q" id="{sid}">{num}. {mathify(d["title"])}</h3>\n'
@@ -82,7 +106,8 @@ def section(n, num, d):
         h += '      ' + dg + '\n'
     if d.get('ex'):
         h += '      ' + lines(d['ex']) + '\n'
-    h += f'      <div class="callout callout-warn">\n        <div class="callout-title">טעויות נפוצות</div>\n        <p>{mathify(d["warn"])}</p>\n      </div>\n'
+    items = ''.join(f'<li>{mathify(w)}</li>' for w in warn_items(d['warn']))
+    h += f'      <div class="callout callout-warn">\n        <div class="callout-title">טעויות נפוצות</div>\n        <ul class="warn-list">{items}</ul>\n      </div>\n'
     h += f'      <div class="callout callout-check"><div class="callout-title"></div><p>{mathify(d["check"])}</p></div>\n'
     return h
 
