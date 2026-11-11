@@ -194,7 +194,15 @@ def m(latex, display=False):
     # lim with its condition underneath (like in the course files), not as a subscript beside it
     x = re.sub(r'<msub><mo>lim</mo>(<mrow>.*?</mrow>|<m[ion]>[^<]*</m[ion]>)</msub>',
                r'<munder><mo movablelimits="false">lim</mo>\1</munder>', x, flags=re.S)
-    return x
+    return fix_bars(x)
+
+
+def fix_bars(x):
+    """the bar of the conjugate (z̄): U+2015 is not drawn by the phone's browser (Safari), and then z·z̄ looks like 'zz'.
+    One letter gets a macron (¯) - an ordinary character every font draws; a longer expression gets the overline character ‾."""
+    x = re.sub(r'<mover>(?:<mrow>)?(<mi>[^<]*</mi>|<msub><mi>[^<]*</mi><m[in]>[^<]*</m[in]></msub>|<msup><mi>[^<]*</mi><m[in]>[^<]*</m[in]></msup>)(?:</mrow>)?<mo accent="true">&#x02015;</mo></mover>',
+               r'<mover accent="true">\1<mo stretchy="false">&#x000AF;</mo></mover>', x)
+    return x.replace('<mo accent="true">&#x02015;</mo>', '<mo stretchy="true" accent="true">&#x0203E;</mo>')
 
 
 REL = ['\\Leftrightarrow', '\\Rightarrow', '\\Leftarrow', '\\iff', '\\leq', '\\geq', '\\neq', '\\approx', '=', '<', '>']

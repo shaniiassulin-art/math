@@ -1064,6 +1064,7 @@ def main():
     for site in SITES:
         p = os.path.join(ROOT, site, 'index.html')
         page, missing, n = apply(site, open(p, encoding='utf-8').read())
+        page = R.fix_bars(page)
         open(p, 'w', encoding='utf-8').write(page)
         print(f'{site}: {n} sample questions' + (f'; missing: {missing}' if missing else ''))
 
