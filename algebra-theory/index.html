@@ -3398,6 +3398,9 @@ try {
   .xm-done-badge button{ border:0; background:none; color:#1E6B57; text-decoration:underline; font:inherit; font-weight:700; cursor:pointer; padding:0 2px; }
   /* ===== הדפסה / שמירה כ-PDF: רק השאלות, בלי פתרונות ===== */
   .xm-print{ display:none; }
+  .xm-go.xm-pdf{ margin:16px 0 22px; padding:8px 16px; line-height:1.35; }
+  .xm-pdf-note{ margin:-10px 0 20px; }
+  .xm-pdf-note[hidden]{ display:none; }
   @media print{
     @page{ size:A4; margin:16mm 14mm; }
     body.xm-printing{ overflow:visible !important; background:#fff !important; }
@@ -3611,19 +3614,31 @@ try {
       var sp = document.createElement('div'); sp.className = 'xp-space'; w.appendChild(sp);
       pr.appendChild(w);
     });
-    var oldTitle = document.title;
+    var oldTitle = document.title, opened = false;
     document.title = 'מבחן - ' + site.trim() + ' - ' + date;
     document.body.classList.add('xm-printing');
-    function after(){ document.body.classList.remove('xm-printing'); document.title = oldTitle; window.removeEventListener('afterprint', after); }
+    function before(){ opened = true; }
+    function after(){ document.body.classList.remove('xm-printing'); document.title = oldTitle; window.removeEventListener('afterprint', after); window.removeEventListener('beforeprint', before); }
+    window.addEventListener('beforeprint', before);
     window.addEventListener('afterprint', after);
-    setTimeout(function(){ try { window.print(); } catch(e){ after(); } }, 60);
+    var note = document.getElementById('xmPdfNote');
+    var how = 'אם חלון ההדפסה לא נפתח: באייפון - לחצי על כפתור השיתוף של ספארי (הריבוע עם החץ) ← "הדפסה", ושם על כפתור השיתוף ← "שמירה בקבצים". במחשב - Ctrl+P (או ⌘+P) ובחרי "שמירה כ-PDF". יודפסו רק השאלות, בלי הפתרונות.';
+    if(window.navigator.standalone){
+      // באפליקציה ממסך הבית אין לאייפון הדפסה בכלל
+      if(note){ note.textContent = 'בגרסה שנפתחת ממסך הבית אין לאייפון אפשרות הדפסה. פתחי את האתר בספארי, צרי את המבחן ולחצי שוב על הכפתור.'; note.hidden = false; }
+      after(); return;
+    }
+    // חייב לקרות מיד בלחיצה - אחרת ספארי באייפון חוסם את חלון ההדפסה
+    try { window.print(); } catch(e){}
+    setTimeout(function(){ if(!opened){ document.title = oldTitle; if(note){ note.textContent = how; note.hidden = false; } } }, 1500);
   }
 
   function renderExam(cur){
     var qs = cur.ids.map(function(id){ return byId[id]; }).filter(Boolean);
     var h = '<div class="xm-note">' + (cur.short ? 'ביקשת ' + cur.short + ' שאלות, אבל נמצאו רק ' + qs.length + ' שמתאימות לבחירה (בלי שאלות שכבר ביצעת).' : '') + '</div>';
     h += '<div class="xm-card"><h3>מבחן · ' + qs.length + ' שאלות · ' + esc(cur.title) + '</h3><p class="xm-sub">פתרי כל שאלה לבד, ורק אחר כך פתחי את הפתרון. בסוף לחצי "סיימתי" - השאלות המסומנות ב-✓ לא יופיעו במבחנים הבאים.</p></div>';
-    h += '<button type="button" class="xm-go alt" id="xmPdf">📄 שמירה כ-PDF / הדפסה - השאלות בלי הפתרונות</button>';
+    h += '<button type="button" class="xm-go alt xm-pdf" id="xmPdf">📄 שמירה כ-PDF - בלי פתרונות</button>' +
+         '<p class="xm-note xm-pdf-note" id="xmPdfNote" hidden></p>';
     body.innerHTML = h;
     document.getElementById('xmPdf').onclick = function(){ printExam(cur, qs); };
     qs.forEach(function(q, k){
