@@ -11,7 +11,7 @@ build_hub.py - בונה את דף הבית (index.html) של אתר המתמטי
 Netlify מריץ את הסקריפט הזה בכל פרסום, כך שדף הבית תמיד מעודכן.
 שימוש:  python3 build_hub.py
 """
-import html, json, os, re, subprocess
+import html, json, os, re, subprocess, sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SHARED_KEY = 'mathGeminiKey_v1'
@@ -84,15 +84,19 @@ REFRESH_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
                'stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><polyline points="20 4 20 9 15 9"/></svg>')
 
 
-def topbar(home_html):
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tools'))
+from exam import EXAM_BTN_TOPBAR, ensure_exam  # noqa: E402
+
+
+def topbar(home_html, extra=''):
     return ('<!-- hub:topbar:start -->\n'
             '<div class="hub-topbar" role="navigation" aria-label="אתר המתמטיקה">'
-            + home_html +
+            + home_html + '<span class="hub-actions">' + extra +
             '<button type="button" class="hub-refresh" id="hubRefresh" aria-label="רענון: טעינת הגרסה העדכנית של האתר" title="רענון">'
-            + REFRESH_SVG + '<span>רענון</span></button></div>\n<!-- hub:topbar:end -->\n')
+            + REFRESH_SVG + '<span>רענון</span></button></span></div>\n<!-- hub:topbar:end -->\n')
 
 
-SUB_BAR = topbar('<a class="hub-home" href="../"><span aria-hidden="true">⌂</span> כל אתרי המתמטיקה</a>')
+SUB_BAR = topbar('<a class="hub-home" href="../"><span aria-hidden="true">⌂</span> כל אתרי המתמטיקה</a>', EXAM_BTN_TOPBAR)
 HUB_BAR = topbar('<span class="hub-home"><span aria-hidden="true">π</span> מתמטיקה</span>')
 
 TOPBAR_ASSETS = ("""<!-- hub:topbar-assets:start -->
@@ -536,6 +540,7 @@ def main():
         page = ensure_topbar_and_key(page)
         page = ensure_ai_v2(page)
         page = ensure_ai_v3(page)
+        page = ensure_exam(page, put_between)
         old_keys += old
         if write_if_changed(path, page):
             print(f"  עודכן: {s['slug']}/index.html")
