@@ -2785,8 +2785,24 @@ try {
   .xm-badges{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:6px; margin-inline-start:8px; vertical-align:middle; }
   .xm-done-badge{ display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:100px; background:#E3F2EE; color:#1E6B57; font-size:.8rem; font-weight:800; }
   .xm-done-badge button{ border:0; background:none; color:#1E6B57; text-decoration:underline; font:inherit; font-weight:700; cursor:pointer; padding:0 2px; }
-  @media print{ .xm-bar, .xm-mark, .xm-go, .sample-btn{ display:none !important; } .xm{ position:static; overflow:visible; } }
+  /* ===== הדפסה / שמירה כ-PDF: רק השאלות, בלי פתרונות ===== */
+  .xm-print{ display:none; }
+  @media print{
+    @page{ size:A4; margin:16mm 14mm; }
+    body.xm-printing{ overflow:visible !important; background:#fff !important; }
+    body.xm-printing > *:not(#xmPrint){ display:none !important; }
+    body.xm-printing #xmPrint{ display:block !important; direction:rtl; color:#000; font-size:12pt; line-height:1.65; }
+    .xm-print h1{ font-size:17pt; margin:0 0 2px; }
+    .xm-print .xp-meta{ color:#444; font-size:10pt; margin:0 0 10px; padding-bottom:8px; border-bottom:1.5px solid #000; }
+    .xm-print .xp-q{ break-inside:avoid; page-break-inside:avoid; padding:10px 0 0; margin:0 0 6px; }
+    .xm-print .xp-q h2{ font-size:13pt; margin:0 0 4px; }
+    .xm-print .xp-space{ height:3.2cm; border-bottom:1px dashed #aaa; }
+    .xm-print .box, .xm-print .box.sample{ border:0 !important; box-shadow:none !important; padding:0 !important; margin:0 !important; background:none !important; }
+    .xm-print .box::before{ display:none !important; }
+    .xm-print svg, .xm-print img{ max-width:100%; }
+  }
 </style>
+<div class="xm-print" id="xmPrint" aria-hidden="true"></div>
 <div class="xm" id="examApp" hidden role="dialog" aria-modal="true" aria-labelledby="xmTitle">
   <div class="xm-bar"><h2 id="xmTitle">📝 מחולל מבחנים</h2><button type="button" class="xm-x" id="xmClose" aria-label="סגירה">✕</button></div>
   <div class="xm-in" id="xmBody"></div>
@@ -2969,11 +2985,36 @@ try {
     return box;
   }
 
+  function printExam(cur, qs){
+    var pr = document.getElementById('xmPrint'); if(!pr) return;
+    if(pr.parentNode !== document.body) document.body.appendChild(pr);
+    var site = document.title.replace(/^מדריך למבחן\s*-?\s*/, '');
+    var d = new Date(), date = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+    pr.innerHTML = '<h1>מבחן · ' + esc(site.trim()) + '</h1><div class="xp-meta">' + qs.length + ' שאלות · ' + esc(cur.title) + ' · ' + date + '</div>';
+    qs.forEach(function(q, k){
+      var w = document.createElement('div'); w.className = 'xp-q';
+      w.innerHTML = '<h2>שאלה ' + (k + 1) + '</h2>';
+      var box = cloneQ(q, 'p' + k);
+      box.querySelectorAll('.box-title, .sample-btn, .sample-hint, .sample-sol, .sample-src, .xm-badges').forEach(function(x){ x.remove(); });
+      w.appendChild(box);
+      var sp = document.createElement('div'); sp.className = 'xp-space'; w.appendChild(sp);
+      pr.appendChild(w);
+    });
+    var oldTitle = document.title;
+    document.title = 'מבחן - ' + site.trim() + ' - ' + date;
+    document.body.classList.add('xm-printing');
+    function after(){ document.body.classList.remove('xm-printing'); document.title = oldTitle; window.removeEventListener('afterprint', after); }
+    window.addEventListener('afterprint', after);
+    setTimeout(function(){ try { window.print(); } catch(e){ after(); } }, 60);
+  }
+
   function renderExam(cur){
     var qs = cur.ids.map(function(id){ return byId[id]; }).filter(Boolean);
     var h = '<div class="xm-note">' + (cur.short ? 'ביקשת ' + cur.short + ' שאלות, אבל נמצאו רק ' + qs.length + ' שמתאימות לבחירה (בלי שאלות שכבר ביצעת).' : '') + '</div>';
     h += '<div class="xm-card"><h3>מבחן · ' + qs.length + ' שאלות · ' + esc(cur.title) + '</h3><p class="xm-sub">פתרי כל שאלה לבד, ורק אחר כך פתחי את הפתרון. בסוף לחצי "סיימתי" - השאלות המסומנות ב-✓ לא יופיעו במבחנים הבאים.</p></div>';
+    h += '<button type="button" class="xm-go alt" id="xmPdf">📄 שמירה כ-PDF / הדפסה - השאלות בלי הפתרונות</button>';
     body.innerHTML = h;
+    document.getElementById('xmPdf').onclick = function(){ printExam(cur, qs); };
     qs.forEach(function(q, k){
       var t = tById[q.topic];
       var card = document.createElement('div'); card.className = 'xm-q';
@@ -3015,6 +3056,22 @@ try {
     .files-section .file-hint{ display:block; }
   }
   .files-section .file-slice img, .files-section .slide img{ cursor:zoom-in; }
+  /* ===== קבצי הקורס בעמוד נפרד (#files) ===== */
+  body:not(.files-mode) .files-section{ display:none; }
+  body.files-mode .files-host > *:not(.files-section){ display:none !important; }
+  body.files-mode .files-section{ margin-top:0; padding-top:0; border-top:0; }
+  .files-back{ display:inline-flex; align-items:center; gap:6px; min-height:44px; margin:0 0 18px; padding:0 16px; border-radius:100px;
+    border:1.5px solid var(--line, #E4DCCB); background:#fff; color:var(--indigo-2, #1F2A47); font-family:inherit; font-weight:800; font-size:.95rem; cursor:pointer; }
+  .files-back:hover{ background:#F6F1E6; }
+  /* ===== כפתורים בתוכן העניינים: מרווח אחיד ===== */
+  .sidebar .search-box{ padding-bottom:0; margin-bottom:14px; }
+  .sidebar .search-status:empty{ min-height:0; padding:0; }
+  .sidebar .ai-open-btn, .sidebar .exam-open-btn, .sidebar .files-open-btn, .sidebar .collapse-all-btn{
+    display:flex; align-items:center; justify-content:center; width:100%; min-height:46px; margin:0 0 10px !important; border-radius:12px; box-sizing:border-box; }
+  .sidebar .collapse-all-btn{ margin-bottom:16px !important; }
+  .sidebar .files-open-btn{ padding:8px 12px; border:1.5px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;
+    font-weight:800; font-size:.95rem; text-decoration:none; }
+  .sidebar .files-open-btn:hover{ background:rgba(255,255,255,.18); }
   .fv{ position:fixed; inset:0; z-index:85; background:#20242E; display:flex; flex-direction:column; direction:rtl;
     font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; }
   .fv[hidden]{ display:none; }
@@ -3051,6 +3108,56 @@ try {
   var pagesEl = document.getElementById('fvPages'), scroll = document.getElementById('fvScroll');
   var title = document.getElementById('fvTitle'), num = document.getElementById('fvNum');
   var ZOOMS = [100, 140, 180, 240, 320], z = 1, imgs = [], pushed = false;
+  // ---------- קבצי הקורס כעמוד נפרד ----------
+  var fsec = document.getElementById('files');
+  if(fsec){
+    var host = fsec.parentElement; host.classList.add('files-host');
+    var back = document.createElement('button'); back.type = 'button'; back.className = 'files-back'; back.textContent = '→ חזרה למדריך';
+    fsec.insertBefore(back, fsec.firstChild);
+    // כפתור בתוכן העניינים, במקום השורה בסוף הרשימה
+    var tocLink = document.querySelector('#tocList a[href="#files"]'); if(tocLink && tocLink.closest('li')) tocLink.closest('li').remove();
+    var anchorBtn = document.querySelector('.sidebar .exam-open-btn') || document.querySelector('.sidebar .ai-open-btn');
+    if(anchorBtn){ var fb = document.createElement('a'); fb.className = 'files-open-btn'; fb.href = '#files'; fb.textContent = '📄 קבצי הקורס';
+      anchorBtn.parentNode.insertBefore(fb, anchorBtn.nextSibling); }
+    var mode = null, lastY = 0, cameIn = false, prevUrl = location.href;
+    var H = {push: history.pushState, replace: history.replaceState};
+    function target(){ var h = location.hash.slice(1); if(!h) return null; try { return document.getElementById(decodeURIComponent(h)); } catch(e){ return null; } }
+    function isFiles(){ var t = target(); return !!t && (t === fsec || fsec.contains(t)); }
+    function closeMenu(){ var mt = document.getElementById('menuToggle'); if(mt) mt.checked = false; }
+    // src: 'pop' (חזרה/קדימה בדפדפן), 'replace' (האתר החליף כתובת בלי רשומה בהיסטוריה), 'nav' (מעבר רגיל)
+    function update(src){
+      var on = isFiles(), t = target();
+      if(on === mode){ if(!on) prevUrl = location.href; return; }
+      if(on){
+        if(mode === false){
+          lastY = window.scrollY; cameIn = true;
+          // שיהיה אפשר לחזור ב"חזרה" של הדפדפן: מוסיפים רשומה בהיסטוריה
+          if(src === 'replace'){ var cur = location.href; try { H.replace.call(history, null, '', prevUrl); H.push.call(history, null, '', cur); } catch(e){} }
+        }
+        document.body.classList.add('files-mode'); closeMenu();
+        setTimeout(function(){ if(t && t !== fsec) t.scrollIntoView(); else window.scrollTo(0, 0); }, 0);
+      } else {
+        document.body.classList.remove('files-mode');
+        if(mode === true) setTimeout(function(){ if(t && src !== 'pop') t.scrollIntoView(); else window.scrollTo(0, lastY); }, 0);
+        prevUrl = location.href;
+      }
+      mode = on;
+    }
+    back.addEventListener('click', function(){
+      if(cameIn){ history.back(); return; }
+      try { H.push.call(history, null, '', location.pathname + location.search); } catch(e){}
+      update('nav'); window.scrollTo(0, 0);
+    });
+    window.addEventListener('hashchange', function(){ update('nav'); });
+    window.addEventListener('popstate', function(){ update('pop'); });
+    // קישורים באתר משנים את הכתובת עם replaceState / pushState (בלי hashchange)
+    history.pushState = function(){ var r = H.push.apply(history, arguments); update('nav'); return r; };
+    history.replaceState = function(){ var r = H.replace.apply(history, arguments); update('replace'); return r; };
+    // חיפוש בתוך המדריך - חוזרים למדריך
+    var ss = document.getElementById('siteSearch');
+    if(ss) ss.addEventListener('input', function(){ if(mode){ try { H.replace.call(history, null, '', location.pathname + location.search); } catch(e){} update('nav'); } });
+    update('nav');
+  }
   // ההינט בטלפון
   document.querySelectorAll('.files-section .file-hint').forEach(function(h){ h.textContent = '👆 לחיצה על עמוד פותחת אותו בגדול - עם הגדלה ומעבר בין העמודים.'; });
   function pagesOf(doc){

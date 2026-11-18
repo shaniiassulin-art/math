@@ -14,6 +14,22 @@ FILEVIEW_ASSETS = r"""<!-- fileview:start -->
     .files-section .file-hint{ display:block; }
   }
   .files-section .file-slice img, .files-section .slide img{ cursor:zoom-in; }
+  /* ===== קבצי הקורס בעמוד נפרד (#files) ===== */
+  body:not(.files-mode) .files-section{ display:none; }
+  body.files-mode .files-host > *:not(.files-section){ display:none !important; }
+  body.files-mode .files-section{ margin-top:0; padding-top:0; border-top:0; }
+  .files-back{ display:inline-flex; align-items:center; gap:6px; min-height:44px; margin:0 0 18px; padding:0 16px; border-radius:100px;
+    border:1.5px solid var(--line, #E4DCCB); background:#fff; color:var(--indigo-2, #1F2A47); font-family:inherit; font-weight:800; font-size:.95rem; cursor:pointer; }
+  .files-back:hover{ background:#F6F1E6; }
+  /* ===== כפתורים בתוכן העניינים: מרווח אחיד ===== */
+  .sidebar .search-box{ padding-bottom:0; margin-bottom:14px; }
+  .sidebar .search-status:empty{ min-height:0; padding:0; }
+  .sidebar .ai-open-btn, .sidebar .exam-open-btn, .sidebar .files-open-btn, .sidebar .collapse-all-btn{
+    display:flex; align-items:center; justify-content:center; width:100%; min-height:46px; margin:0 0 10px !important; border-radius:12px; box-sizing:border-box; }
+  .sidebar .collapse-all-btn{ margin-bottom:16px !important; }
+  .sidebar .files-open-btn{ padding:8px 12px; border:1.5px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;
+    font-weight:800; font-size:.95rem; text-decoration:none; }
+  .sidebar .files-open-btn:hover{ background:rgba(255,255,255,.18); }
   .fv{ position:fixed; inset:0; z-index:85; background:#20242E; display:flex; flex-direction:column; direction:rtl;
     font-family:'Assistant', system-ui, 'Arial Hebrew', Arial, sans-serif; }
   .fv[hidden]{ display:none; }
@@ -50,6 +66,56 @@ FILEVIEW_ASSETS = r"""<!-- fileview:start -->
   var pagesEl = document.getElementById('fvPages'), scroll = document.getElementById('fvScroll');
   var title = document.getElementById('fvTitle'), num = document.getElementById('fvNum');
   var ZOOMS = [100, 140, 180, 240, 320], z = 1, imgs = [], pushed = false;
+  // ---------- קבצי הקורס כעמוד נפרד ----------
+  var fsec = document.getElementById('files');
+  if(fsec){
+    var host = fsec.parentElement; host.classList.add('files-host');
+    var back = document.createElement('button'); back.type = 'button'; back.className = 'files-back'; back.textContent = '→ חזרה למדריך';
+    fsec.insertBefore(back, fsec.firstChild);
+    // כפתור בתוכן העניינים, במקום השורה בסוף הרשימה
+    var tocLink = document.querySelector('#tocList a[href="#files"]'); if(tocLink && tocLink.closest('li')) tocLink.closest('li').remove();
+    var anchorBtn = document.querySelector('.sidebar .exam-open-btn') || document.querySelector('.sidebar .ai-open-btn');
+    if(anchorBtn){ var fb = document.createElement('a'); fb.className = 'files-open-btn'; fb.href = '#files'; fb.textContent = '📄 קבצי הקורס';
+      anchorBtn.parentNode.insertBefore(fb, anchorBtn.nextSibling); }
+    var mode = null, lastY = 0, cameIn = false, prevUrl = location.href;
+    var H = {push: history.pushState, replace: history.replaceState};
+    function target(){ var h = location.hash.slice(1); if(!h) return null; try { return document.getElementById(decodeURIComponent(h)); } catch(e){ return null; } }
+    function isFiles(){ var t = target(); return !!t && (t === fsec || fsec.contains(t)); }
+    function closeMenu(){ var mt = document.getElementById('menuToggle'); if(mt) mt.checked = false; }
+    // src: 'pop' (חזרה/קדימה בדפדפן), 'replace' (האתר החליף כתובת בלי רשומה בהיסטוריה), 'nav' (מעבר רגיל)
+    function update(src){
+      var on = isFiles(), t = target();
+      if(on === mode){ if(!on) prevUrl = location.href; return; }
+      if(on){
+        if(mode === false){
+          lastY = window.scrollY; cameIn = true;
+          // שיהיה אפשר לחזור ב"חזרה" של הדפדפן: מוסיפים רשומה בהיסטוריה
+          if(src === 'replace'){ var cur = location.href; try { H.replace.call(history, null, '', prevUrl); H.push.call(history, null, '', cur); } catch(e){} }
+        }
+        document.body.classList.add('files-mode'); closeMenu();
+        setTimeout(function(){ if(t && t !== fsec) t.scrollIntoView(); else window.scrollTo(0, 0); }, 0);
+      } else {
+        document.body.classList.remove('files-mode');
+        if(mode === true) setTimeout(function(){ if(t && src !== 'pop') t.scrollIntoView(); else window.scrollTo(0, lastY); }, 0);
+        prevUrl = location.href;
+      }
+      mode = on;
+    }
+    back.addEventListener('click', function(){
+      if(cameIn){ history.back(); return; }
+      try { H.push.call(history, null, '', location.pathname + location.search); } catch(e){}
+      update('nav'); window.scrollTo(0, 0);
+    });
+    window.addEventListener('hashchange', function(){ update('nav'); });
+    window.addEventListener('popstate', function(){ update('pop'); });
+    // קישורים באתר משנים את הכתובת עם replaceState / pushState (בלי hashchange)
+    history.pushState = function(){ var r = H.push.apply(history, arguments); update('nav'); return r; };
+    history.replaceState = function(){ var r = H.replace.apply(history, arguments); update('replace'); return r; };
+    // חיפוש בתוך המדריך - חוזרים למדריך
+    var ss = document.getElementById('siteSearch');
+    if(ss) ss.addEventListener('input', function(){ if(mode){ try { H.replace.call(history, null, '', location.pathname + location.search); } catch(e){} update('nav'); } });
+    update('nav');
+  }
   // ההינט בטלפון
   document.querySelectorAll('.files-section .file-hint').forEach(function(h){ h.textContent = '👆 לחיצה על עמוד פותחת אותו בגדול - עם הגדלה ומעבר בין העמודים.'; });
   function pagesOf(doc){

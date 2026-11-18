@@ -75,8 +75,24 @@ EXAM_ASSETS = r"""<!-- exam:start -->
   .xm-badges{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:6px; margin-inline-start:8px; vertical-align:middle; }
   .xm-done-badge{ display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:100px; background:#E3F2EE; color:#1E6B57; font-size:.8rem; font-weight:800; }
   .xm-done-badge button{ border:0; background:none; color:#1E6B57; text-decoration:underline; font:inherit; font-weight:700; cursor:pointer; padding:0 2px; }
-  @media print{ .xm-bar, .xm-mark, .xm-go, .sample-btn{ display:none !important; } .xm{ position:static; overflow:visible; } }
+  /* ===== הדפסה / שמירה כ-PDF: רק השאלות, בלי פתרונות ===== */
+  .xm-print{ display:none; }
+  @media print{
+    @page{ size:A4; margin:16mm 14mm; }
+    body.xm-printing{ overflow:visible !important; background:#fff !important; }
+    body.xm-printing > *:not(#xmPrint){ display:none !important; }
+    body.xm-printing #xmPrint{ display:block !important; direction:rtl; color:#000; font-size:12pt; line-height:1.65; }
+    .xm-print h1{ font-size:17pt; margin:0 0 2px; }
+    .xm-print .xp-meta{ color:#444; font-size:10pt; margin:0 0 10px; padding-bottom:8px; border-bottom:1.5px solid #000; }
+    .xm-print .xp-q{ break-inside:avoid; page-break-inside:avoid; padding:10px 0 0; margin:0 0 6px; }
+    .xm-print .xp-q h2{ font-size:13pt; margin:0 0 4px; }
+    .xm-print .xp-space{ height:3.2cm; border-bottom:1px dashed #aaa; }
+    .xm-print .box, .xm-print .box.sample{ border:0 !important; box-shadow:none !important; padding:0 !important; margin:0 !important; background:none !important; }
+    .xm-print .box::before{ display:none !important; }
+    .xm-print svg, .xm-print img{ max-width:100%; }
+  }
 </style>
+<div class="xm-print" id="xmPrint" aria-hidden="true"></div>
 <div class="xm" id="examApp" hidden role="dialog" aria-modal="true" aria-labelledby="xmTitle">
   <div class="xm-bar"><h2 id="xmTitle">📝 מחולל מבחנים</h2><button type="button" class="xm-x" id="xmClose" aria-label="סגירה">✕</button></div>
   <div class="xm-in" id="xmBody"></div>
@@ -259,11 +275,36 @@ EXAM_ASSETS = r"""<!-- exam:start -->
     return box;
   }
 
+  function printExam(cur, qs){
+    var pr = document.getElementById('xmPrint'); if(!pr) return;
+    if(pr.parentNode !== document.body) document.body.appendChild(pr);
+    var site = document.title.replace(/^מדריך למבחן\s*-?\s*/, '');
+    var d = new Date(), date = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+    pr.innerHTML = '<h1>מבחן · ' + esc(site.trim()) + '</h1><div class="xp-meta">' + qs.length + ' שאלות · ' + esc(cur.title) + ' · ' + date + '</div>';
+    qs.forEach(function(q, k){
+      var w = document.createElement('div'); w.className = 'xp-q';
+      w.innerHTML = '<h2>שאלה ' + (k + 1) + '</h2>';
+      var box = cloneQ(q, 'p' + k);
+      box.querySelectorAll('.box-title, .sample-btn, .sample-hint, .sample-sol, .sample-src, .xm-badges').forEach(function(x){ x.remove(); });
+      w.appendChild(box);
+      var sp = document.createElement('div'); sp.className = 'xp-space'; w.appendChild(sp);
+      pr.appendChild(w);
+    });
+    var oldTitle = document.title;
+    document.title = 'מבחן - ' + site.trim() + ' - ' + date;
+    document.body.classList.add('xm-printing');
+    function after(){ document.body.classList.remove('xm-printing'); document.title = oldTitle; window.removeEventListener('afterprint', after); }
+    window.addEventListener('afterprint', after);
+    setTimeout(function(){ try { window.print(); } catch(e){ after(); } }, 60);
+  }
+
   function renderExam(cur){
     var qs = cur.ids.map(function(id){ return byId[id]; }).filter(Boolean);
     var h = '<div class="xm-note">' + (cur.short ? 'ביקשת ' + cur.short + ' שאלות, אבל נמצאו רק ' + qs.length + ' שמתאימות לבחירה (בלי שאלות שכבר ביצעת).' : '') + '</div>';
     h += '<div class="xm-card"><h3>מבחן · ' + qs.length + ' שאלות · ' + esc(cur.title) + '</h3><p class="xm-sub">פתרי כל שאלה לבד, ורק אחר כך פתחי את הפתרון. בסוף לחצי "סיימתי" - השאלות המסומנות ב-✓ לא יופיעו במבחנים הבאים.</p></div>';
+    h += '<button type="button" class="xm-go alt" id="xmPdf">📄 שמירה כ-PDF / הדפסה - השאלות בלי הפתרונות</button>';
     body.innerHTML = h;
+    document.getElementById('xmPdf').onclick = function(){ printExam(cur, qs); };
     qs.forEach(function(q, k){
       var t = tById[q.topic];
       var card = document.createElement('div'); card.className = 'xm-q';
