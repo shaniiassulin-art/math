@@ -86,6 +86,7 @@ REFRESH_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tools'))
 from exam import EXAM_BTN_TOPBAR, ensure_exam  # noqa: E402
+from fileview import ensure_fileview  # noqa: E402
 
 
 def topbar(home_html, extra=''):
@@ -541,6 +542,7 @@ def main():
         page = ensure_ai_v2(page)
         page = ensure_ai_v3(page)
         page = ensure_exam(page, put_between)
+        page = ensure_fileview(page, put_between)
         old_keys += old
         if write_if_changed(path, page):
             print(f"  עודכן: {s['slug']}/index.html")
