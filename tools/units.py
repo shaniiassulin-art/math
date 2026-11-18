@@ -15,7 +15,7 @@ _s = importlib.util.spec_from_file_location('samples_u', os.path.join(HERE, 'sam
 S = importlib.util.module_from_spec(_s); _s.loader.exec_module(S)
 
 SITES = {'calculus-1': ['calculus_12', 'calculus_34'], 'algebra-solutions': ['algebra_solutions_u'],
-         'algebra-theory': ['algebra_theory_u']}
+         'algebra-theory': ['algebra_theory_u', 'algebra_theory_u2']}
 
 
 def step_li(st):

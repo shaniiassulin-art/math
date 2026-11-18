@@ -205,6 +205,26 @@ def fix_bars(x):
     return x.replace('<mo accent="true">&#x02015;</mo>', '<mo stretchy="true" accent="true">&#x0203E;</mo>')
 
 
+def fix_cols(x):
+    """the bar in an augmented matrix [A|b]: MathML columnlines is not drawn by Chrome or Safari, so the line becomes a CSS border."""
+    def tab(m):
+        lines = m.group(1).split()
+        body = m.group(2)
+        def row(r):
+            k = [-1]
+            def cell(c):
+                k[0] += 1
+                j = k[0]
+                if j < len(lines) and lines[j] == 'solid':
+                    return c.group(0).replace('<mtd', '<mtd style="border-right:1.5px solid currentColor;padding-right:.5em"', 1)
+                if j > 0 and j - 1 < len(lines) and lines[j - 1] == 'solid':
+                    return c.group(0).replace('<mtd', '<mtd style="padding-left:.5em"', 1)
+                return c.group(0)
+            return re.sub(r'<mtd\b[^>]*>', cell, r.group(0))
+        return '<mtable>' + re.sub(r'<mtr>.*?</mtr>', row, body, flags=re.S) + '</mtable>'
+    return re.sub(r'<mtable columnlines="([^"]*)">(.*?)</mtable>', tab, x, flags=re.S)
+
+
 REL = ['\\Leftrightarrow', '\\Rightarrow', '\\Leftarrow', '\\iff', '\\leq', '\\geq', '\\neq', '\\approx', '=', '<', '>']
 GAPS = ['\\qquad', '\\quad']
 

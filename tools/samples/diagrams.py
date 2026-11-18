@@ -548,6 +548,50 @@ def d_matdiag():
 
 
 
+
+def d_augmented():
+    el = []
+    _t(el, 70, 18, 'המקדמים', 12, PURPLE, True)
+    _t(el, 168, 18, 'אגף ימין', 12, GREEN, True)
+    rows = [['a₁₁', 'a₁₂', 'a₁₃', 'b₁'], ['a₂₁', 'a₂₂', 'a₂₃', 'b₂'], ['a₃₁', 'a₃₂', 'a₃₃', 'b₃']]
+    fill = {(i, j): (GREEN if j == 3 else PURPLE) for i in range(3) for j in range(4)}
+    _mat(el, 20, 30, rows, fill, cw=40, ch=28)
+    el.append(f'<line x1="140" y1="28" x2="140" y2="116" stroke="{INK}" stroke-width="1.6"/>')
+    return box(_svg(el, 200, 125, 'מטריצה מורחבת'), 'שורה לכל משוואה, עמודה לכל נעלם, ובצד ימין - עמודת המספרים החופשיים',
+               [(PURPLE, 'מקדמי הנעלמים'), (GREEN, 'אגף ימין')])
+
+
+def d_echelon():
+    el = []
+    rows = [[1, '*', '*', '*', '*'], [0, 0, 1, '*', '*'], [0, 0, 0, 1, '*'], [0, 0, 0, 0, 0]]
+    fill = {(0, 0): GREEN, (1, 2): GREEN, (2, 3): GREEN}
+    _mat(el, 20, 14, rows, fill, cw=34, ch=28)
+    path = 'M20,42 L88,42 L88,70 L122,70 L122,98 L190,98'
+    el.append(f'<path d="{path}" fill="none" stroke="{ORANGE}" stroke-width="2" stroke-dasharray="5 3"/>')
+    _t(el, 280, 40, 'האיבר המוביל של כל שורה', 13, GREEN, True)
+    _t(el, 280, 58, 'מימין לזה של השורה שמעליה', 13, GREEN, True)
+    _t(el, 280, 112, 'שורת אפסים - בסוף', 13, GREY, True)
+    return box(_svg(el, 370, 135, 'מטריצה מדורגת'), 'מטריצה מדורגת: "מדרגות" של אפסים משמאל, וכל איבר מוביל מימין לזה שמעליו',
+               [(GREEN, 'איבר מוביל'), (ORANGE, 'קו המדרגות')])
+
+
+def d_cofactor():
+    el = []
+    rows = [['a₁₁', 'a₁₂', 'a₁₃'], ['a₂₁', 'a₂₂', 'a₂₃'], ['a₃₁', 'a₃₂', 'a₃₃']]
+    fill = {(0, 0): ORANGE, (1, 1): BLUE, (1, 2): BLUE, (2, 1): BLUE, (2, 2): BLUE}
+    _mat(el, 20, 20, rows, fill, cw=40, ch=30)
+    el.append(f'<line x1="22" y1="35" x2="138" y2="35" stroke="{RED}" stroke-width="1.6"/>')
+    el.append(f'<line x1="40" y1="22" x2="40" y2="108" stroke="{RED}" stroke-width="1.6"/>')
+    signs = [['+', '−', '+'], ['−', '+', '−'], ['+', '−', '+']]
+    for i in range(3):
+        for j in range(3):
+            c = GREEN if signs[i][j] == '+' else RED
+            _t(el, 200 + j * 30, 40 + i * 30, signs[i][j], 20, c, False, 'middle', True)
+    _t(el, 230, 130, 'הסימן (−1)ⁱ⁺ʲ', 13, INK)
+    return box(_svg(el, 300, 140, 'מינור וסימן'), 'המינור של '+L('a₁₁')+': מוחקים את השורה ואת העמודה שלו, ומחשבים את הדטרמיננטה של מה שנשאר. הסימן לפי לוח השחמט.',
+               [(ORANGE, 'האיבר'), (BLUE, 'המינור'), (RED, 'מה שנמחק')])
+
+
 # ---------------------------------------------------------------- generic versions (letters, not numbers) for the explanations
 def g_plane():
     p = Plot(-1, 4.5, -1, 4.2, w=250)
@@ -623,6 +667,7 @@ DIAGRAMS = {
     'g_signtable': g_signtable, 'g_interval': g_interval,
     'matindex': d_matindex, 'matmul': d_matmul, 'mattypes': d_mattypes, 'transpose': d_transpose,
     'matcols': d_matcols, 'trace': d_trace, 'matsym': d_matdiag,
+    'augmented': d_augmented, 'echelon': d_echelon, 'cofactor': d_cofactor,
 }
 
 
