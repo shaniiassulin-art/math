@@ -31,7 +31,10 @@ EXAM_ASSETS = r"""<!-- exam:start -->
     padding:0 max(14px, env(safe-area-inset-right,0px)); background:#4B2A78; color:#fff; }
   .xm-bar h2{ margin:0; font-size:1.08rem; font-weight:800; color:#fff; }
   .xm-x{ min-width:44px; min-height:44px; border:0; background:transparent; color:#fff; font-size:1.3rem; cursor:pointer; border-radius:10px; }
-  .xm-x:focus-visible{ outline:3px solid #E3B95C; }
+  .xm-x:focus-visible, .xm-refresh:focus-visible{ outline:3px solid #E3B95C; }
+  .xm-bar-btns{ display:flex; align-items:center; gap:6px; }
+  .xm-refresh{ min-height:36px; padding:0 12px; border-radius:100px; border:1px solid rgba(255,255,255,.35); background:rgba(255,255,255,.1);
+    color:#fff; font-family:inherit; font-weight:700; font-size:.9rem; cursor:pointer; }
   .xm-in{ max-width:760px; margin:0 auto; padding:16px 16px 90px; }
   .xm-card{ background:#fff; border:1px solid #E4DCCB; border-radius:16px; padding:16px; margin:0 0 14px; }
   .xm-card h3{ margin:0 0 10px; font-size:1.02rem; font-weight:800; color:#4B2A78; }
@@ -48,7 +51,10 @@ EXAM_ASSETS = r"""<!-- exam:start -->
   .xm-topic small{ color:#7A84A0; white-space:nowrap; }
   .xm-topic select{ min-height:38px; border:1.5px solid #CFC3E3; border-radius:10px; font:inherit; font-size:.9rem; background:#fff; color:#1F2A47; max-width:44%; }
   .xm-files label, .xm-check{ display:flex; align-items:center; gap:8px; min-height:38px; font-size:.95rem; }
-  .xm-files input, .xm-check input{ width:20px; height:20px; accent-color:#6B3FA0; }
+  .xm-files input, .xm-check input{ width:20px; height:20px; accent-color:#6B3FA0; flex:none; }
+  .xm-files label{ align-items:flex-start; padding:6px 0; line-height:1.45; }
+  .xm-files label input{ margin-top:3px; }
+  .xm-about{ display:block; color:#4A5578; font-size:.85rem; margin-top:2px; }
   .xm-go{ display:block; width:100%; min-height:52px; border:0; border-radius:14px; background:#6B3FA0; color:#fff; font-family:inherit;
     font-weight:800; font-size:1.08rem; cursor:pointer; margin-top:6px; }
   .xm-go:disabled{ opacity:.5; cursor:default; }
@@ -98,7 +104,7 @@ EXAM_ASSETS = r"""<!-- exam:start -->
 </style>
 <div class="xm-print" id="xmPrint" aria-hidden="true"></div>
 <div class="xm" id="examApp" hidden role="dialog" aria-modal="true" aria-labelledby="xmTitle">
-  <div class="xm-bar"><h2 id="xmTitle">📝 מחולל מבחנים</h2><button type="button" class="xm-x" id="xmClose" aria-label="סגירה">✕</button></div>
+  <div class="xm-bar"><h2 id="xmTitle">📝 מחולל מבחנים</h2><div class="xm-bar-btns"><button type="button" class="xm-refresh" id="xmRefresh" aria-label="רענון: טעינת הגרסה העדכנית של האתר">↻ רענון</button><button type="button" class="xm-x" id="xmClose" aria-label="סגירה">✕</button></div></div>
   <div class="xm-in" id="xmBody"></div>
 </div>
 <script>
@@ -160,15 +166,22 @@ EXAM_ASSETS = r"""<!-- exam:start -->
   // ---------- 3. החלון ----------
   var app = document.getElementById('examApp'), body = document.getElementById('xmBody');
   var set = load(K_SET, {n: 6, mode: 'all', level: 0, per: {}, files: {}, incl: false});
+  set.mode = 'all';   // רמה אחת לכל המבחן (בלי רמה לפי נושא)
   function open(){ app.hidden = false; document.body.classList.add('xm-on'); render(); app.scrollTop = 0; document.getElementById('xmClose').focus(); }
   function close(){ app.hidden = true; document.body.classList.remove('xm-on'); }
   document.addEventListener('click', function(e){ if(e.target.closest('[data-exam-open]')){ e.preventDefault(); var mt = document.getElementById('menuToggle'); if(mt) mt.checked = false; open(); } });
   document.getElementById('xmClose').addEventListener('click', close);
+  // רענון: טוען את הגרסה העדכנית של האתר, ופותח שוב את מחולל המבחנים (המבחן הפתוח שמור)
+  document.getElementById('xmRefresh').addEventListener('click', function(){
+    try { sessionStorage.setItem('mathExamReopen', '1'); } catch(e){}
+    location.replace(location.pathname + '?r=' + Date.now());
+  });
+  try { if(sessionStorage.getItem('mathExamReopen')){ sessionStorage.removeItem('mathExamReopen'); setTimeout(open, 0); } } catch(e){}
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !app.hidden) close(); });
 
   function render(){ var cur = load(K_CUR, null); if(cur && cur.ids && cur.ids.length) renderExam(cur); else renderSetup(''); }
 
-  function levelOf(t){ return set.mode === 'all' ? (set.level || 0) : (set.per[t.id] == null ? 0 : +set.per[t.id]); }   // -1 = לא לכלול, 0 = מעורבת
+  function levelOf(t){ return set.level || 0; }   // 0 = מעורבת
   function pool(){
     return Q.filter(function(q){
       if(set.files[q.file] === false) return false;
@@ -176,6 +189,16 @@ EXAM_ASSETS = r"""<!-- exam:start -->
       var lv = levelOf(tById[q.topic]); if(lv === -1) return false;
       return lv === 0 || q.level === lv;
     });
+  }
+
+  // במה הקובץ עוסק, בגדול: שם היחידה שלו - או, כשהיחידה היא בעצם שם הקובץ (מצגת), החלקים שלה
+  function fileTopics(f){
+    var units = [], parts = [], base = f.replace(/^מצגת\s+/, '');
+    Q.forEach(function(q){ if(q.file !== f) return; var t = tById[q.topic];
+      if(t.unit && units.indexOf(t.unit) < 0) units.push(t.unit);
+      if(t.name && !/^האם AI/.test(t.name) && parts.indexOf(t.name) < 0) parts.push(t.name); });
+    var same = units.length && units.every(function(u){ return base.indexOf(u) >= 0 || u.indexOf(base) >= 0; });
+    return (same || !units.length ? parts : units).join(', ');
   }
 
   function renderSetup(msg){
@@ -187,27 +210,15 @@ EXAM_ASSETS = r"""<!-- exam:start -->
          'השאלות מתחלקות בין הנושאים ובין הקבצים, ושאלות שכבר ביצעת לא חוזרות.</p>' +
          '<p class="xm-sub">רמת הקושי נקבעת לפי היקף הפתרון: השליש הקצר - קלה, האמצעי - בינונית, הארוך - קשה. הרמה של כל שאלה מופיעה גם ליד השאלה באתר.</p></div>';
     h += '<div class="xm-card"><h3>כמה שאלות?</h3><div class="xm-row"><input class="xm-num" id="xmN" type="number" min="1" max="40" inputmode="numeric" value="' + set.n + '"> <span class="xm-sub" style="margin:0">שאלות</span></div></div>';
-    h += '<div class="xm-card"><h3>רמת קושי</h3><div class="xm-seg" role="group" aria-label="איך לקבוע רמה">' +
-         '<button type="button" data-mode="all" aria-pressed="' + (set.mode === 'all') + '">רמה אחת לכל המבחן</button>' +
-         '<button type="button" data-mode="per" aria-pressed="' + (set.mode === 'per') + '">רמה לכל נושא</button></div>';
-    if(set.mode === 'all'){
-      h += '<div class="xm-seg" style="margin-top:10px" role="group" aria-label="רמה">' + [[1,'קלה'],[2,'בינונית'],[3,'קשה'],[0,'מעורבת']].map(function(o){
-        return '<button type="button" data-level="' + o[0] + '" aria-pressed="' + ((set.level || 0) === o[0]) + '">' + o[1] + '</button>'; }).join('') + '</div>';
-    } else {
-      var lastUnit = null;
-      topics.forEach(function(t){
-        if(t.unit !== lastUnit){ h += '<div class="xm-unit">' + esc(t.unit) + '</div>'; lastUnit = t.unit; }
-        var v = levelOf(t), left = t.qs.filter(function(q){ return set.incl || !isDone(q.id); }).length;
-        h += '<label class="xm-topic"><span>' + esc(t.name) + ' <small>(' + left + ' שאלות)</small></span><select data-topic="' + t.id + '">' +
-             [[-1,'לא לכלול'],[0,'מעורבת'],[1,'קלה'],[2,'בינונית'],[3,'קשה']].map(function(o){ return '<option value="' + o[0] + '"' + (v === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') +
-             '</select></label>';
-      });
-      h += '<div class="xm-row" style="margin-top:8px"><button type="button" class="xm-link" data-allper="0">הכול מעורבת</button><button type="button" class="xm-link" data-allper="-1">ניקוי - אף נושא</button></div>';
-    }
+    h += '<div class="xm-card"><h3>רמת קושי</h3>';
+    h += '<div class="xm-seg" role="group" aria-label="רמה">' + [[1,'קלה'],[2,'בינונית'],[3,'קשה'],[0,'מעורבת']].map(function(o){
+      return '<button type="button" data-level="' + o[0] + '" aria-pressed="' + ((set.level || 0) === o[0]) + '">' + o[1] + '</button>'; }).join('') + '</div>';
     h += '</div>';
     h += '<div class="xm-card"><h3>מאילו קבצים?</h3><div class="xm-files">' + files.map(function(f){
       var n = Q.filter(function(q){ return q.file === f; }).length;
-      return '<label><input type="checkbox" data-file="' + esc(f) + '"' + (set.files[f] === false ? '' : ' checked') + '> ' + esc(f) + ' <small class="xm-src">(' + n + ')</small></label>'; }).join('') + '</div></div>';
+      var about = fileTopics(f);
+      return '<label><input type="checkbox" data-file="' + esc(f) + '"' + (set.files[f] === false ? '' : ' checked') + '><span><b>' + esc(f) + '</b> <small class="xm-src">(' + n + ' שאלות)</small>' +
+        (about ? '<span class="xm-about">(' + esc(about) + ')</span>' : '') + '</span></label>'; }).join('') + '</div></div>';
     h += '<div class="xm-card"><h3>שאלות שכבר ביצעת: ' + doneIds.length + '</h3>' +
          '<label class="xm-check"><input type="checkbox" id="xmIncl"' + (set.incl ? ' checked' : '') + '> לכלול גם שאלות שכבר ביצעתי</label>';
     if(doneIds.length){
@@ -222,10 +233,7 @@ EXAM_ASSETS = r"""<!-- exam:start -->
     if(cur && cur.ids && cur.ids.length) h += '<button type="button" class="xm-go alt" id="xmResume">חזרה למבחן הפתוח</button>';
     body.innerHTML = h;
 
-    body.querySelectorAll('[data-mode]').forEach(function(b){ b.onclick = function(){ set.mode = b.getAttribute('data-mode'); save(K_SET, set); renderSetup(''); }; });
     body.querySelectorAll('[data-level]').forEach(function(b){ b.onclick = function(){ set.level = +b.getAttribute('data-level'); save(K_SET, set); renderSetup(''); }; });
-    body.querySelectorAll('select[data-topic]').forEach(function(s){ s.onchange = function(){ set.per[s.getAttribute('data-topic')] = +s.value; save(K_SET, set); renderSetup(''); }; });
-    body.querySelectorAll('[data-allper]').forEach(function(b){ b.onclick = function(){ var v = +b.getAttribute('data-allper'); topics.forEach(function(t){ set.per[t.id] = v; }); save(K_SET, set); renderSetup(''); }; });
     body.querySelectorAll('[data-file]').forEach(function(c){ c.onchange = function(){ set.files[c.getAttribute('data-file')] = c.checked; save(K_SET, set); renderSetup(''); }; });
     document.getElementById('xmIncl').onchange = function(){ set.incl = this.checked; save(K_SET, set); renderSetup(''); };
     document.getElementById('xmN').onchange = function(){ set.n = Math.max(1, Math.min(40, parseInt(this.value, 10) || 6)); save(K_SET, set); };
@@ -255,7 +263,7 @@ EXAM_ASSETS = r"""<!-- exam:start -->
     }
     if(!pick.length){ renderSetup('אין שאלות שמתאימות לבחירה. אפשר לשנות רמה, להוסיף קבצים, או לבטל סימונים של שאלות שבוצעו.'); return; }
     pick.sort(function(a,b){ return Q.indexOf(a) - Q.indexOf(b); });   // לפי סדר החומר
-    var lvName = set.mode === 'all' ? (set.level ? 'רמה ' + LV[set.level] : 'רמה מעורבת') : 'רמה לפי נושא';
+    var lvName = set.level ? 'רמה ' + LV[set.level] : 'רמה מעורבת';
     var cur = {ids: pick.map(function(q){ return q.id; }), title: lvName, short: pick.length < n ? n : 0};
     save(K_CUR, cur); renderExam(cur);
   }
