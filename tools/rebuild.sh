@@ -11,3 +11,4 @@ python3 tools/units.py
 timeout 300 python3 tools/samples.py
 timeout 300 python3 tools/samples.py
 python3 build_hub.py
+node tools/exam_images.js                       # תמונות השאלות לקובץ ה-PDF של המבחן

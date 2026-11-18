@@ -600,7 +600,7 @@ dict(
     (r'$2\times2$', r'$\begin{vmatrix}a&b\\c&d\end{vmatrix}=ad-bc$.'),
     (r'פיתוח', r'לפי שורה / עמודה עם הכי הרבה אפסים; סימנים $(-1)^{i+j}$.'),
     (r'משולשת', r'מכפלת האלכסון; בבלוקים - מכפלת דטרמיננטות הבלוקים.'),
-    (r'פעולות', r'החלפה: $-$; $\ $הכפלה ב-$\lambda$: $\times\lambda$; $\ $הוספת כפולה: ללא שינוי.'),
+    (r'פעולות', r'החלפה - מחליפה סימן; הכפלה ב-$\lambda$ - כופלת ב-$\lambda$; הוספת כפולה - ללא שינוי.'),
     (r'תכונות', r'$\det(AB)=\det A\det B$, $\ \det(\lambda A)=\lambda^n\det A$, $\ \det(A^t)=\det A$, $\ \det(A^{-1})=\frac1{\det A}$.'),
     (r'הפיכות', r'$A$ הפיכה $\iff\det(A)\neq0$; $\ A^{-1}=\frac{1}{\det A}\operatorname{Adj}(A)$, $\ \operatorname{Adj}(A)=M^t$.'),
     (r'קרמר', r'$x_i=\frac{\Delta_i}{\det A}$ - עמודה $i$ מוחלפת ב-$\vec b$.'),

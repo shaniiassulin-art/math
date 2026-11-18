@@ -77,7 +77,8 @@ EXAM_ASSETS = r"""<!-- exam:start -->
   .xm-done-badge button{ border:0; background:none; color:#1E6B57; text-decoration:underline; font:inherit; font-weight:700; cursor:pointer; padding:0 2px; }
   /* ===== הדפסה / שמירה כ-PDF: רק השאלות, בלי פתרונות ===== */
   .xm-print{ display:none; }
-  .xm-go.xm-pdf{ margin:16px 0 22px; padding:8px 16px; line-height:1.35; }
+  .xm-pdf-row{ display:flex; flex-wrap:wrap; gap:10px; margin:16px 0 22px; }
+  .xm-pdf-row .xm-go{ flex:1 1 220px; margin:0; padding:8px 16px; line-height:1.35; }
   .xm-pdf-note{ margin:-10px 0 20px; }
   .xm-pdf-note[hidden]{ display:none; }
   @media print{
@@ -304,7 +305,7 @@ EXAM_ASSETS = r"""<!-- exam:start -->
     var how = 'אם חלון ההדפסה לא נפתח: באייפון - לחצי על כפתור השיתוף של ספארי (הריבוע עם החץ) ← "הדפסה", ושם על כפתור השיתוף ← "שמירה בקבצים". במחשב - Ctrl+P (או ⌘+P) ובחרי "שמירה כ-PDF". יודפסו רק השאלות, בלי הפתרונות.';
     if(window.navigator.standalone){
       // באפליקציה ממסך הבית אין לאייפון הדפסה בכלל
-      if(note){ note.textContent = 'בגרסה שנפתחת ממסך הבית אין לאייפון אפשרות הדפסה. פתחי את האתר בספארי, צרי את המבחן ולחצי שוב על הכפתור.'; note.hidden = false; }
+      if(note){ note.textContent = 'בגרסה שנפתחת ממסך הבית אין לאייפון אפשרות הדפסה - השתמשי בכפתור "📤 קובץ PDF לשיתוף".'; note.hidden = false; }
       after(); return;
     }
     // חייב לקרות מיד בלחיצה - אחרת ספארי באייפון חוסם את חלון ההדפסה
@@ -312,14 +313,124 @@ EXAM_ASSETS = r"""<!-- exam:start -->
     setTimeout(function(){ if(!opened){ document.title = oldTitle; if(note){ note.textContent = how; note.hidden = false; } } }, 1500);
   }
 
+  // ---------- קובץ PDF אמיתי (גם באפליקציה ממסך הבית, שבה אין הדפסה) ----------
+  // השאלות הן תמונות שהוכנו מראש (tools/exam_images.js); הכותרות מצוירות כאן; הקובץ נבנה בלי ספריות.
+  var IMG_INFO = null;
+  function getInfo(){
+    if(IMG_INFO) return Promise.resolve(IMG_INFO);
+    return fetch('exam-img/index.json', {cache: 'no-cache'}).then(function(r){ if(!r.ok) throw new Error('index'); return r.json(); }).then(function(j){ IMG_INFO = j; return j; });
+  }
+  function b64bytes(d){ var s = atob(d.split(',')[1]), a = new Uint8Array(s.length); for(var i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+  function textImg(lines){   // lines: [[text, px, bold, color]] -> jpeg {bytes,w,h}; 1360px = רוחב התוכן
+    var W = 1360, pad = 6, H = pad * 2;
+    lines.forEach(function(l){ H += Math.round(l[1] * 1.45); });
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
+    var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+    g.direction = 'rtl'; g.textAlign = 'right'; g.textBaseline = 'top';
+    var y = pad;
+    lines.forEach(function(l){ g.font = (l[2] ? '700 ' : '400 ') + l[1] + "px Assistant, 'Arial Hebrew', Arial, sans-serif"; g.fillStyle = l[3] || '#1F2A47'; g.fillText(l[0], W - 2, y + l[1] * 0.12); y += Math.round(l[1] * 1.45); });
+    return {bytes: b64bytes(c.toDataURL('image/jpeg', 0.9)), w: W, h: H};
+  }
+  function makePdf(pages){   // pages: [[{img, x, y, w, h} | {line:[x1,y1,x2,y2]}]] - נקודות, y מלמעלה
+    var enc = new TextEncoder(), parts = [], off = 0, offs = [], imgs = [], n;
+    function push(x){ var b = typeof x === 'string' ? enc.encode(x) : x; parts.push(b); off += b.length; }
+    pages.forEach(function(pg){ pg.forEach(function(it){ if(it.img && imgs.indexOf(it.img) < 0) imgs.push(it.img); }); });
+    var firstImg = 3, firstPage = firstImg + imgs.length, total = firstPage + pages.length * 2 - 1;
+    push(new Uint8Array([37, 80, 68, 70, 45, 49, 46, 52, 10, 37, 226, 227, 207, 211, 10]));
+    function obj(k, body){ offs[k] = off; push(k + ' 0 obj\n' + body + '\nendobj\n'); }
+    obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    var kids = pages.map(function(_, i){ return (firstPage + i * 2) + ' 0 R'; }).join(' ');
+    obj(2, '<< /Type /Pages /Kids [' + kids + '] /Count ' + pages.length + ' >>');
+    imgs.forEach(function(im, i){
+      n = firstImg + i; offs[n] = off;
+      push(n + ' 0 obj\n<< /Type /XObject /Subtype /Image /Width ' + im.w + ' /Height ' + im.h + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + im.bytes.length + ' >>\nstream\n');
+      push(im.bytes); push('\nendstream\nendobj\n');
+    });
+    pages.forEach(function(pg, i){
+      var res = [], cs = '';
+      pg.forEach(function(it){
+        if(it.img){ var k = imgs.indexOf(it.img); if(res.indexOf(k) < 0) res.push(k);
+          cs += 'q ' + it.w.toFixed(2) + ' 0 0 ' + it.h.toFixed(2) + ' ' + it.x.toFixed(2) + ' ' + (842 - it.y - it.h).toFixed(2) + ' cm /Im' + k + ' Do Q\n'; }
+        else if(it.line){ var L = it.line; cs += 'q 0.62 0.62 0.62 RG 0.6 w ' + (it.dash ? '[3 3] 0 d ' : '') + L[0] + ' ' + (842 - L[1]) + ' m ' + L[2] + ' ' + (842 - L[3]) + ' l S Q\n'; }
+      });
+      var pn = firstPage + i * 2, cn = pn + 1;
+      obj(pn, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /XObject << ' +
+        res.map(function(k){ return '/Im' + k + ' ' + (firstImg + k) + ' 0 R'; }).join(' ') + ' >> >> /Contents ' + cn + ' 0 R >>');
+      var cb = enc.encode(cs); offs[cn] = off;
+      push(cn + ' 0 obj\n<< /Length ' + cb.length + ' >>\nstream\n'); push(cb); push('\nendstream\nendobj\n');
+    });
+    var xo = off, x = 'xref\n0 ' + (total + 1) + '\n0000000000 65535 f \n';
+    for(var k = 1; k <= total; k++) x += ('0000000000' + offs[k]).slice(-10) + ' 00000 n \n';
+    push(x + 'trailer\n<< /Size ' + (total + 1) + ' /Root 1 0 R >>\nstartxref\n' + xo + '\n%%EOF\n');
+    return new Blob(parts, {type: 'application/pdf'});
+  }
+  function buildPdf(cur, qs){
+    return getInfo().then(function(info){
+      return Promise.all(qs.map(function(q){
+        return fetch('exam-img/' + q.id + '.jpg').then(function(r){ if(!r.ok) throw new Error(q.id); return r.arrayBuffer(); })
+          .then(function(b){ var sz = info.q[q.id] || [1360, 200]; return {bytes: new Uint8Array(b), w: sz[0], h: sz[1]}; });
+      }));
+    }).then(function(imgs){
+      var site = document.title.replace(/^מדריך למבחן\s*-?\s*/, '').trim();
+      var d = new Date(), date = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+      var X = 40, CW = 515, TOP = 40, BOT = 802, k = CW / 1360;
+      var pages = [[]], pg = pages[0], y = TOP;
+      var head = textImg([['מבחן · ' + site, 40, true], [qs.length + ' שאלות · ' + cur.title + ' · ' + date, 26, false, '#555']]);
+      pg.push({img: head, x: X, y: y, w: CW, h: head.h * k}); y += head.h * k + 4;
+      pg.push({line: [X, y, X + CW, y]}); y += 12;
+      imgs.forEach(function(im, i){
+        var lab = textImg([['שאלה ' + (i + 1), 32, true]]);
+        var lh = lab.h * k, w = CW, h = im.h * k;
+        if(h > BOT - TOP - lh){ var f = (BOT - TOP - lh) / h; w *= f; h *= f; }
+        if(y + lh + h > BOT){ pg = []; pages.push(pg); y = TOP; }
+        pg.push({img: lab, x: X, y: y, w: CW, h: lh}); y += lh + 2;
+        pg.push({img: im, x: X + CW - w, y: y, w: w, h: h}); y += h;
+        var space = Math.min(110, BOT - y);
+        y += space;
+        if(space > 20) pg.push({line: [X, y - 6, X + CW, y - 6], dash: true});
+        y += 8;
+      });
+      var name = 'מבחן - ' + site + ' - ' + date + '.pdf';
+      return {blob: makePdf(pages), name: name};
+    });
+  }
+  function sharePdf(cur, qs, btn){
+    var note = document.getElementById('xmPdfNote');
+    function say(t){ if(note){ note.textContent = t; note.hidden = !t; } }
+    if(btn._file){ return deliver(btn._file); }
+    var label = btn.textContent; btn.disabled = true; btn.textContent = '⏳ מכינה את הקובץ...'; say('');
+    buildPdf(cur, qs).then(function(r){
+      var file = null;
+      try { file = new File([r.blob], r.name, {type: 'application/pdf'}); } catch(e){}
+      btn._file = file || r.blob; btn._name = r.name; btn.disabled = false; btn.textContent = '📤 שיתוף הקובץ';
+      deliver(btn._file);
+    }).catch(function(e){ btn.disabled = false; btn.textContent = label; say('לא הצלחתי להכין את הקובץ. בדקי שיש חיבור לאינטרנט ונסי שוב.'); if(window.console) console.error('exam pdf', e); });
+    function deliver(f){
+      if(f instanceof File && navigator.canShare && navigator.canShare({files: [f]})){
+        navigator.share({files: [f], title: btn._name}).then(function(){ say(''); }).catch(function(e){
+          if(e && e.name === 'AbortError') return;
+          say('הקובץ מוכן - לחצי על "📤 שיתוף הקובץ" כדי לשמור או לשלוח אותו.');
+        });
+        return;
+      }
+      var url = URL.createObjectURL(f), a = document.createElement('a');
+      a.href = url; a.download = btn._name || 'exam.pdf'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
+      say('הקובץ ירד למכשיר (בתיקיית ההורדות).');
+    }
+  }
+
   function renderExam(cur){
     var qs = cur.ids.map(function(id){ return byId[id]; }).filter(Boolean);
     var h = '<div class="xm-note">' + (cur.short ? 'ביקשת ' + cur.short + ' שאלות, אבל נמצאו רק ' + qs.length + ' שמתאימות לבחירה (בלי שאלות שכבר ביצעת).' : '') + '</div>';
     h += '<div class="xm-card"><h3>מבחן · ' + qs.length + ' שאלות · ' + esc(cur.title) + '</h3><p class="xm-sub">פתרי כל שאלה לבד, ורק אחר כך פתחי את הפתרון. בסוף לחצי "סיימתי" - השאלות המסומנות ב-✓ לא יופיעו במבחנים הבאים.</p></div>';
-    h += '<button type="button" class="xm-go alt xm-pdf" id="xmPdf">📄 שמירה כ-PDF - בלי פתרונות</button>' +
+    var standalone = !!window.navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+    h += '<div class="xm-pdf-row"><button type="button" class="xm-go alt" id="xmShare">📤 קובץ PDF לשיתוף - בלי פתרונות</button>' +
+         (standalone ? '' : '<button type="button" class="xm-go alt" id="xmPdf">🖨️ הדפסה - בלי פתרונות</button>') + '</div>' +
          '<p class="xm-note xm-pdf-note" id="xmPdfNote" hidden></p>';
     body.innerHTML = h;
-    document.getElementById('xmPdf').onclick = function(){ printExam(cur, qs); };
+    var pb = document.getElementById('xmPdf'); if(pb) pb.onclick = function(){ printExam(cur, qs); };
+    document.getElementById('xmShare').onclick = function(){ sharePdf(cur, qs, this); };
     qs.forEach(function(q, k){
       var t = tById[q.topic];
       var card = document.createElement('div'); card.className = 'xm-q';

@@ -439,7 +439,7 @@ dict(
       check=r'הציבי $z$ אחד במשוואה המקורית: $z=-\frac12$ נותן $\left(\frac1{1/2}\right)^4=16$ ✓.'),
     dict(id='s5', title='חזקה בצורה קוטבית, ו-z חלקי הצמוד שלו',
       src='תרגיל בית 2, שאלה 4(א,ב) · תרגיל כיתה 2, שאלה 4(א,ב)',
-      ident=r'"רשמו בהצגה קוטבית" ביטוי עם חזקה, או ביטוי עם $\overline z$ ו-$z$ כשנתונה רק הזווית $\arg(z)$.',
+      ident=r'"רשמו בהצגה קוטבית" ביטוי עם חזקה, או ביטוי עם $\overline z$ ו-$z$ כשנתונה רק הזווית $\operatorname{arg}(z)$.',
       steps=[
         dict(t=r'<b>חזקה:</b> צורה קוטבית לבסיס, ואז דה-מואבר.',
              more=[r'↓ $w=re^{i\theta}$',
@@ -450,7 +450,7 @@ dict(
                    r'↓ $\frac{\overline z}z=\frac{re^{-i\theta}}{re^{i\theta}}=e^{-2i\theta}$',
                    r'svg:g_conj']),
         dict(t=r'<b>חברי את הזוויות</b> וכתבי בצורה $Re^{i\varphi}$.',
-             more=[r'↓ $\frac{\overline z}z\cdot w^n=e^{-2i\theta}\cdot r^ne^{in\alpha}$ | $\alpha=\arg w$',
+             more=[r'↓ $\frac{\overline z}z\cdot w^n=e^{-2i\theta}\cdot r^ne^{in\alpha}$ | $\alpha=\operatorname{arg} w$',
                    r'↓ $=r^ne^{i(n\alpha-2\theta)}$']),
         dict(t=r'<b>שורש ריבועי לפי הריבוע:</b> אם ידוע $z_0^2$, יש שתי אפשרויות ל-$z_0$, ובוחרים לפי הסימנים של $z_0$.',
              more=[r'↓ $z_0^2=\rho e^{i\varphi}$',

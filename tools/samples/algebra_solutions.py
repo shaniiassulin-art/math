@@ -692,7 +692,7 @@ SAMPLES['ex2-s4'] = [_S['ex2-s4'],
 ]
 
 SAMPLES['ex2-s5'] = [_S['ex2-s5'],
-  Q('תרגיל כיתה 2, שאלה 4(א,ב)', r'א. רשמו הצגה קוטבית ל-$(1-i\sqrt3)^5$. ב. נתון $\arg z=\frac\pi7$; מצאו הצגה קוטבית ל-$w=\frac{\overline z(1-i\sqrt3)^5}{z}$.',
+  Q('תרגיל כיתה 2, שאלה 4(א,ב)', r'א. רשמו הצגה קוטבית ל-$(1-i\sqrt3)^5$. ב. נתון $\operatorname{arg} z=\frac\pi7$; מצאו הצגה קוטבית ל-$w=\frac{\overline z(1-i\sqrt3)^5}{z}$.',
     [(r'א. הבסיס בקוטבית', [r'↓ $r=2$, רביע רביעי', r'↓ $1-i\sqrt3=2e^{-i\frac\pi3}$']),
      (r'דה-מואבר', [r'↓ $32e^{-i\frac{5\pi}3}$', r'↓ $=32e^{i\frac\pi3}$ | מוסיפים $2\pi$']),
      (r'ב. $\frac{\overline z}z$', [r'= | $e^{-2i\cdot\frac\pi7}=e^{-i\frac{2\pi}7}$']),
