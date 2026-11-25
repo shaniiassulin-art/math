@@ -20,6 +20,28 @@ def data(mod='review_algebra'):
     return m
 
 
+def unit(m, q):
+    """the latest syllabus unit/week a question needs (0 when the course has no syllabus)"""
+    tu = getattr(m, 'TOPIC_UNIT', None)
+    if not tu: return 0
+    return max([tu[t] for t in q['topics']] + [getattr(m, 'UNIT', {}).get(q['id'], 0)])
+
+
+def stage_card(m):
+    if not getattr(m, 'SYLLABUS', None): return ''
+    lab = m.STAGE_LABEL
+    opts = ''.join(f'<option value="{n}">{lab} {n} - {t}</option>' for n, t in m.SYLLABUS) + '<option value="99">כל החומר</option>'
+    rows = ''.join(f'<li data-u="{n}"><span class="rv-su-n">{lab} {n}</span> {t}</li>' for n, t in m.SYLLABUS)
+    cnt = {n: sum(1 for q in m.Q if unit(m, q) == n) for n, _ in m.SYLLABUS}
+    return ('<div class="rv-stage" data-default="%d">' % m.STAGE
+            + '<div class="rv-fh">🎯 לפי מה שכבר למדנו</div>'
+            + '<label class="rv-stage-sel">סיימנו ללמוד עד: <select id="rvStage">' + opts + '</select></label>'
+            + '<label class="rv-chip"><input type="checkbox" id="rvOnly" checked><span>רק שאלות בנושאים שכבר למדנו</span></label>'
+            + '<div class="rv-stage-act"><button type="button" class="rv-pdf" id="rvMock">🎲 מבחן חזרה ממה שלמדנו</button>'
+            + (f'<a class="rv-all rv-syl" href="files/{m.SYLLABUS_PDF}" target="_blank" rel="noopener">📄 הסילבוס</a>' if getattr(m, 'SYLLABUS_PDF', None) else '')
+            + '</div><details class="rv-su"><summary>תוכנית הקורס לפי הסילבוס</summary><ol>' + rows + '</ol></details></div>')
+
+
 def section(render_one, mathify, mod='review_algebra'):
     m = data(mod)
     subject = getattr(m, 'SUBJECT', 'אלגברה לינארית')
@@ -29,8 +51,9 @@ def section(render_one, mathify, mod='review_algebra'):
     used = [t for t, _ in m.TOPICS if any(t in q['topics'] for q in m.Q)]
     h = [f'\n    <!-- review:start --><section class="review-section" id="review" data-subject="{subject}" aria-labelledby="reviewTitle">',
          '<h2 id="reviewTitle">📝 מבחני חזרה</h2>',
-         f'<p class="rv-intro">כל השאלות מ-{len(m.EXAMS)} מבחנים של הקורס ({len(m.Q)} שאלות), עם פתרון מלא לכל אחת. '
+         f'<p class="rv-intro">כל השאלות מ-{len(m.EXAMS)} מבחנים של הקורס ({len(m.Q)} שאלות), עם פתרון מלא לכל אחת. ' + ('כברירת מחדל מוצגות רק שאלות בנושאים שכבר למדנו לפי הסילבוס. ' if getattr(m, 'SYLLABUS', None) else '') +
          'בחרי מבחנים, נושאים ורמה - ואפשר להוציא קובץ עם התרגילים ומקום לפתרון, וקובץ נפרד עם כל הפתרונות של אותן שאלות.</p>',
+         stage_card(m),
          '<div class="rv-filters">',
          '<div class="rv-f"><div class="rv-fh">מבחנים</div><div class="rv-chips">'
          + ''.join(f'<label class="rv-chip"><input type="checkbox" data-f="exam" value="{k}" checked><span>{v}</span></label>' for k, v in m.EXAMS)
@@ -48,6 +71,9 @@ def section(render_one, mathify, mod='review_algebra'):
          '<div class="rv-bar"><span class="rv-count" id="rvCount" aria-live="polite"></span>'
          '<button type="button" class="rv-pdf" id="rvPdfQ">📄 קובץ תרגילים - עם מקום לפתרון</button>'
          '<button type="button" class="rv-pdf" id="rvPdfS">✅ קובץ פתרונות מלאים</button></div>',
+         '<div class="rv-mockbar" id="rvMockBar" hidden><b id="rvMockTxt"></b>'
+         '<button type="button" class="rv-all" id="rvMockNew">🎲 מבחן אחר</button>'
+         '<button type="button" class="rv-all" id="rvMockEnd">חזרה לכל השאלות</button></div>',
          '<p class="rv-note" id="rvNote" hidden></p>',
          '<div class="rv-list">']
     for q in m.Q:
@@ -64,7 +90,7 @@ def section(render_one, mathify, mod='review_algebra'):
         chips = (f'<span class="rv-tag rv-lv rv-lv-{q["level"]}">רמה {LV[q["level"]]}</span>'
                  + (f'<span class="rv-tag rv-mc">אמריקאית</span>' if q.get('mc') else '')
                  + ''.join(f'<span class="rv-tag">{mathify(topics[t])}</span>' for t in q['topics']))
-        h.append(f'<div class="rv-item" data-id="{q["id"]}" data-exam="{" ".join(codes)}" data-topics="{" ".join(q["topics"])}" '
+        h.append(f'<div class="rv-item" data-id="{q["id"]}" data-unit="{unit(m, q)}" data-exam="{" ".join(codes)}" data-topics="{" ".join(q["topics"])}" '
                  f'data-level="{q["level"]}" data-kind="{"mc" if q.get("mc") else "open"}" '
                  f'data-label="{exams[q["exam"]]}, {q["num"]} ({q["pts"]} נק׳)">'
                  f'<div class="rv-tags">{chips}</div>{box}</div>')
@@ -109,6 +135,23 @@ ASSETS = r"""<!-- review-assets:start -->
   .rv-opt{ display:flex; align-items:baseline; gap:8px; }
   .rv-opt b{ flex:none; min-width:1.4em; }
   .rv-ox{ min-width:0; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .rv-stage{ display:grid; gap:10px; margin:16px 0; padding:16px; border-radius:16px; background:#F7F3FD; border:1.5px solid #CDBCE6; }
+  .rv-stage-sel{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-weight:700; }
+  .rv-stage{ min-width:0; } .rv-stage > *{ min-width:0; }
+  .rv-stage-sel select{ min-height:42px; width:100%; max-width:100%; text-overflow:ellipsis; padding:4px 10px; border-radius:10px; border:1.5px solid #B9A6D8; background:#fff; font-family:inherit; font-size:.92rem; }
+  .rv-stage .rv-chip{ justify-self:start; }
+  .rv-stage-act{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .rv-syl{ display:inline-flex; align-items:center; min-height:44px; padding:0 14px; text-decoration:none; font-size:.9rem; }
+  .rv-su summary{ cursor:pointer; font-weight:700; color:#4A2C75; min-height:32px; }
+  .rv-su ol{ list-style:none; margin:8px 0 0; padding:0; display:grid; gap:4px; font-size:.9rem; }
+  .rv-su li{ padding:4px 8px; border-radius:8px; color:#8A8398; }
+  .rv-su li.done{ color:#1F2A47; background:#fff; }
+  .rv-su li.done::before{ content:"✓ "; color:#1E6B3A; font-weight:800; }
+  .rv-su-n{ font-weight:800; }
+  .rv-mockbar{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 12px; padding:10px 12px; border-radius:12px; background:#E3F4E8; border:1px solid #9CD3AE; }
+  .rv-mockbar b{ margin-inline-end:auto; }
+  .rv-mockbar{ scroll-margin-top:90px; }
+  .rv-mockbar[hidden]{ display:none; }
   .rv-empty{ padding:16px; text-align:center; color:var(--ink-soft, #4A5578); }
   .sidebar .review-open-btn{ display:flex; align-items:center; justify-content:center; width:100%; min-height:46px; margin:0 0 10px !important; border-radius:12px; box-sizing:border-box;
     padding:8px 12px; border:1.5px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff; font-weight:800; font-size:.95rem; text-decoration:none; }
@@ -122,8 +165,11 @@ ASSETS = r"""<!-- review-assets:start -->
   var KEY = 'mathReview_v1:' + location.pathname;
   var LV = {1: 'קלה', 2: 'בינונית', 3: 'קשה'};
   var items = [].slice.call(sec.querySelectorAll('.rv-item'));
+  var stageBox = sec.querySelector('.rv-stage');
   var st = {exam: null, topic: null, level: 0, kind: 'all'};
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if(sv) st = sv; } catch(e){}
+  if(stageBox){ var def = +stageBox.dataset.default; if(st.stage == null || st.stageDef !== def){ st.stage = def; st.stageDef = def; st.mock = null; } if(st.only == null) st.only = true; } else { st.only = false; st.mock = null; }
+  var order = items.slice(), list = sec.querySelector('.rv-list');
   function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e){} }
 
   // ---------- עמוד נפרד ----------
@@ -158,15 +204,16 @@ ASSETS = r"""<!-- review-assets:start -->
   var boxes = function(f){ return [].slice.call(sec.querySelectorAll('input[data-f="' + f + '"]')); };
   ['exam', 'topic'].forEach(function(f){
     if(st[f]) boxes(f).forEach(function(c){ c.checked = st[f].indexOf(c.value) >= 0; });
-    boxes(f).forEach(function(c){ c.addEventListener('change', apply); });
+    boxes(f).forEach(function(c){ c.addEventListener('change', function(){ st.mock = null; apply(); }); });
   });
   sec.querySelectorAll('[data-all],[data-none]').forEach(function(bt){
     bt.addEventListener('click', function(){ var f = bt.getAttribute('data-all') || bt.getAttribute('data-none'), on = bt.hasAttribute('data-all');
-      boxes(f).forEach(function(c){ c.checked = on; }); apply(); });
+      boxes(f).forEach(function(c){ c.checked = on; }); st.mock = null; apply(); });
   });
-  sec.querySelectorAll('[data-level]').forEach(function(bt){ bt.addEventListener('click', function(){ st.level = +bt.getAttribute('data-level'); apply(); }); });
-  sec.querySelectorAll('[data-kind]').forEach(function(bt){ bt.addEventListener('click', function(){ st.kind = bt.getAttribute('data-kind'); apply(); }); });
+  sec.querySelectorAll('[data-level]').forEach(function(bt){ bt.addEventListener('click', function(){ st.level = +bt.getAttribute('data-level'); st.mock = null; apply(); }); });
+  sec.querySelectorAll('[data-kind]').forEach(function(bt){ bt.addEventListener('click', function(){ st.kind = bt.getAttribute('data-kind'); st.mock = null; apply(); }); });
   function visible(){ return items.filter(function(it){ return !it.hidden; }); }
+  function learned(it){ return !st.only || +it.dataset.unit <= st.stage; }
   function apply(){
     st.exam = boxes('exam').filter(function(c){ return c.checked; }).map(function(c){ return c.value; });
     st.topic = boxes('topic').filter(function(c){ return c.checked; }).map(function(c){ return c.value; });
@@ -176,8 +223,17 @@ ASSETS = r"""<!-- review-assets:start -->
       var ok = it.dataset.exam.split(' ').some(function(e){ return st.exam.indexOf(e) >= 0; }) &&
         it.dataset.topics.split(' ').some(function(t){ return st.topic.indexOf(t) >= 0; }) &&
         (!st.level || +it.dataset.level === st.level) && (st.kind === 'all' || it.dataset.kind === st.kind);
-      it.hidden = !ok;
+      it.hidden = !(st.mock ? st.mock.indexOf(it.dataset.id) >= 0 : ok && learned(it));
     });
+    // מבחן חזרה: השאלות בסדר של המבחן; אחרת - הסדר המקורי
+    var seq = st.mock ? st.mock.map(function(id){ return items.filter(function(it){ return it.dataset.id === id; })[0]; }).filter(Boolean) : order;
+    seq.forEach(function(it){ list.appendChild(it); }); items = st.mock ? seq.concat(order.filter(function(it){ return seq.indexOf(it) < 0; })) : order.slice();
+    if(stageBox){
+      document.getElementById('rvStage').value = String(st.stage); document.getElementById('rvOnly').checked = !!st.only;
+      stageBox.querySelectorAll('.rv-su li').forEach(function(li){ li.classList.toggle('done', +li.dataset.u <= st.stage); });
+      var mb = document.getElementById('rvMockBar'); mb.hidden = !st.mock;
+      if(st.mock) document.getElementById('rvMockTxt').textContent = '🎯 מבחן חזרה: ' + st.mock.length + ' שאלות מהנושאים שכבר למדנו';
+    }
     var n = visible().length;
     document.getElementById('rvCount').textContent = n + ' שאלות';
     document.getElementById('rvEmpty').hidden = n > 0;
@@ -186,6 +242,37 @@ ASSETS = r"""<!-- review-assets:start -->
     say(''); save();
   }
   ['rvPdfQ', 'rvPdfS'].forEach(function(id){ var b = document.getElementById(id); b._label = b.textContent; });
+  // ---------- לפי הסילבוס ----------
+  function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function makeMock(){
+    var pool = order.filter(function(it){
+      return it.dataset.exam.split(' ').some(function(e){ return st.exam.indexOf(e) >= 0; }) && +it.dataset.unit <= st.stage &&
+        it.dataset.topics.split(' ').some(function(t){ return st.topic.indexOf(t) >= 0; }) && (!st.level || +it.dataset.level === st.level); });
+    var used = {}, pick = function(arr, n){
+      var out = []; arr = shuffle(arr.slice());
+      while(out.length < n && arr.length){
+        // בכל פעם השאלה שהנושאים שלה הופיעו הכי מעט - כדי שהמבחן יכסה את כל מה שלמדנו
+        var best = 0, bs = 1e9;
+        arr.forEach(function(it, k){ var sc = it.dataset.topics.split(' ').reduce(function(a, t){ return a + (used[t] || 0); }, 0); if(sc < bs){ bs = sc; best = k; } });
+        var it = arr.splice(best, 1)[0]; out.push(it); it.dataset.topics.split(' ').forEach(function(t){ used[t] = (used[t] || 0) + 1; });
+      }
+      return out;
+    };
+    var open = pool.filter(function(it){ return it.dataset.kind === 'open'; }), mc = pool.filter(function(it){ return it.dataset.kind === 'mc'; });
+    var nO = st.kind === 'mc' ? 0 : st.kind === 'open' ? 8 : 5, nM = st.kind === 'open' ? 0 : st.kind === 'mc' ? 8 : 4;
+    if(open.length < nO) nM += nO - open.length; if(mc.length < nM) nO += nM - mc.length;
+    var sel = pick(open, nO).concat(pick(mc, nM));
+    if(!sel.length){ say('אין עדיין שאלות שמתאימות לנושאים שלמדנו ולבחירה. אפשר לסמן עוד מבחנים או נושאים.'); return; }
+    st.mock = sel.map(function(it){ return it.dataset.id; }); apply();
+    var mb = document.getElementById('rvMockBar'); if(mb.scrollIntoView) mb.scrollIntoView({block: 'start'});
+  }
+  if(stageBox){
+    document.getElementById('rvStage').addEventListener('change', function(){ st.stage = +this.value; st.mock = null; apply(); });
+    document.getElementById('rvOnly').addEventListener('change', function(){ st.only = this.checked; st.mock = null; apply(); });
+    document.getElementById('rvMock').addEventListener('click', makeMock);
+    document.getElementById('rvMockNew').addEventListener('click', makeMock);
+    document.getElementById('rvMockEnd').addEventListener('click', function(){ st.mock = null; apply(); });
+  }
   var note = document.getElementById('rvNote');
   function say(t){ note.textContent = t; note.hidden = !t; }
   apply();
@@ -197,6 +284,8 @@ ASSETS = r"""<!-- review-assets:start -->
   function describe(){
     var all = function(f){ return boxes(f).every(function(c){ return c.checked; }); };
     var p = [];
+    if(st.mock){ var o = document.querySelector('#rvStage option[value="' + st.stage + '"]'); return 'מבחן חזרה' + (o && st.stage < 99 ? ' · עד ' + o.textContent.split(' - ')[0] : ''); }
+    if(stageBox && st.only && st.stage < 99) p.push('רק מה שלמדנו (עד ' + document.querySelector('#rvStage option[value="' + st.stage + '"]').textContent.split(' - ')[0] + ')');
     p.push(all('exam') ? 'כל המבחנים' : boxes('exam').filter(function(c){ return c.checked; }).map(function(c){ return c.nextElementSibling.textContent; }).join(', '));
     if(!all('topic')) p.push(st.topic.length + ' נושאים');
     p.push(st.level ? 'רמה ' + LV[st.level] : 'כל הרמות');
