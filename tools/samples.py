@@ -1050,7 +1050,21 @@ def apply(site, page):
         out.append(page[last:ins]); out.append(render(hid, data[hid], tips.get(hid, ()))); last = ins
     out.append(page[last:])
     page = ''.join(out)
+    if site == 'algebra-solutions':          # מבחני חזרה: עמוד נפרד לפני קבצי הקורס
+        import review
+        page = re.sub(r'\n?\s*<!-- review:start -->.*?<!-- review:end -->\n?', '', page, flags=re.S)
+        i = page.index('<section class="files-section"')
+        rv_html, rv_repl = review.section(render_one, mathify)
+        page = page[:i] + rv_html.lstrip('\n') + '\n    ' + page[i:]
+        a = page.find('<!-- review-assets:start -->')
+        if a != -1:
+            page = page[:a] + page[page.index('<!-- review-assets:end -->') + len('<!-- review-assets:end -->\n'):]
+        i = page.rindex('</body>')
+        page = page[:i] + review.ASSETS + page[i:]
     page = separate_regions(page)
+    if site == 'algebra-solutions':
+        for ph, x in rv_repl.items():
+            page = page.replace(ph, x)
     page = tight_fences(page)
     a = page.find('<!-- samples-assets:start -->')
     if a != -1:

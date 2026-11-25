@@ -74,6 +74,45 @@ function serve() {
     }
     fs.writeFileSync(path.join(out, 'index.json'), JSON.stringify({ w: WIDTH, q: sizes }));
     console.log(`${site}: ${ids.length} question images`);
+    // מבחני חזרה: תמונה לשאלה, ותמונה לכל שלב בפתרון (כדי שהפתרון יתחלק יפה בין עמודים)
+    const rv = await page.evaluate(() => [...document.querySelectorAll('.review-section .rv-item')].map(e => e.dataset.id));
+    if (rv.length) {
+      const rout = path.join(ROOT, site, 'review-img');
+      fs.rmSync(rout, { recursive: true, force: true });
+      fs.mkdirSync(rout, { recursive: true });
+      const R = { w: WIDTH, q: {}, s: {} };
+      const shot = async (file) => {
+        const el = await page.$('#xr'); const bb = await el.boundingBox();
+        await el.screenshot({ path: path.join(rout, file + '.jpg'), type: 'jpeg', quality: 82 });
+        return [Math.round(bb.width * 2), Math.round(bb.height * 2)];
+      };
+      for (const id of rv) {
+        const n = await page.evaluate((id) => {
+          const src = document.querySelector('.rv-item[data-id="' + id + '"] .box.sample');
+          const c = src.cloneNode(true);
+          c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+          c.querySelectorAll('.box-title, .sample-btn, .sample-hint, .sample-sol, .sample-src, .xm-badges').forEach(x => x.remove());
+          const xr = document.getElementById('xr'); xr.innerHTML = ''; xr.appendChild(c); window.scrollTo(0, 0);
+          return src.querySelectorAll('.sample-sol > .sol-step, .sample-sol > .sol-ans').length;
+        }, id);
+        R.q[id] = await shot(id + '-q');
+        R.s[id] = [];
+        for (let k = 0; k < n; k++) {
+          await page.evaluate(([id, k]) => {
+            const src = document.querySelector('.rv-item[data-id="' + id + '"] .sample-sol');
+            const sol = src.cloneNode(false); sol.removeAttribute('id'); sol.hidden = false; sol.style.display = 'flex';
+            const part = src.querySelectorAll(':scope > .sol-step, :scope > .sol-ans')[k].cloneNode(true);
+            part.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+            part.querySelectorAll('.tip-row, .tip-panel').forEach(x => x.remove());
+            sol.appendChild(part);
+            const xr = document.getElementById('xr'); xr.innerHTML = ''; xr.appendChild(sol); window.scrollTo(0, 0);
+          }, [id, k]);
+          R.s[id].push(await shot(id + '-s' + (k + 1)));
+        }
+      }
+      fs.writeFileSync(path.join(rout, 'index.json'), JSON.stringify(R));
+      console.log(`${site}: ${rv.length} review questions, ${Object.values(R.s).reduce((a, x) => a + x.length, 0)} solution images`);
+    }
     await page.close();
   }
   await browser.close();

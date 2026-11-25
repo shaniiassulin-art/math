@@ -402,6 +402,7 @@ EXAM_ASSETS = r"""<!-- exam:start -->
       return {blob: makePdf(pages), name: name};
     });
   }
+  window.MathPdf = {makePdf: makePdf, textImg: textImg};   // גם מבחני החזרה משתמשים בזה
   function sharePdf(cur, qs, btn){
     var note = document.getElementById('xmPdfNote');
     function say(t){ if(note){ note.textContent = t; note.hidden = !t; } }
