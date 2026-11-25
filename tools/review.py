@@ -13,22 +13,23 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LV = {1: 'קלה', 2: 'בינונית', 3: 'קשה'}
 
 
-def data():
-    spec = importlib.util.spec_from_file_location('review_algebra', os.path.join(HERE, 'samples', 'review_algebra.py'))
+def data(mod='review_algebra'):
+    spec = importlib.util.spec_from_file_location(mod, os.path.join(HERE, 'samples', mod + '.py'))
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
 
 
-def section(render_one, mathify):
-    m = data()
+def section(render_one, mathify, mod='review_algebra'):
+    m = data(mod)
+    subject = getattr(m, 'SUBJECT', 'אלגברה לינארית')
     exams = dict(m.EXAMS)
     topics = dict(m.TOPICS)
     repl = {}
     used = [t for t, _ in m.TOPICS if any(t in q['topics'] for q in m.Q)]
-    h = ['\n    <!-- review:start --><section class="review-section" id="review" aria-labelledby="reviewTitle">',
+    h = [f'\n    <!-- review:start --><section class="review-section" id="review" data-subject="{subject}" aria-labelledby="reviewTitle">',
          '<h2 id="reviewTitle">📝 מבחני חזרה</h2>',
-         f'<p class="rv-intro">כל השאלות משלושת המבחנים של הקורס - מועד א, מועד ב ומבחן הדוגמה ({len(m.Q)} שאלות), עם פתרון מלא לכל אחת. '
+         f'<p class="rv-intro">כל השאלות מ-{len(m.EXAMS)} מבחנים של הקורס ({len(m.Q)} שאלות), עם פתרון מלא לכל אחת. '
          'בחרי מבחנים, נושאים ורמה - ואפשר להוציא קובץ עם התרגילים ומקום לפתרון, וקובץ נפרד עם כל הפתרונות של אותן שאלות.</p>',
          '<div class="rv-filters">',
          '<div class="rv-f"><div class="rv-fh">מבחנים</div><div class="rv-chips">'
@@ -50,7 +51,9 @@ def section(render_one, mathify):
          '<p class="rv-note" id="rvNote" hidden></p>',
          '<div class="rv-list">']
     for q in m.Q:
-        src = f'{exams[q["exam"]]} - {q["num"]} ({q["pts"]} נק׳)'
+        codes = [q['exam']] + list(q.get('also', []))
+        names = ', '.join(exams[c] for c in codes)
+        src = f'{names} - {q["num"]} ({q["pts"]} נק׳)'
         qt, _, op = q['q'].partition('§§OPTS§§')
         box = render_one('rv-' + q['id'], dict(src=src, q=qt.strip(), steps=q['steps'], ans=q['ans']))
         if op:      # the options go in after separate_regions, so the long formulas stay whole, one option per line
@@ -61,7 +64,7 @@ def section(render_one, mathify):
         chips = (f'<span class="rv-tag rv-lv rv-lv-{q["level"]}">רמה {LV[q["level"]]}</span>'
                  + (f'<span class="rv-tag rv-mc">אמריקאית</span>' if q.get('mc') else '')
                  + ''.join(f'<span class="rv-tag">{mathify(topics[t])}</span>' for t in q['topics']))
-        h.append(f'<div class="rv-item" data-id="{q["id"]}" data-exam="{q["exam"]}" data-topics="{" ".join(q["topics"])}" '
+        h.append(f'<div class="rv-item" data-id="{q["id"]}" data-exam="{" ".join(codes)}" data-topics="{" ".join(q["topics"])}" '
                  f'data-level="{q["level"]}" data-kind="{"mc" if q.get("mc") else "open"}" '
                  f'data-label="{exams[q["exam"]]}, {q["num"]} ({q["pts"]} נק׳)">'
                  f'<div class="rv-tags">{chips}</div>{box}</div>')
@@ -142,9 +145,9 @@ ASSETS = r"""<!-- review-assets:start -->
     mode = on;
   }
   back.addEventListener('click', function(){
-    if(cameIn){ history.back(); return; }
-    try { history.pushState(null, '', location.pathname + location.search); } catch(e){}
-    update(); window.scrollTo(0, 0);
+    var was = cameIn;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+    update(); if(!was) window.scrollTo(0, 0);
   });
   window.addEventListener('hashchange', update);
   window.addEventListener('popstate', update);
@@ -170,7 +173,7 @@ ASSETS = r"""<!-- review-assets:start -->
     sec.querySelectorAll('[data-level]').forEach(function(bt){ bt.setAttribute('aria-pressed', String(+bt.getAttribute('data-level') === st.level)); });
     sec.querySelectorAll('[data-kind]').forEach(function(bt){ bt.setAttribute('aria-pressed', String(bt.getAttribute('data-kind') === st.kind)); });
     items.forEach(function(it){
-      var ok = st.exam.indexOf(it.dataset.exam) >= 0 &&
+      var ok = it.dataset.exam.split(' ').some(function(e){ return st.exam.indexOf(e) >= 0; }) &&
         it.dataset.topics.split(' ').some(function(t){ return st.topic.indexOf(t) >= 0; }) &&
         (!st.level || +it.dataset.level === st.level) && (st.kind === 'all' || it.dataset.kind === st.kind);
       it.hidden = !ok;
@@ -219,7 +222,7 @@ ASSETS = r"""<!-- review-assets:start -->
         if(y + h > BOT) newPage();
         pg.push({img: im, x: X + CW - w, y: y, w: w, h: h}); y += h + (gap || 0);
       }
-      var head = P.textImg([['מבחני חזרה · אלגברה לינארית · ' + (withSol ? 'פתרונות' : 'תרגילים'), 40, true], [its.length + ' שאלות · ' + describe() + ' · ' + date, 26, false, '#555']]);
+      var head = P.textImg([['מבחני חזרה · ' + sec.dataset.subject + ' · ' + (withSol ? 'פתרונות' : 'תרגילים'), 40, true], [its.length + ' שאלות · ' + describe() + ' · ' + date, 26, false, '#555']]);
       put(head, 4); pg.push({line: [X, y, X + CW, y]}); y += 14;
       imgs.forEach(function(arr, i){
         var it = its[i], mc = it.dataset.kind === 'mc';
@@ -238,7 +241,7 @@ ASSETS = r"""<!-- review-assets:start -->
           y += 10; if(y < BOT){ pg.push({line: [X, y, X + CW, y]}); } y += 14;
         }
       });
-      var name = 'מבחני חזרה - אלגברה לינארית - ' + (withSol ? 'פתרונות' : 'תרגילים') + ' - ' + date + '.pdf';
+      var name = 'מבחני חזרה - ' + sec.dataset.subject + ' - ' + (withSol ? 'פתרונות' : 'תרגילים') + ' - ' + date + '.pdf';
       return {blob: P.makePdf(pages), name: name};
     });
   }
