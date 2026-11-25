@@ -3650,9 +3650,9 @@ try {
     mode = on;
   }
   back.addEventListener('click', function(){
-    if(cameIn){ history.back(); return; }
-    try { history.pushState(null, '', location.pathname + location.search); } catch(e){}
-    update(); window.scrollTo(0, 0);
+    var was = cameIn;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+    update(); if(!was) window.scrollTo(0, 0);
   });
   window.addEventListener('hashchange', update);
   window.addEventListener('popstate', update);

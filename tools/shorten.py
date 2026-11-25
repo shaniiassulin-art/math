@@ -44,6 +44,7 @@ SHORTEN_ASSETS = r"""<!-- shorten:start -->
     <li>שקף נמחק רק אם <b>כל</b> מה שיש בו - טקסט, נוסחאות, מטריצות, צבעים, סימונים והדגשות - מופיע בדיוק כך בשקף מאוחר יותר שנשאר (למשל השקף המסכם של רצף שלבים).</li>
     <li>אם שני שקפים מראים אותו תרגיל עם הדגשה שונה - שניהם נשארים, אלא אם שקף אחר מראה את שתי ההדגשות יחד.</li>
     <li>אם יש בשקף ביניים משהו שלא מופיע בסיכום - הוא נשאר. בספק - השקף נשאר.</li>
+    <li>הבדיקה האוטומטית זהירה: שקף שיש בו אפילו סימן אחד שלא מופיע בהמשך (למשל ״?״ שמתחלף בתשובה) נשאר. כדאי לעבור על השקפים ולמחוק בלחיצה מה שמיותר.</li>
     <li>כל מצגת נשמרת בנפרד. אפשר לבדוק כל החלטה ולשנות אותה בלחיצה על השקף.</li>
   </ul></div>
   <div class="sh-card">
@@ -102,41 +103,112 @@ SHORTEN_ASSETS = r"""<!-- shorten:start -->
   function note(t){ $('shNote').textContent = t; $('shNote').hidden = !t; }
 
   // ---------- ניתוח ----------
-  var W = 320, H = 240, TOL = 48, SLACK = 0.004;
+  var W = 480, H = 360, T = 60, LOOK = 4;
   var cur = null;   // {name, bytes, n, thumbs[], keep[], why[]}
   function renderPage(pdf, i, w){
     return pdf.getPage(i).then(function(pg){
       var v0 = pg.getViewport({scale: 1}), sc = w / v0.width, v = pg.getViewport({scale: sc});
       var c = document.createElement('canvas'); c.width = Math.round(v.width); c.height = Math.round(v.height);
-      return pg.render({canvasContext: c.getContext('2d'), viewport: v}).promise.then(function(){ return c; });
+      var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+      return pg.render({canvasContext: g, viewport: v}).promise.then(function(){ return c; });
     });
   }
-  function pixels(c){ var d = document.createElement('canvas'); d.width = W; d.height = H; var g = d.getContext('2d'); g.drawImage(c, 0, 0, W, H); return g.getImageData(0, 0, W, H).data; }
-  function analyse(px){
-    var n = px.length, N = W * H;
-    // רקע: הצבע החציוני של כל פיקסל בכל השקפים (תבנית העיצוב של המצגת)
-    var bg = new Uint8ClampedArray(N * 3), col = new Array(n);
-    for(var p = 0; p < N; p++){
-      for(var ch = 0; ch < 3; ch++){
-        for(var k = 0; k < n; k++) col[k] = px[k][p * 4 + ch];
-        col.sort(function(a, b){ return a - b; }); bg[p * 3 + ch] = col[n >> 1];
-      }
+  function pixels(c){ var d = document.createElement('canvas'); d.width = W; d.height = H; var g = d.getContext('2d'); g.drawImage(c, 0, 0, W, H);
+    var a = g.getImageData(0, 0, W, H).data, r = new Int16Array(W * H * 3);
+    for(var p = 0, q = 0; p < a.length; p += 4, q += 3){ r[q] = a[p]; r[q + 1] = a[p + 1]; r[q + 2] = a[p + 2]; }
+    return r; }
+  // רקע מקומי: חציון 9x9 (בשני מעברים, שורה ואז עמודה) - מה שיש סביב הפיקסל בלי הכתב הדק
+  function localBg(a){
+    var t = new Int16Array(a.length), o = new Int16Array(a.length), v = new Int16Array(9), N = W * H;
+    function med(){ for(var x = 1; x < 9; x++){ var y = v[x], z = x - 1; while(z >= 0 && v[z] > y){ v[z + 1] = v[z]; z--; } v[z + 1] = y; } return v[4]; }
+    for(var ch = 0; ch < 3; ch++){
+      for(var y = 0; y < H; y++) for(var x = 0; x < W; x++){
+        for(var k = -4; k <= 4; k++){ var xx = x + k; xx = xx < 0 ? 0 : xx >= W ? W - 1 : xx; v[k + 4] = a[(y * W + xx) * 3 + ch]; }
+        t[(y * W + x) * 3 + ch] = med(); }
+      for(var y2 = 0; y2 < H; y2++) for(var x2 = 0; x2 < W; x2++){
+        for(var k2 = -4; k2 <= 4; k2++){ var yy = y2 + k2; yy = yy < 0 ? 0 : yy >= H ? H - 1 : yy; v[k2 + 4] = t[(yy * W + x2) * 3 + ch]; }
+        o[(y2 * W + x2) * 3 + ch] = med(); }
     }
-    function far(a, i, b, j){ return Math.abs(a[i] - b[j]) + Math.abs(a[i + 1] - b[j + 1]) + Math.abs(a[i + 2] - b[j + 2]) > TOL; }
-    var ink = px.map(function(a){ var m = []; for(var p = 0; p < N; p++) if(far(a, p * 4, bg, p * 3)) m.push(p); return m; });
-    var keep = [], why = [];
-    for(var i = 0; i < n; i++){
-      keep[i] = true; why[i] = '';
-      if(ink[i].length < 40){ continue; }        // שקף כמעט ריק / שקף כותרת: נשאר
-      for(var j = i + 1; j < n; j++){
-        var bad = 0, lim = Math.max(3, ink[i].length * SLACK), a = px[i], b = px[j];
-        for(var q = 0; q < ink[i].length && bad <= lim; q++){ var o = ink[i][q] * 4; if(far(a, o, b, o)) bad++; }
-        if(bad <= lim){ keep[i] = false; why[i] = 'כל התוכן מופיע בשקף ' + (j + 1); break; }
-      }
-    }
-    // שרשרת: אם השקף שמכסה נמחק - הוא מכוסה בעצמו בשקף מאוחר יותר, אז המידע עדיין נשאר
-    return {keep: keep, why: why};
+    return o;
   }
+  function near(a, i, b, j){ return Math.abs(a[i] - b[j]) + Math.abs(a[i + 1] - b[j + 1]) + Math.abs(a[i + 2] - b[j + 2]) <= T; }
+  // הכנה של שקף אחד: רקע מקומי ורשימת פיקסלי "דיו" (כתב, נוסחאות, קווים, סימונים)
+  function prep(a){
+    var bg = localBg(a), N = W * H, ink = [], im = new Uint8Array(N);
+    for(var p = 0; p < N; p++) if(!near(a, p * 3, bg, p * 3)){ ink.push(p); im[p] = 1; }
+    return {a: a, bg: bg, ink: ink, im: im, D: coarseBg(a)};
+  }
+  // האם כל התוכן של שקף s מופיע בשקף t (באותו מקום, באותו צבע, עם סטייה של פיקסל אחד)
+  function covered(s, t){
+    var k = s.ink.length, lost = [], lim = k * 0.03;
+    for(var q = 0; q < k; q++){
+      var p = s.ink[q], y = (p / W) | 0, x = p - y * W, ok = false;
+      for(var dy = -1; dy <= 1 && !ok; dy++) for(var dx = -1; dx <= 1 && !ok; dx++){
+        var yy = y + dy, xx = x + dx; if(yy < 0 || yy >= H || xx < 0 || xx >= W) continue;
+        if(near(s.a, p * 3, t.a, (yy * W + xx) * 3)) ok = true; }
+      if(!ok){ lost.push(p); if(lost.length > lim) return false; }
+    }
+    // אם חסר משהו - רק נקודות בודדות (שוליים של קו) מותרות; כל צורה (ספרה, אות, סימן) = מידע שחסר
+    if(lost.length){
+      var seen = {}, set = {}; lost.forEach(function(p){ set[p] = 1; });
+      for(var i = 0; i < lost.length; i++){
+        var st = lost[i]; if(seen[st]) continue; seen[st] = 1;
+        var stack = [st], x0 = 1e9, x1 = -1, y0 = 1e9, y1 = -1;
+        while(stack.length){ var p2 = stack.pop(), py = (p2 / W) | 0, px = p2 - py * W;
+          if(px < x0) x0 = px; if(px > x1) x1 = px; if(py < y0) y0 = py; if(py > y1) y1 = py;
+          for(var ey = -2; ey <= 2; ey++) for(var ex = -2; ex <= 2; ex++){ var nn = (py + ey) * W + px + ex; if(set[nn] && !seen[nn]){ seen[nn] = 1; stack.push(nn); } } }
+        if(x1 - x0 + 1 >= 5 || y1 - y0 + 1 >= 5) return false;
+      }
+    }
+    // הדגשות: אם הרקע מתחת לתוכן משותף השתנה (הדגשה נוספה / הוסרה / הוזזה) - זה מידע, והשקף נשאר
+    var N = W * H, I = new Int32Array((W + 1) * (H + 1));
+    for(var y3 = 0; y3 < H; y3++){ var row = 0;
+      for(var x3 = 0; x3 < W; x3++){ var pp = y3 * W + x3; row += near(s.bg, pp * 3, t.bg, pp * 3) ? 0 : 1; I[(y3 + 1) * (W + 1) + x3 + 1] = I[y3 * (W + 1) + x3 + 1] + row; } }
+    var hl = 0;
+    for(var q2 = 0; q2 < k; q2++){ var p3 = s.ink[q2]; if(!t.im[p3]) continue;
+      var yy3 = (p3 / W) | 0, xx3 = p3 - yy3 * W, ya = Math.max(0, yy3 - 3), yb = Math.min(H, yy3 + 4), xa = Math.max(0, xx3 - 3), xb = Math.min(W, xx3 + 4);
+      if(I[yb * (W + 1) + xb] - I[ya * (W + 1) + xb] - I[yb * (W + 1) + xa] + I[ya * (W + 1) + xa] > 0 && ++hl > 30) return false; }
+    // תוכן עבה (סימן גדול, מילוי צבעוני) שנעלם: הרקע המקומי השתנה, והצבע בשקף הזה הוא לא צבע הרקע הכללי של השקף
+    var thick = 0;
+    for(var p4 = 0; p4 < N; p4++){
+      if(s.im[p4] || near(s.bg, p4 * 3, t.bg, p4 * 3) || near(s.a, p4 * 3, s.D, p4 * 3) || near(s.a, p4 * 3, t.a, p4 * 3)) continue;
+      if(++thick > 25) return false; }
+    return true;
+  }
+  // רקע גס של השקף: ממוצע בבלוקים של 8x8 ואז חציון על 5x5 בלוקים (כ-40 פיקסלים) - צבע הרקע הגדול של השקף
+  function coarseBg(a){
+    var bw = Math.ceil(W / 8), bh = Math.ceil(H / 8), B = new Float32Array(bw * bh * 3), C = new Int32Array(bw * bh);
+    for(var y = 0; y < H; y++) for(var x = 0; x < W; x++){ var bi = ((y >> 3) * bw + (x >> 3)), p = (y * W + x) * 3; C[bi]++; B[bi * 3] += a[p]; B[bi * 3 + 1] += a[p + 1]; B[bi * 3 + 2] += a[p + 2]; }
+    for(var i = 0; i < bw * bh; i++) for(var ch = 0; ch < 3; ch++) B[i * 3 + ch] /= C[i];
+    var M = new Int16Array(bw * bh * 3), v = [];
+    for(var by = 0; by < bh; by++) for(var bx = 0; bx < bw; bx++) for(var c = 0; c < 3; c++){
+      v.length = 0;
+      for(var dy = -2; dy <= 2; dy++) for(var dx = -2; dx <= 2; dx++){ var yy = by + dy, xx = bx + dx; if(yy >= 0 && yy < bh && xx >= 0 && xx < bw) v.push(B[(yy * bw + xx) * 3 + c]); }
+      v.sort(function(p, q){ return p - q; }); M[(by * bw + bx) * 3 + c] = Math.round(v[v.length >> 1]); }
+    var o = new Int16Array(W * H * 3);
+    for(var y2 = 0; y2 < H; y2++) for(var x2 = 0; x2 < W; x2++){ var q = (y2 * W + x2) * 3, r = ((y2 >> 3) * bw + (x2 >> 3)) * 3; o[q] = M[r]; o[q + 1] = M[r + 1]; o[q + 2] = M[r + 2]; }
+    return o;
+  }
+  function analyse(S, onStep){
+    var n = S.length, keep = [], why = [], i = 0;
+    return new Promise(function(done){
+      (function step(){
+        var t0 = Date.now();
+        while(i < n && Date.now() - t0 < 60){
+          keep[i] = true; why[i] = '';
+          if(S[i].ink.length >= 50){
+            for(var j = i + 1; j < Math.min(n, i + 1 + LOOK); j++){
+              if(covered(S[i], S[j])){ keep[i] = false; why[i] = 'כל התוכן מופיע בשקף ' + (j + 1); break; }
+            }
+          }
+          i++;
+        }
+        if(onStep) onStep(i, n);
+        if(i < n) setTimeout(step, 0); else done({keep: keep, why: why});
+      })();
+    });
+  }
+  window.__shorten = {prep: prep, covered: covered};
   function show(){
     var g = $('shGrid'); g.innerHTML = '';
     var k = cur.keep.filter(Boolean).length;
@@ -164,11 +236,12 @@ SHORTEN_ASSETS = r"""<!-- shorten:start -->
         function next(){
           if(i >= n) return Promise.resolve();
           i++; status('קוראת שקף ' + i + ' מתוך ' + n + '...');
-          return renderPage(pdf, i, 640).then(function(c){ thumbs.push(c.toDataURL('image/jpeg', 0.7)); px.push(pixels(c)); prog.value = i; return next(); });
+          return renderPage(pdf, i, 640).then(function(c){ thumbs.push(c.toDataURL('image/jpeg', 0.7)); px.push(prep(pixels(c))); prog.value = i;
+            return new Promise(function(ok){ setTimeout(ok, 0); }).then(next); });
         }
         return next().then(function(){
-          status('משווה בין השקפים...');
-          return new Promise(function(ok){ setTimeout(function(){ ok(analyse(px)); }, 30); });
+          prog.value = 0;
+          return analyse(px, function(k, nn){ prog.value = k; status('משווה בין השקפים... ' + k + '/' + nn); });
         }).then(function(r){
           prog.hidden = true;
           cur = {name: f.name.replace(/\.pdf$/i, ''), bytes: bytes, n: n, thumbs: thumbs, keep: r.keep, why: r.why};
